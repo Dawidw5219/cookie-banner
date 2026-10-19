@@ -1,0 +1,10 @@
+Cookie Banner App4You
+Copyright 2024-2026 App4You.dev
+
+This plugin includes the following third-party data:
+
+Open Cookie Database
+  Source: https://github.com/jkwakman/Open-Cookie-Database
+  License: Apache License 2.0
+  File: includes/cookie-database.json
+  No modifications to the original data.

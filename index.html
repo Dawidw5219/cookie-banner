@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Banner Dev</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      line-height: 1.8;
+      color: #333;
+      background: #fafafa;
+    }
+    h1 { color: #111; }
+    p { margin-bottom: 1em; }
+    .dev-panel {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #111;
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      z-index: 10;
+      min-width: 220px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .dev-panel h3 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .dev-panel .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid #222;
+    }
+    .dev-panel .row:last-child {
+      border-bottom: none;
+    }
+    .dev-panel .label {
+      color: #9ca3af;
+    }
+    .dev-panel .val {
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .dev-panel .val.on {
+      background: #065f46;
+      color: #34d399;
+    }
+    .dev-panel .val.off {
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+    .dev-panel .val.none {
+      background: #333;
+      color: #6b7280;
+    }
+    .dev-panel .actions {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #333;
+    }
+    .dev-panel button {
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      font-size: 12px;
+      font-family: inherit;
+      transition: background 150ms;
+    }
+    .dev-panel button:hover { background: #555; }
+  </style>
+</head>
+<body>
+  <div class="dev-panel">
+    <h3>Debug Panel</h3>
+    <div class="row">
+      <span class="label">has_consented</span>
+      <span class="val none" id="dbg-consented">—</span>
+    </div>
+    <div class="row">
+      <span class="label">essential</span>
+      <span class="val none" id="dbg-essential">—</span>
+    </div>
+    <div class="row">
+      <span class="label">analytics</span>
+      <span class="val none" id="dbg-analytics">—</span>
+    </div>
+    <div class="row">
+      <span class="label">marketing</span>
+      <span class="val none" id="dbg-marketing">—</span>
+    </div>
+    <div class="actions">
+      <button onclick="localStorage.clear(); location.reload();">
+        Reset & Reload
+      </button>
+    </div>
+  </div>
+
+  <h1>Example Website</h1>
+  <p>
+    This is a demo page to test the cookie consent banner. The banner should
+    appear as a fullscreen overlay on first visit, requiring the user to make
+    a consent decision before interacting with the page.
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.
+  </p>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris.
+  </p>
+
+  <script>
+    window.__cookieConsent = {
+      mode: 'gtm',
+      variant: 'bar',
+      gtmId: 'GTM-TEST123',
+      lang: 'pl',
+      privacyPolicyUrl: '/privacy-policy',
+      theme: {
+        primary: '#2563eb',
+        background: '#ffffff',
+        text: '#1a1a1a',
+      }
+    };
+
+    function updateDebugPanel(state) {
+      var consented = localStorage.getItem('cb_has_consented') === '1';
+      setVal('dbg-consented', consented);
+  
+      if (state) {
+        setVal('dbg-essential', state.essential);
+        setVal('dbg-analytics', state.analytics);
+        setVal('dbg-marketing', state.marketing);
+      } else {
+        var prefix = 'cb_consent_';
+        setVal('dbg-essential', localStorage.getItem(prefix + 'essential') === 'granted');
+        setVal('dbg-analytics', localStorage.getItem(prefix + 'analytics') === 'granted');
+        setVal('dbg-marketing',localStorage.getItem(prefix + 'marketing') === 'granted');
+      }
+    }
+
+    function setVal(id, val) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (val === true) {
+        el.textContent = 'true';
+        el.className = 'val on';
+      } else if (val === false) {
+        el.textContent = 'false';
+        el.className = 'val off';
+      } else {
+        el.textContent = '—';
+        el.className = 'val none';
+      }
+    }
+
+    window.addEventListener('cb:consent-update', (e) => {
+      updateDebugPanel(e.detail);
+    });
+
+    updateDebugPanel(null);
+    setInterval(() => { updateDebugPanel(null); }, 1000);
+  </script>
+  <script type="module" src="/src/app.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "cookie-banner",
+  "version": "1.1.0",
+  "description": "Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.",
+  "type": "module",
+  "main": "dist/cookie-banner.js",
+  "files": ["dist", "README.md"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dawidw5219/cookie-banner.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm run build:banner && pnpm --dir plugin run build",
+    "build:banner": "vite build",
+    "deploy": "pnpm run build && ghdeploy --release 'plugin/builds/cookie-banner-wp-{version}.zip'",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build:all": "pnpm run build"
+  },
+  "dependencies": {
+    "preact": "^10"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2",
+    "@tailwindcss/vite": "^4",
+    "jsdom": "^26.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vite": "^6",
+    "vitest": "^4.1.2"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "cookie-banner-wp",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dawidw5219/cookie-banner.git"
+  },
+  "scripts": {
+    "prep": "mkdir -p assets && cp ../dist/cookie-banner.js assets/cookie-banner.js",
+    "dev": "pnpm run prep && concurrently \"vite build --watch\" \"grunt dev\"",
+    "dev:vite": "vite build --watch",
+    "build": "pnpm run prep && vite build && grunt build",
+    "typecheck": "tsc --noEmit",
+    "zip": "grunt compress",
+    "lint": "grunt lint",
+    "assets": "grunt assets",
+    "makepot": "grunt makepot",
+    "deploy:wp": "grunt deploy:wp",
+    "deploy": "pnpm --dir .. run deploy"
+  },
+  "dependencies": {
+    "cookie-banner": "workspace:*"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.5",
+    "@tailwindcss/vite": "^4.2.4",
+    "concurrently": "^9.2.1",
+    "dotenv": "^16.4.5",
+    "grunt": "^1.6.1",
+    "grunt-contrib-compress": "^2.0.0",
+    "grunt-contrib-cssmin": "^5.0.0",
+    "grunt-contrib-uglify": "^5.2.2",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-exec": "^3.0.0",
+    "grunt-ftp-push": "^0.2.2",
+    "grunt-sync": "^0.8.2",
+    "grunt-wp-i18n": "^1.0.4",
+    "preact": "10.25.4",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10"
+  }
+}

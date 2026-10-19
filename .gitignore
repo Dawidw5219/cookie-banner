@@ -1,0 +1,31 @@
+node_modules/
+dist/
+plugin/assets/cookie-banner.js
+plugin/builds/
+.env
+.env.local
+.DS_Store
+
+# Local Sophia data must never be committed.
+.sophia/
+**/.sophia/
+
+
+# Explicit project policy overrides the managed exceptions above.
+/.sophia/
+**/.sophia/
+
+# BEGIN SOPHIA DURABLE STATE
+!/.sophia/
+!/.sophia/project.db
+!/.sophia/memos.db
+!/.sophia/memos-skills/
+!/.sophia/memos-skills/**
+!/.sophia/database-migration.json
+!/.sophia/assets/
+!/.sophia/assets/**
+!/.sophia/drawnix/
+!/.sophia/drawnix/**
+!/.sophia/storage.json
+!/.sophia/.gitignore
+# END SOPHIA DURABLE STATE

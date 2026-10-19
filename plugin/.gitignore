@@ -1,0 +1,6 @@
+node_modules/
+assets/cookie-banner.js
+builds/
+.env
+.env.local
+todo.md
