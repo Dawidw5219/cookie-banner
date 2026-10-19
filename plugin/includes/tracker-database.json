@@ -1,0 +1,110 @@
+{
+	"Google Analytics 4": {
+		"id": "ga4",
+		"category": "Analytics",
+		"icon": "ga4",
+		"scriptPatterns": ["gtag/js", "google-analytics.com/analytics.js", "googletagmanager.com/gtag/js"],
+		"networkPatterns": ["google-analytics.com/g/collect", "analytics.google.com/g/collect"],
+		"description": "Measures website traffic and user behavior using anonymized data.",
+		"privacyLink": "https://policies.google.com/privacy"
+	},
+	"Google Tag Manager": {
+		"id": "gtm",
+		"category": "Analytics",
+		"icon": "gtm",
+		"scriptPatterns": ["googletagmanager.com/gtm.js"],
+		"networkPatterns": ["googletagmanager.com/gtm.js"],
+		"description": "Tag management system that loads and manages third-party scripts.",
+		"privacyLink": "https://policies.google.com/privacy"
+	},
+	"Facebook Pixel": {
+		"id": "fbpixel",
+		"category": "Marketing",
+		"icon": "meta",
+		"scriptPatterns": ["connect.facebook.net/en_US/fbevents.js", "connect.facebook.net/signals/config"],
+		"networkPatterns": ["facebook.com/tr", "connect.facebook.net/fbevents.js", "facebook.com/tr?"],
+		"description": "Tracks conversions, builds audiences, and measures ad performance for Meta ads.",
+		"privacyLink": "https://www.facebook.com/privacy/policy/"
+	},
+	"Hotjar": {
+		"id": "hotjar",
+		"category": "Analytics",
+		"icon": "hotjar",
+		"scriptPatterns": ["static.hotjar.com/c/hotjar-", "static.hj.contentsquare.net"],
+		"networkPatterns": ["hotjar.com", "hotjar.io", "hj.contentsquare.net"],
+		"description": "Records user sessions, heatmaps, and feedback to improve UX.",
+		"privacyLink": "https://www.hotjar.com/privacy/"
+	},
+	"Microsoft Clarity": {
+		"id": "clarity",
+		"category": "Analytics",
+		"icon": "clarity",
+		"scriptPatterns": ["clarity.ms/tag/", "clarity.ms/s/"],
+		"networkPatterns": ["clarity.ms"],
+		"description": "Session recording and heatmap tool by Microsoft for UX analysis.",
+		"privacyLink": "https://privacy.microsoft.com/privacystatement"
+	},
+	"TikTok Pixel": {
+		"id": "tiktok",
+		"category": "Marketing",
+		"icon": "tiktok",
+		"scriptPatterns": ["analytics.tiktok.com/i18n/pixel/events.js"],
+		"networkPatterns": ["analytics.tiktok.com", "business-api.tiktok.com"],
+		"description": "Tracks conversions and builds audiences for TikTok advertising.",
+		"privacyLink": "https://www.tiktok.com/legal/privacy-policy"
+	},
+	"LinkedIn Insight Tag": {
+		"id": "linkedin",
+		"category": "Marketing",
+		"icon": "linkedin",
+		"scriptPatterns": ["snap.licdn.com/li.lms-analytics/insight.min.js"],
+		"networkPatterns": ["snap.licdn.com", "px.ads.linkedin.com", "dc.ads.linkedin.com"],
+		"description": "Tracks conversions and retargeting for LinkedIn advertising campaigns.",
+		"privacyLink": "https://www.linkedin.com/legal/privacy-policy"
+	},
+	"Pinterest Tag": {
+		"id": "pinterest",
+		"category": "Marketing",
+		"icon": "pinterest",
+		"scriptPatterns": ["s.pinimg.com/ct/core.js"],
+		"networkPatterns": ["ct.pinterest.com", "s.pinimg.com/ct/"],
+		"description": "Tracks conversions and builds audiences for Pinterest advertising.",
+		"privacyLink": "https://policy.pinterest.com/privacy-policy"
+	},
+	"Snapchat Pixel": {
+		"id": "snapchat",
+		"category": "Marketing",
+		"icon": "snapchat",
+		"scriptPatterns": ["sc-static.net/scevent.min.js"],
+		"networkPatterns": ["sc-static.net/scevent", "tr.snapchat.com"],
+		"description": "Measures ad performance and builds audiences for Snapchat campaigns.",
+		"privacyLink": "https://snap.com/privacy/privacy-policy"
+	},
+	"HubSpot": {
+		"id": "hubspot",
+		"category": "Marketing",
+		"icon": "hubspot",
+		"scriptPatterns": ["js.hs-scripts.com/", "js.hs-analytics.net/analytics"],
+		"networkPatterns": ["js.hs-scripts.com", "js.hs-analytics.net", "forms.hubspot.com", "api.hubapi.com"],
+		"description": "Marketing automation, analytics, and CRM tracking for inbound marketing.",
+		"privacyLink": "https://legal.hubspot.com/privacy-policy"
+	},
+	"Google Ads": {
+		"id": "gads",
+		"category": "Marketing",
+		"icon": "gads",
+		"scriptPatterns": ["googleads.g.doubleclick.net/pagead/", "www.googleadservices.com/pagead/conversion"],
+		"networkPatterns": ["googleads.g.doubleclick.net", "www.googleadservices.com/pagead", "pagead2.googlesyndication.com"],
+		"description": "Conversion tracking and remarketing for Google Ads campaigns.",
+		"privacyLink": "https://policies.google.com/privacy"
+	},
+	"Twitter/X Pixel": {
+		"id": "twitter",
+		"category": "Marketing",
+		"icon": "twitter",
+		"scriptPatterns": ["static.ads-twitter.com/uwt.js"],
+		"networkPatterns": ["static.ads-twitter.com", "analytics.twitter.com", "t.co/i/adsct"],
+		"description": "Tracks conversions and builds audiences for Twitter/X advertising.",
+		"privacyLink": "https://twitter.com/en/privacy"
+	}
+}
