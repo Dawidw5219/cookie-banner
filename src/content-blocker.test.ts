@@ -67,7 +67,7 @@ describe("per-service content consent", () => {
 		expect(component.hidden).toBe(true);
 		expect(
 			document.querySelector(".cb-content-placeholder strong")?.textContent,
-		).toBe("example.org");
+		).toBe("Treść zewnętrzna");
 		component.remove();
 		await settle();
 		expect(document.querySelector(".cb-content-placeholder")).toBeNull();

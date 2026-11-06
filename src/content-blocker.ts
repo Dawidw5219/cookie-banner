@@ -1,3 +1,4 @@
+import { createContentPlaceholder } from "./content-placeholder";
 import { setServiceConsent } from "./service-consent";
 import { getConsentState } from "@/hooks/use-storage";
 import { getServices, matchService } from "@/services";
@@ -11,7 +12,6 @@ export function startContentBlocker(config: BannerConfig): () => void {
 	let stopped = false;
 	let scriptQueue = Promise.resolve();
 	let serviceSignature = "";
-	const pl = config.lang === "pl";
 	const sync = (event?: Event) => {
 		if (stopped) return;
 		if (
@@ -152,49 +152,9 @@ export function startContentBlocker(config: BannerConfig): () => void {
 			element.hidden = true;
 			if (placeholders.has(element)) continue;
 			const service = getServices().find((service) => service.id === id);
-			const box = document.createElement("section");
-			box.className = "cb-content-placeholder";
-			box.setAttribute(
-				"aria-label",
-				pl ? "Zablokowana treść zewnętrzna" : "Blocked external content",
-			);
-			box.style.cssText = `box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;padding:clamp(1.5rem,5vw,3rem);min-height:180px;border:1px solid var(--cb-content-border,#d1d5db);border-radius:var(--cb-content-radius,12px);background:var(--cb-content-background,${config.theme?.background || "#f5f5f5"});color:var(--cb-content-color,${config.theme?.text || "inherit"});font:inherit;`;
-			if (element instanceof HTMLIFrameElement)
-				box.style.minHeight = "clamp(240px, 35vw, 450px)";
-			const title = document.createElement("strong");
-			title.textContent = service?.name || id;
-			const text = document.createElement("p");
-			text.style.cssText = "margin:0;max-width:48ch;line-height:1.6";
-			text.textContent = pl
-				? "Ta treść wymaga Twojej zgody. Jej włączenie udostępni dostawcy Twój adres IP i dane przeglądarki. Możesz cofnąć zgodę w ustawieniach prywatności."
-				: "This content requires your consent. Enabling it shares your IP address and browser data with the provider. You can withdraw consent in privacy settings.";
-			const button = document.createElement("button");
-			button.type = "button";
-			button.textContent = pl
-				? `Zgadzam się — włącz ${title.textContent}`
-				: `Allow ${title.textContent}`;
-			button.style.cssText = `font:inherit;cursor:pointer;padding:.75em 1.25em;border-radius:var(--cb-content-radius,8px);border:1px solid currentColor;background:var(--cb-content-primary,${config.theme?.primary || "#2563eb"});color:var(--cb-content-button-text,#fff)`;
-			button.addEventListener(
-				"click",
-				() => {
-					setServiceConsent(id, true);
-				},
-				{ isRocket: true } as AddEventListenerOptions,
-			);
-			box.append(title, text);
-			if (service?.privacyUrl) {
-				const link = document.createElement("a");
-				link.href = service.privacyUrl;
-				link.textContent = pl
-					? "Polityka prywatności dostawcy"
-					: "Provider privacy policy";
-				link.target = "_blank";
-				link.rel = "noopener noreferrer";
-				box.append(link);
-			}
-			box.append(button);
-			for (const child of box.children)
-				(child as HTMLElement).style.flexShrink = "0";
+			const box = createContentPlaceholder(service, id, config.lang, () => {
+				setServiceConsent(id, true);
+			});
 			placeholders.set(element, box);
 			element.after(box);
 		}

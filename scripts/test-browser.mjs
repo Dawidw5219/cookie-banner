@@ -46,6 +46,9 @@ try {
 		.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
 		.click();
 	assert.equal(await ui.page.locator("iframe[src]").count(), 0);
+	const firstEmbed = ui.page.waitForResponse((response) =>
+		response.url().includes("youtube-nocookie.com"),
+	);
 	await ui.page
 		.locator(".cb-content-placeholder")
 		.first()
@@ -54,12 +57,17 @@ try {
 	await ui.page.waitForFunction(
 		() => document.querySelectorAll("iframe[src]").length === 1,
 	);
+	await firstEmbed;
 	assert.equal(ui.requests.length, 1);
 	assert.match(ui.requests[0], /youtube-nocookie\.com/);
+	const restoredEmbed = ui.page.waitForResponse((response) =>
+		response.url().includes("youtube-nocookie.com"),
+	);
 	await ui.page.reload();
 	await ui.page.waitForFunction(
 		() => document.querySelectorAll("iframe[src]").length === 1,
 	);
+	await restoredEmbed;
 	assert.equal(ui.requests.length, 2);
 	await ui.page
 		.getByRole("button", { name: "Preferencje plików cookie", exact: true })

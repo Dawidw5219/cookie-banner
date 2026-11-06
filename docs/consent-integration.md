@@ -96,7 +96,7 @@ Własny kod WordPressa może emitować:
 
 Filtr `cookie4_config` pozwala dodać `services` (ten sam format co npm) i ustawić `autoBlock: false` w razie konfliktu konkretnej witryny. To wyłącza dodatkowy guard; transformacja PHP pozostaje. Własne usługi oznaczone w HTML pozostają blokowane bez zgody niezależnie od obecności w bazie.
 
-Boksy dziedziczą font i korzystają z kolorów bannera. Strona może nadpisać zmienne CSS: `--cb-content-background`, `--cb-content-color`, `--cb-content-border`, `--cb-content-radius`, `--cb-content-primary`, `--cb-content-button-text` oraz klasę `.cb-content-placeholder`.
+Boksy dziedziczą rodzinę fontów i kolor tekstu strony, z kompaktowymi rozmiarami tekstu i przycisków. Tło oraz obramowanie są delikatnymi odcieniami bieżącego koloru, a YouTube ma lokalną ikonę odtwarzania bez pobierania miniatury. Strona może nadpisać zmienne CSS: `--cb-content-background`, `--cb-content-color`, `--cb-content-border`, `--cb-content-radius`, `--cb-content-primary`, `--cb-content-button-text` oraz klasę `.cb-content-placeholder`.
 
 ## Bazy i aktualizacje
 
