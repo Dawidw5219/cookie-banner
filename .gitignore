@@ -29,3 +29,6 @@ plugin/builds/
 !/.sophia/storage.json
 !/.sophia/.gitignore
 # END SOPHIA DURABLE STATE
+
+# Downloaded competitor sources for local reference only.
+/reference-plugins/

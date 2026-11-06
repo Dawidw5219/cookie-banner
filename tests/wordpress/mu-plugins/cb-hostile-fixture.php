@@ -102,3 +102,11 @@ add_action('send_headers', function () {
         header("Content-Security-Policy: img-src 'self' data:", false);
     }
 });
+
+// Standard foreign plugin notices must remain available outside our panel.
+add_action('admin_notices', function () {
+    echo '<div class="notice notice-warning" id="cb-test-foreign-notice"><p>Cookie Banner test: foreign plugin notice.</p></div>';
+});
+add_action('all_admin_notices', function () {
+    echo '<div class="notice notice-info" id="cb-test-foreign-global-notice"><p>Cookie Banner test: foreign global notice.</p></div>';
+});

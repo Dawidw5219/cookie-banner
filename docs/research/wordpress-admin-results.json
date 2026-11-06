@@ -1,0 +1,15 @@
+{
+  "base": "http://127.0.0.1:9403",
+  "checks": [
+    "Anonymous read/write admin APIs denied",
+    "Real WordPress overview and setup checklist render",
+    "Sandboxed local preview preserves real consent storage",
+    "Edits made during a save remain dirty and are not lost",
+    "Banner and integration drafts survive navigation",
+    "UI saves a custom service through nonce-protected REST",
+    "Custom service shares frontend registry: no request before consent; only its frame released after consent",
+    "Atomic validation rejects CSP injection and prevents reusing old consent even after removing a service",
+    "Diagnostics reads actual frontend CSP and cache headers",
+    "Admin shell fits mobile viewport; no JavaScript errors"
+  ]
+}

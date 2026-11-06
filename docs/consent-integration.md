@@ -230,3 +230,33 @@ This implementation does not itself establish legal compliance for a website.
 
 References: [MDN CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP),
 [WP Rocket caching](https://docs.wp-rocket.me/article/1528-page-caching).
+
+
+## WordPress administrator workspace
+
+The WordPress panel now has Overview, Banner & texts, Services, Cookies & scan,
+WordPress integration and Diagnostics sections. Banner and service drafts remain
+mounted when switching sections; the banner save indicator preserves edits made
+while an earlier save is in flight.
+
+Services can be registered through the panel with an ID, name, purpose, HTTPS URL
+prefixes and optional privacy policy URL. The same saved definitions feed scanner
+detection, HTML blocking, frontend service preferences and CSP. Built-in IDs cannot
+be overridden. To change an integration's purpose/destinations, create a new ID:
+the server retains a hash of prior definitions so deleting/recreating a service
+cannot reuse earlier consent for something different.
+
+Diagnostics exposes local prerequisites, detected cache adapters and known other
+active consent plugins. Its explicit homepage check fetches HTML without executing
+it and reports actual response headers for the administrator session; this does
+not replace anonymous full-site request testing. Native WordPress Site Health also
+shows these prerequisites and support information.
+
+The live banner preview uses a sandbox that cannot read/write the site's actual
+consent storage. It loads locally bundled assets; preview choices and changing
+appearance do not reset a real visitor's consent.
+
+Reference source versions and the resulting design decisions are documented in
+`docs/research/wordpress-product-comparison.md`. Competitor packages are kept only
+in ignored `reference-plugins/` and can be restored with
+`python3 scripts/fetch-cookie-references.py`.

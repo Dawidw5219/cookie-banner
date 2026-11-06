@@ -22,27 +22,15 @@ function cookie4_scanner_enqueue_assets( string $current_hook ): void {
 		return;
 	}
 
-	// Tailwind CDN — scoped to this admin page only.
-	wp_enqueue_script(
-		'tailwindcss-cdn',
-		'https://cdn.tailwindcss.com',
-		[],
-		null,
-		false
-	);
-
-	// Disable Tailwind preflight so it doesn't mess with WP admin styles.
-	wp_add_inline_script( 'tailwindcss-cdn', "tailwind.config={corePlugins:{preflight:false}}" );
-
-	// Scanner admin interactions are inline in scanner-page.php.
-	// Just provide the config object they need.
-	wp_add_inline_script( 'tailwindcss-cdn', 'var cookie4Scanner = ' . wp_json_encode( [
+	// The Preact admin app already ships locally compiled CSS. Keep the legacy
+	// scanner configuration available without loading a third-party CSS runtime.
+	wp_add_inline_script( 'cookie4-admin-app', 'var cookie4Scanner = ' . wp_json_encode( [
 		'restUrl'    => rest_url( 'cookie4/v1/' ),
 		'nonce'      => wp_create_nonce( 'wp_rest' ),
 		'scanUrl'    => home_url( '/?cookie_scan=1' ),
 		'siteUrl'    => home_url( '/' ),
 		'auditMode'  => get_option( 'cookie4_audit_mode', '' ) === '1',
-	] ) . ';' );
+	] ) . ';', 'before' );
 }
 
 add_action( 'admin_enqueue_scripts', 'cookie4_scanner_enqueue_assets' );
@@ -677,6 +665,16 @@ function cookie4_get_tracker_database(): array {
             'requiresConsent' => $requires_consent,
             'description' => 'Third-party provider: ' . $provider['name'] . ' (' . $category . '). Review the purpose used on this website.',
             'privacyLink' => '',
+        ];
+    }
+    foreach (get_option('cookie4_services', []) as $service) {
+        $label = $service['name'];
+        if (isset($db[$label])) { $label .= ' (' . $service['id'] . ')'; }
+        $db[$label] = [
+            'id' => $service['id'], 'category' => 'Unknown', 'custom' => true,
+            'scriptPatterns' => array_map(fn($url) => substr($url, 8), $service['urls']),
+            'networkPatterns' => [], 'requiresConsent' => true,
+            'description' => $service['description'], 'privacyLink' => $service['privacyUrl'],
         ];
     }
 	return $db;

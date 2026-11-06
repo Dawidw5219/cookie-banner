@@ -54,14 +54,14 @@ body { padding:40px 24px; }
 <script>
 // Listen for config from parent.
 window.addEventListener('message', function(e) {
-	if (e.data && e.data.type === 'cookie4_preview') {
+	if (e.source === window.parent && e.origin === new URL(<?php echo wp_json_encode(admin_url()); ?>).origin && e.data && e.data.type === 'cookie4_preview') {
+		// The opaque sandbox cannot read or write the site's real consent storage.
+		if (window.CookieConsent && window.CookieConsent.teardown) window.CookieConsent.teardown();
 		// Remove existing banner.
 		var host = document.getElementById('cookie-consent-host');
 		if (host) host.remove();
-		// Clear consent so banner always shows.
-		Object.keys(localStorage).forEach(function(k) { if (k.startsWith('cb_')) localStorage.removeItem(k); });
 		// Set new config.
-		window.__cookieConsent = e.data.config;
+		window.__cookieConsent = Object.assign({}, e.data.config, {strictCsp:false, autoBlock:false, loadGtm:false, gtmId:undefined, scripts:undefined});
 		// Re-load banner by inserting a fresh script tag.
 		var old = document.getElementById('cb-preview-script');
 		if (old) old.remove();

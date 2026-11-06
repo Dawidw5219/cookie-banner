@@ -1,3 +1,4 @@
+import { wp } from "@/shared/types/wp";
 import { useEffect, useRef } from "preact/hooks";
 
 interface BannerPreviewProps {
@@ -6,9 +7,7 @@ interface BannerPreviewProps {
 }
 
 // Build the preview iframe URL (WordPress AJAX endpoint).
-const PREVIEW_URL =
-	(window.cookie4Admin?.homeUrl || "/") +
-	"wp-admin/admin-ajax.php?action=cookie4_preview";
+const PREVIEW_URL = wp.previewUrl;
 
 /**
  * Live banner preview via an iframe that loads the real banner JS.
@@ -36,7 +35,11 @@ export function BannerPreview({ config, previewVariant }: BannerPreviewProps) {
 	// Listen for "ready" from iframe.
 	useEffect(() => {
 		function onMessage(e: MessageEvent) {
-			if (e.data?.type === "cookie4_preview_ready") {
+			if (
+				e.source === iframeRef.current?.contentWindow &&
+				e.origin === "null" &&
+				e.data?.type === "cookie4_preview_ready"
+			) {
 				readyRef.current = true;
 				sendConfig();
 			}
@@ -56,6 +59,8 @@ export function BannerPreview({ config, previewVariant }: BannerPreviewProps) {
 	return (
 		<iframe
 			ref={iframeRef}
+			title="Isolated cookie banner preview"
+			sandbox="allow-scripts"
 			src={PREVIEW_URL}
 			class="w-full bg-gray-100"
 			style={{ height: "480px", border: "none" }}

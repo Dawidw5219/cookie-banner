@@ -62,8 +62,8 @@ export function Field(props: FieldProps) {
 	}
 
 	return (
-		<div class="flex items-center justify-between gap-4 py-4 border-b border-gray-100 last:border-0">
-			<div class="shrink-0">
+		<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 py-4 border-b border-gray-100 last:border-0">
+			<div class="min-w-0 sm:shrink-0 sm:max-w-[50%]">
 				<label class="text-sm font-medium text-gray-900">{label}</label>
 				{description && (
 					<p
@@ -72,7 +72,7 @@ export function Field(props: FieldProps) {
 					/>
 				)}
 			</div>
-			<div class="flex-1 max-w-xs">
+			<div class="w-full min-w-0 flex-1 sm:max-w-xs">
 				{type === "color" && <ColorInput value={props.value} onChange={props.onChange} />}
 				{type === "select" && (
 					<select

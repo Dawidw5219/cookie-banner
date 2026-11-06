@@ -1,8 +1,9 @@
+import type { CustomService } from "@/features/services/use-services";
 import { useState, useMemo } from "preact/hooks";
 import { Card } from "@/shared/ui/card";
 import { Field } from "@/shared/ui/field";
 import { Button } from "@/shared/ui/button";
-import { useSettings } from "./use-settings";
+import type { useSettings } from "./use-settings";
 import { BannerPreview } from "./banner-preview";
 import { CustomTexts } from "./custom-texts";
 import { getLanguageDefaults } from "./i18n-defaults";
@@ -26,8 +27,11 @@ function dotToNested(flat: Record<string, string>): Record<string, unknown> {
 	return result;
 }
 
-export function BannerSettings() {
-	const { settings, fields, update, save, saving, dirty } = useSettings();
+export function BannerSettings({ model, services }: {
+	model: ReturnType<typeof useSettings>;
+	services: CustomService[];
+}) {
+	const { settings, fields, update, save, saving, dirty } = model;
 	const [previewVariant, setPreviewVariant] = useState<string | null>(null);
 	const [customTexts, setCustomTexts] = useState<Record<string, string>>({});
 	const [textsLoaded, setTextsLoaded] = useState(false);
@@ -55,6 +59,7 @@ export function BannerSettings() {
 		if (!settings) return {};
 		const lang = settings.lang === "auto" || settings.lang === "custom" ? "en" : settings.lang;
 		const config: Record<string, unknown> = {
+			services,
 			mode: settings.gtm_id ? "gtm" : "standalone",
 			variant: previewVariant || settings.variant || "modal",
 			lang,
@@ -70,7 +75,7 @@ export function BannerSettings() {
 			config.customTexts = dotToNested(customTexts);
 		}
 		return config;
-	}, [settings, customTexts, previewVariant]);
+	}, [settings, customTexts, previewVariant, services]);
 
 	if (!settings) {
 		return (
@@ -86,9 +91,9 @@ export function BannerSettings() {
 	const isCustomLang = settings.lang === "custom";
 
 	return (
-		<div class="flex gap-6 items-start">
+		<div class="flex flex-col xl:flex-row gap-6 items-start">
 			{/* LEFT: Settings editor */}
-			<div class="flex-1 min-w-0">
+			<div class="w-full flex-1 min-w-0">
 				<Card
 					title="Banner Settings"
 					description="Configure the appearance and behavior of the consent banner."
@@ -173,7 +178,7 @@ export function BannerSettings() {
 			</div>
 
 			{/* RIGHT: Live preview */}
-			<div class="w-[420px] shrink-0 sticky top-4">
+			<div class="w-full xl:w-[420px] shrink-0 xl:sticky top-4">
 				<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 					<div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
 						<h3 class="text-sm font-semibold text-gray-900">Live Preview</h3>
@@ -197,6 +202,7 @@ export function BannerSettings() {
 						config={previewConfig}
 						previewVariant={previewVariant || settings.variant}
 					/>
+					<p class="px-4 py-3 text-xs text-gray-500">Preview choices do not change your website consent.</p>
 				</div>
 			</div>
 		</div>

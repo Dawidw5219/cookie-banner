@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "preact/hooks";
+import { useState, useEffect, useCallback, useRef } from "preact/hooks";
 import { api } from "@/shared/hooks/use-api";
 import { toast } from "@/shared/ui/toast";
 
@@ -21,15 +21,27 @@ export function useSettings() {
 	const [fields, setFields] = useState<FieldDef[]>([]);
 	const [saving, setSaving] = useState(false);
 	const [dirty, setDirty] = useState(false);
+	const [error, setError] = useState("");
+	const revision = useRef(0);
 
-	useEffect(() => {
-		api<SettingsResponse>("/settings").then((data) => {
+	const reload = useCallback(async () => {
+		setError("");
+		try {
+			const data = await api<SettingsResponse>("/settings");
 			setSettings(data.settings);
 			setFields(data.fields);
-		});
+		} catch (error) {
+			setError(
+				error instanceof Error ? error.message : "Could not load settings",
+			);
+		}
 	}, []);
+	useEffect(() => {
+		void reload();
+	}, [reload]);
 
 	const update = useCallback((key: string, value: string) => {
+		revision.current += 1;
 		setSettings((prev) => (prev ? { ...prev, [key]: value } : prev));
 		setDirty(true);
 	}, []);
@@ -37,12 +49,13 @@ export function useSettings() {
 	const save = useCallback(async () => {
 		if (!settings) return;
 		setSaving(true);
+		const savedRevision = revision.current;
 		try {
 			await api("/settings", {
 				method: "PUT",
 				body: JSON.stringify(settings),
 			});
-			setDirty(false);
+			if (revision.current === savedRevision) setDirty(false);
 			toast("Settings saved");
 		} catch {
 			toast("Failed to save", "error");
@@ -51,5 +64,5 @@ export function useSettings() {
 		}
 	}, [settings]);
 
-	return { settings, fields, update, save, saving, dirty };
+	return { settings, fields, update, save, saving, dirty, error, reload };
 }

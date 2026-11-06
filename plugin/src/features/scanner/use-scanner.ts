@@ -51,9 +51,11 @@ export function useScanner() {
 	const [scanActive, setScanActive] = useState(false);
 	const [auditActive, setAuditActive] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState("");
 
 	const refresh = useCallback(async () => {
 		setLoading(true);
+		setError("");
 		try {
 			const [cookieData, trackerData] = await Promise.all([
 				api<CookiesResponse>("/cookies"),
@@ -64,6 +66,8 @@ export function useScanner() {
 			setScanActive(cookieData.scan_active);
 			setAuditActive(cookieData.audit_active);
 			setTrackers(trackerData.trackers);
+		} catch (error) {
+			setError(error instanceof Error ? error.message : "Could not load scanner data");
 		} finally {
 			setLoading(false);
 		}
@@ -177,6 +181,7 @@ export function useScanner() {
 		scanActive,
 		auditActive,
 		loading,
+		error,
 		total,
 		categorized,
 		uncategorized,

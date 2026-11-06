@@ -130,6 +130,7 @@ function cookie4_csp_refresh_cache(): void {
     if (function_exists('rocket_clean_domain')) { rocket_clean_domain(); }
     if (function_exists('rocket_generate_config_file')) { rocket_generate_config_file(); }
     if (function_exists('flush_rocket_htaccess')) { flush_rocket_htaccess(); }
+    if (class_exists('Cache_Enabler') && method_exists('Cache_Enabler', 'clear_total_cache')) { Cache_Enabler::clear_total_cache(); }
     do_action('litespeed_purge_all');
 }
 // Once per deployed policy revision, plus every optimizer activation.

@@ -109,5 +109,6 @@ function cookie4_rest_put_settings( WP_REST_Request $request ): WP_REST_Response
 		}
 	}
 
+	if ($updated) { cookie4_csp_refresh_cache(); }
 	return new WP_REST_Response( [ 'updated' => $updated ] );
 }

@@ -83,18 +83,6 @@ function cookie4_get_fields(): array {
                 'bar'   => 'Bar (bottom strip, non-blocking)',
             ],
         ],
-        'cookie4_test_mode' => [
-            'label'   => '⚠️ Enable tracking before consent',
-            'type'    => 'checkbox',
-            'default' => '',
-            'description' => 'Testing only: tracking starts immediately, but the cookie banner remains visible. Disable on public sites.',
-        ],
-        'cookie4_auto_accept_all' => [
-            'label'   => '⚠️ Hide banner and allow all cookies',
-            'type'    => 'checkbox',
-            'default' => '',
-            'description' => 'Private sites only: automatically allows all cookies and hides both the banner and settings icon. Disable on public sites.',
-        ],
         'cookie4_load_gtm' => [
             'label'   => 'Load Google Tag Manager',
             'type'    => 'checkbox',

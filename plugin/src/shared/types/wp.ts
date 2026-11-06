@@ -4,6 +4,7 @@ declare global {
 			restUrl: string;
 			nonce: string;
 			homeUrl: string;
+			previewUrl: string;
 		};
 	}
 }

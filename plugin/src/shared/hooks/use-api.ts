@@ -14,7 +14,12 @@ export async function api<T = unknown>(
 	});
 
 	if (!res.ok) {
-		throw new Error(`API ${res.status}: ${res.statusText}`);
+		const error = await res.json().catch(() => null);
+		throw new Error(
+			typeof error?.message === "string"
+				? error.message
+				: `API ${res.status}: ${res.statusText}`,
+		);
 	}
 
 	return res.json();

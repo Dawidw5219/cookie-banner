@@ -194,6 +194,7 @@ function cookie4_build_config(): array {
         'variant' => $variant,
         'lang'    => cookie4_resolve_lang(),
         'detectedServices' => array_keys($observed),
+        'services' => get_option('cookie4_services', []),
         'theme'   => [
             'primary'    => $primary,
             'background' => $background,
