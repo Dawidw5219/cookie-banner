@@ -1,3 +1,5 @@
+import { installAutoBlocker } from "./auto-blocker";
+import { startContentBlocker } from "@/content-blocker";
 import { ConsentButton } from "@/ui/consent-button";
 import type { ComponentChildren } from "preact";
 import { render } from "preact";
@@ -5,13 +7,7 @@ import { useEffect } from "preact/hooks";
 import { ConsentOverlay } from "@/components/consent-overlay";
 import { PolicyLinks } from "@/components/policy-links";
 import { PreferencesModal } from "@/components/preferences-modal";
-import {
-	applyAutomaticConsent,
-	ConfigContext,
-	getAcceptAllState,
-	runConsentInit,
-	useConsent,
-} from "@/hooks/use-consent";
+import { ConfigContext, runConsentInit, useConsent } from "@/hooks/use-consent";
 import { applyCustomTexts, setLang, t } from "@/i18n";
 import {
 	observeBannerHostRemoval,
@@ -47,11 +43,13 @@ function ConsentBar({
 	cookiePolicyUrl,
 	onAcceptAll,
 	onOpenPreferences,
+	onRejectAll,
 }: {
 	privacyPolicyUrl?: string;
 	cookiePolicyUrl?: string;
 	onAcceptAll: () => void;
 	onOpenPreferences: () => void;
+	onRejectAll: () => void;
 }) {
 	return (
 		<div class="fixed bottom-0 left-0 right-0 z-2147483647">
@@ -64,7 +62,7 @@ function ConsentBar({
 							cookiePolicyUrl={cookiePolicyUrl}
 						/>
 					</p>
-					<div class="grid grid-cols-2 gap-2.5 sm:gap-3 shrink-0 sm:w-auto sm:min-w-80">
+					<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 shrink-0 sm:w-auto sm:min-w-[32rem]">
 						<ConsentButton
 							type="button"
 							onClick={onOpenPreferences}
@@ -72,6 +70,13 @@ function ConsentBar({
 							class="cursor-pointer rounded-md bg-cb-bg px-3 sm:px-4 h-9 sm:h-10 text-[11px] sm:text-sm font-semibold text-cb-primary transition-colors hover:bg-cb-primary/5 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
 						>
 							{t.overlay.advancedSettings}
+						</ConsentButton>
+						<ConsentButton
+							type="button"
+							onClick={onRejectAll}
+							class="cursor-pointer rounded-md border border-cb-primary px-3 h-10 text-sm font-semibold text-cb-primary"
+						>
+							{t.preferences.rejectAll}
 						</ConsentButton>
 						<ConsentButton
 							type="button"
@@ -133,6 +138,7 @@ function AppContent() {
 						privacyPolicyUrl={config.privacyPolicyUrl}
 						cookiePolicyUrl={config.cookiePolicyUrl}
 						onAcceptAll={acceptAll}
+						onRejectAll={rejectAll}
 						onOpenPreferences={openPreferences}
 					/>
 				</ConsentPanel>
@@ -142,11 +148,12 @@ function AppContent() {
 					privacyPolicyUrl={config.privacyPolicyUrl}
 					cookiePolicyUrl={config.cookiePolicyUrl}
 					onAcceptAll={acceptAll}
+					onRejectAll={rejectAll}
 					onOpenPreferences={openPreferences}
 				/>
 			)}
 			{view === "preferences" && (
-				<ConsentPanel class="flex max-h-[90vh] sm:max-h-none flex-col">
+				<ConsentPanel class="flex max-h-[90vh] flex-col">
 					<PreferencesModal
 						privacyPolicyUrl={config.privacyPolicyUrl}
 						cookiePolicyUrl={config.cookiePolicyUrl}
@@ -164,13 +171,15 @@ function AppContent() {
 	);
 }
 
+if (window.__cookieConsent?.autoBlock)
+	installAutoBlocker(window.__cookieConsent);
+
 // Set consent default IMMEDIATELY (before GTM or any other script runs)
 if (window.__cookieConsent) {
-	if (window.__cookieConsent.autoAcceptAll) {
-		applyAutomaticConsent(window.__cookieConsent);
-	}
 	runConsentInit(window.__cookieConsent);
 }
+
+let stopContentBlocker: (() => void) | undefined;
 
 let mountedBanner:
 	| {
@@ -181,6 +190,8 @@ let mountedBanner:
 	| undefined;
 
 export function teardown(): void {
+	stopContentBlocker?.();
+	stopContentBlocker = undefined;
 	if (!mountedBanner) {
 		releaseBannerScrollLock();
 		return;
@@ -196,18 +207,12 @@ export function teardown(): void {
 	host.remove();
 }
 
-function init(): void {
+export function init(): void {
 	if (document.getElementById("cookie-consent-host")) return;
 	if (!window.__cookieConsent) return;
 	const config: BannerConfig = window.__cookieConsent;
-	if (config.autoAcceptAll) {
-		window.dispatchEvent(
-			new CustomEvent("cb:consent-update", {
-				detail: getAcceptAllState(),
-			}),
-		);
-		return;
-	}
+	stopContentBlocker ||= startContentBlocker(config);
+	if (config.auditMode) return;
 	setLang(config.lang ?? "en");
 	if (config.customTexts) {
 		applyCustomTexts(config.customTexts);

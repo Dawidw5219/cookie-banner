@@ -4,7 +4,7 @@ export const nl: TranslationSchema = {
 	overlay: {
 		title: "Wij respecteren uw privacy",
 		description:
-			"Deze website gebruikt cookies en vergelijkbare trackingtechnologieën om uw browse-ervaring te verbeteren, het websiteverkeer te analyseren en te begrijpen waar onze bezoekers vandaan komen. Door uw voorkeuren te kiezen, helpt u ons onze diensten te verbeteren met respect voor uw recht op privacy.",
+			"Optionele cookies en externe diensten worden alleen met uw toestemming geladen. U kunt weigeren of uw keuze op elk moment wijzigen. Lees ons",
 		descriptionPolicyLink: "Meer informatie vindt u in ons",
 		acceptAll: "Alles accepteren",
 		advancedSettings: "Geavanceerde instellingen",
@@ -13,6 +13,8 @@ export const nl: TranslationSchema = {
 		andOur: "en ons",
 	},
 	preferences: {
+		externalServices: "Externe diensten op deze website",
+		externalServicesDescription: "Afzonderlijke toestemming per aanbieder. Laden kan uw IP-adres en browsergegevens delen.",
 		title: "Cookievoorkeuren",
 		description:
 			"Beheer hieronder uw cookievoorkeuren. Essentiële cookies zijn altijd actief omdat ze nodig zijn voor de werking van de website. U kunt andere categorieën naar wens in- of uitschakelen.",

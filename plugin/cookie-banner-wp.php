@@ -3,7 +3,9 @@
  * Plugin Name: Cookie Banner App4You
  * Plugin URI: https://app4you.dev
  * Description: Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
- * Version: 1.2.1
+ * Requires at least: 6.5
+ * Requires PHP: 8.0
+ * Version: 1.3.0
  * Author: App4You.dev
  * Author URI: https://app4you.dev
  * License: GPL-2.0-or-later
@@ -15,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('COOKIE4_VERSION', '1.2.1');
+define('COOKIE4_VERSION', '1.3.0');
 define('COOKIE4_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('COOKIE4_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -23,7 +25,9 @@ require_once COOKIE4_PLUGIN_DIR . 'includes/settings.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/rest-settings.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/admin-page.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/frontend.php';
+require_once COOKIE4_PLUGIN_DIR . 'includes/content-blocker.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/scanner.php';
+require_once COOKIE4_PLUGIN_DIR . 'includes/csp.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/preview.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/github-updater.php';
 

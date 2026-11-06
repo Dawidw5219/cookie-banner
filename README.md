@@ -31,3 +31,18 @@ samego buildu cookie bannera i może być pakowany niezależnie:
 bun run build:all
 bun run --cwd plugin zip
 ```
+
+## Natywne zgody i blokowanie treści
+
+Punkt wejścia `cookie-banner/native` udostępnia bezpieczne w SSR
+`blockedContentProps` i `blockedScriptProps`, inicjalizację bannera oraz API
+zgody na konkretną usługę. W WordPressie działa oddzielna warstwa blokowania
+HTML i dynamicznych loaderów, korzystająca z istniejącego skanera.
+
+[Integracja Next.js / npm i WordPress, ograniczenia oraz testy](docs/consent-integration.md).
+[Porównanie mechanizmów 17 publicznych wtyczek WordPress](docs/research/wordpress-blockers.md).
+
+Tryb rygorystyczny używa CSP w odpowiedzi HTTP i przeładowania po zmianie zgody.
+Npm udostępnia `consentCspHeaders`; WordPress włącza ten tryb domyślnie.
+HTML zależny od zgód omija współdzielony cache, a optymalizacje JS/CSS pozostają aktywne.
+[Wyniki testów CSP z Elementorem, WP Rocket i rzeczywistym OpenLiteSpeed](docs/research/strict-csp-verification.md).

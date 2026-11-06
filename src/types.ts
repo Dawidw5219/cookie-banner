@@ -1,6 +1,8 @@
 export type ConsentCategory = "essential" | "analytics" | "marketing";
 
-export type ConsentState = Record<ConsentCategory, boolean>;
+export type ConsentState = Record<ConsentCategory, boolean> & {
+	services?: Record<string, boolean>;
+};
 
 export type BannerMode = "gtm" | "standalone";
 
@@ -22,12 +24,29 @@ export interface ThemeConfig {
 	text?: string;
 }
 
+export interface ServiceDefinition {
+	id: string;
+	name: string;
+	description: string;
+	privacyUrl?: string;
+	/** Absolute URL prefixes; matched on hostname and path, not arbitrary substrings. */
+	urls?: string[];
+}
+
 export interface BannerConfig {
+	/** HTTP CSP supplied by the host; consent changes require a fresh document. */
+	strictCsp?: boolean;
+	services?: ServiceDefinition[];
+	/** Early best-effort interception for third-party code. Enabled by the WP plugin. */
+	autoBlock?: boolean;
+	auditMode?: boolean;
 	mode: BannerMode;
 	variant?: BannerVariant;
 	gtmId?: string;
 	loadGtm?: boolean;
+	/** @deprecated Ignored: consent always requires a visitor action. */
 	testMode?: boolean;
+	/** @deprecated Ignored: consent always requires a visitor action. */
 	autoAcceptAll?: boolean;
 	lang: string;
 	privacyPolicyUrl?: string;
@@ -35,6 +54,7 @@ export interface BannerConfig {
 	theme?: ThemeConfig;
 	useCustomSettingsLink?: boolean;
 	customTexts?: Record<string, unknown>;
+	detectedServices?: string[];
 	scripts?: {
 		analytics?: ScriptDef[];
 		marketing?: ScriptDef[];
@@ -84,7 +104,7 @@ export const GTM_CONSENT_MAP: Record<
 	ConsentCategory,
 	readonly GTMConsentKey[]
 > = {
-	essential: ["functionality_storage", "security_storage", "personalization_storage"],
+	essential: ["security_storage"],
 	analytics: ["analytics_storage"],
 	marketing: ["ad_storage", "ad_user_data", "ad_personalization"],
 };

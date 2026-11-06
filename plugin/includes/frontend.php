@@ -130,27 +130,18 @@ function cookie4_shortcode_policy_table($atts): string {
     return ob_get_clean();
 }
 
-function cookie4_print_banner(): void {
-    // In audit mode, skip the banner to prevent overriding deny-all consent.
-    if ( get_option( 'cookie4_audit_mode', '' ) === '1' && current_user_can( 'manage_options' ) ) {
-        return;
-    }
-
+function cookie4_banner_markup(): string {
     $config = cookie4_build_config();
     $js_file = COOKIE4_PLUGIN_DIR . 'assets/cookie-banner.js';
-    $js_ver  = file_exists($js_file) ? md5_file($js_file) : COOKIE4_VERSION;
-    $js_url  = COOKIE4_PLUGIN_URL . 'assets/cookie-banner.js?ver=' . $js_ver;
+    $js_ver = file_exists($js_file) ? md5_file($js_file) : COOKIE4_VERSION;
+    $js_url = COOKIE4_PLUGIN_URL . 'assets/cookie-banner.js?ver=' . $js_ver;
+    $json = wp_json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    return '<script id="cookie4-consent-config" data-nowprocket data-cfasync="false" data-no-optimize="1">window.__cookieConsent=' . $json . ';</script>' .
+        '<script id="cookie4-banner-runtime" charset="utf-8" data-nowprocket data-cfasync="false" data-no-optimize="1" src="' . esc_url($js_url) . '"></script>';
+}
 
-    // The consent default is pushed by cookie-banner.js with the REAL stored state (granted for
-    // returning visitors, denied for first-timers). GTM processes `default` commands at Consent Init
-    // but `update` only after Container Loaded — so pushing denied here + update later blocks tags
-    // that trigger on "All Pages" / "Initialization". Pushing the correct default straight from JS
-    // avoids the update entirely on normal page loads.
-    ?>
-<script data-nowprocket>window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};</script>
-<script data-nowprocket>window.__cookieConsent=<?php echo wp_json_encode($config); ?>;</script>
-<script data-nowprocket src="<?php echo esc_url($js_url); ?>"></script>
-    <?php
+function cookie4_print_banner(): void {
+    echo cookie4_banner_markup();
 }
 
 function cookie4_resolve_lang(): string {
@@ -187,17 +178,22 @@ function cookie4_build_config(): array {
     $gtm_id     = get_option('cookie4_gtm_id', '');
 
     $has_gtm         = !empty($gtm_id);
-    $test_mode       = get_option('cookie4_test_mode', '') === '1';
-    $auto_accept_all = get_option('cookie4_auto_accept_all', '') === '1';
     $load_gtm        = get_option('cookie4_load_gtm', '1') === '1';
     $use_link        = get_option('cookie4_use_settings_link', '') === '1';
 
     $variant = get_option('cookie4_variant', 'modal');
 
+    $observed = array_filter(get_option('cookie4_detected_trackers', []), fn($tracker) =>
+        in_array($tracker['category'] ?? '', ['Analytics', 'Marketing'], true) || ($tracker['detected_via'] ?? '') === 'blocked'
+    );
     $config = [
+        'autoBlock' => true,
+        'strictCsp' => function_exists('cookie4_csp_enabled') && cookie4_csp_enabled(),
+        'auditMode' => get_option('cookie4_audit_mode', '') === '1' && current_user_can('manage_options'),
         'mode'    => $has_gtm ? 'gtm' : 'standalone',
         'variant' => $variant,
         'lang'    => cookie4_resolve_lang(),
+        'detectedServices' => array_keys($observed),
         'theme'   => [
             'primary'    => $primary,
             'background' => $background,
@@ -218,14 +214,6 @@ function cookie4_build_config(): array {
         if (!$load_gtm) {
             $config['loadGtm'] = false;
         }
-    }
-
-    if ($test_mode) {
-        $config['testMode'] = true;
-    }
-
-    if ($auto_accept_all) {
-        $config['autoAcceptAll'] = true;
     }
 
     if ($use_link) {
@@ -260,5 +248,5 @@ function cookie4_build_config(): array {
         }
     }
 
-    return $config;
+    return apply_filters('cookie4_config', $config);
 }

@@ -4,7 +4,7 @@ export const sv: TranslationSchema = {
 	overlay: {
 		title: "Vi respekterar din integritet",
 		description:
-			"Den här webbplatsen använder cookies och liknande spårningsteknik för att förbättra din webbupplevelse, analysera trafiken på webbplatsen och förstå var våra besökare kommer ifrån. Genom att välja dina inställningar hjälper du oss att förbättra våra tjänster samtidigt som vi respekterar din rätt till integritet.",
+			"Valfria cookies och externa tjänster laddas bara med ditt samtycke. Du kan avvisa eller ändra ditt val när som helst. Läs vår",
 		descriptionPolicyLink: "Mer information finns i vår",
 		acceptAll: "Godkänn alla",
 		advancedSettings: "Avancerade inställningar",
@@ -13,6 +13,8 @@ export const sv: TranslationSchema = {
 		andOur: "och vår",
 	},
 	preferences: {
+		externalServices: "Externa tjänster på denna webbplats",
+		externalServicesDescription: "Separat samtycke för varje leverantör. Laddning kan dela din IP-adress och webbläsardata.",
 		title: "Cookieinställningar",
 		description:
 			"Hantera dina cookieinställningar nedan. Nödvändiga cookies är alltid aktiva eftersom de krävs för att webbplatsen ska fungera. Du kan aktivera eller inaktivera andra kategorier utifrån dina önskemål.",

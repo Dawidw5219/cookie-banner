@@ -4,7 +4,7 @@ export const da: TranslationSchema = {
 	overlay: {
 		title: "Vi respekterer dit privatliv",
 		description:
-			"Dette websted bruger cookies og lignende sporingsteknologier til at forbedre din browseroplevelse, analysere trafikken på webstedet og forstå, hvor vores besøgende kommer fra. Ved at vælge dine præferencer hjælper du os med at forbedre vores tjenester, samtidig med at vi respekterer din ret til privatliv.",
+			"Valgfrie cookies og eksterne tjenester indlæses kun med dit samtykke. Du kan afvise eller ændre dit valg når som helst. Læs vores",
 		descriptionPolicyLink: "Du kan finde flere oplysninger i vores",
 		acceptAll: "Accepter alle",
 		advancedSettings: "Avancerede indstillinger",
@@ -13,6 +13,8 @@ export const da: TranslationSchema = {
 		andOur: "og vores",
 	},
 	preferences: {
+		externalServices: "Eksterne tjenester på dette websted",
+		externalServicesDescription: "Separat samtykke til hver udbyder. Indlæsning kan dele din IP-adresse og browserdata.",
 		title: "Cookieindstillinger",
 		description:
 			"Administrer dine cookieindstillinger nedenfor. Nødvendige cookies er altid aktive, fordi de er nødvendige for, at webstedet kan fungere. Du kan aktivere eller deaktivere andre kategorier efter dine præferencer.",

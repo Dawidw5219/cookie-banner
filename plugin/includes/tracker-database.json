@@ -106,5 +106,87 @@
 		"networkPatterns": ["static.ads-twitter.com", "analytics.twitter.com", "t.co/i/adsct"],
 		"description": "Tracks conversions and builds audiences for Twitter/X advertising.",
 		"privacyLink": "https://twitter.com/en/privacy"
+	},
+	"YouTube": {
+		"id": "youtube",
+		"category": "Marketing",
+		"icon": "youtube",
+		"scriptPatterns": [
+			"youtube.com/embed/",
+			"youtube-nocookie.com/embed/",
+			"youtube.com/iframe_api",
+			"youtube.com/",
+			"youtube-nocookie.com/",
+			"ytimg.com/"
+		],
+		"networkPatterns": [
+			"youtube.com/embed/",
+			"youtube-nocookie.com/embed/",
+			"youtube.com/iframe_api",
+			"youtube.com/",
+			"youtube-nocookie.com/",
+			"ytimg.com/"
+		],
+		"description": "External content provided by YouTube. Loading sends your IP address and browser data to the provider.",
+		"privacyLink": "https://policies.google.com/privacy"
+	},
+
+	"Vimeo": {
+		"id": "vimeo",
+		"category": "Marketing",
+		"icon": "vimeo",
+		"scriptPatterns": [
+			"player.vimeo.com/"
+		],
+		"networkPatterns": [
+			"player.vimeo.com/"
+		],
+		"description": "External content provided by Vimeo. Loading sends your IP address and browser data to the provider.",
+		"privacyLink": "https://vimeo.com/privacy"
+	},
+	"Google Maps": {
+		"id": "google-maps",
+		"category": "Marketing",
+		"icon": "google-maps",
+		"scriptPatterns": [
+			"google.com/maps/",
+			"maps.google.com/",
+			"maps.googleapis.com/"
+		],
+		"networkPatterns": [
+			"google.com/maps/",
+			"maps.google.com/",
+			"maps.googleapis.com/"
+		],
+		"description": "External content provided by Google Maps. Loading sends your IP address and browser data to the provider.",
+		"privacyLink": "https://policies.google.com/privacy"
+	},
+	"Spotify": {
+		"id": "spotify",
+		"category": "Marketing",
+		"icon": "spotify",
+		"scriptPatterns": [
+			"open.spotify.com/embed/"
+		],
+		"networkPatterns": [
+			"open.spotify.com/embed/"
+		],
+		"description": "External content provided by Spotify. Loading sends your IP address and browser data to the provider.",
+		"privacyLink": "https://www.spotify.com/legal/privacy-policy/"
+	},
+	"Google Fonts": {
+		"id": "google-fonts",
+		"category": "Personalization",
+		"icon": "google-fonts",
+		"scriptPatterns": [
+			"fonts.googleapis.com/css",
+			"fonts.gstatic.com/"
+		],
+		"networkPatterns": [
+			"fonts.googleapis.com/css",
+			"fonts.gstatic.com/"
+		],
+		"description": "Optional fonts delivered by Google. Loading shares your IP address and browser data with Google.",
+		"privacyLink": "https://policies.google.com/privacy"
 	}
 }

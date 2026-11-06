@@ -8,3 +8,13 @@ Open Cookie Database
   License: Apache License 2.0
   File: includes/cookie-database.json
   No modifications to the original data.
+
+Third Party Web
+  Copyright (c) 2019 Patrick Hulce
+  Source: https://github.com/patrickhulce/third-party-web
+  License: MIT (licenses/third-party-web-MIT.txt)
+  File: includes/service-database.json
+  Modified: provider metadata normalized; performance data and empty entries omitted.
+
+Pinned upstream revisions for both databases: includes/database-sources.json.
+Open Cookie Database license: licenses/open-cookie-database-Apache-2.0.txt.

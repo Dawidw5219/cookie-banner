@@ -1,0 +1,81 @@
+{
+  "base": "http://127.0.0.1:9403",
+  "results": [
+    {
+      "profile": "off",
+      "httpStatus": 200,
+      "htmlBytes": 80612,
+      "elementor": true,
+      "combinedAssets": 0,
+      "delayedAssets": 0,
+      "before": [],
+      "afterInteraction": [],
+      "refused": [],
+      "afterConsent": [
+        "https://www.youtube.com/iframe_api",
+        "https://www.youtube.com/embed/privacy-probe"
+      ],
+      "functionalFlag": true,
+      "localButton": "Works",
+      "liveIframe": 1,
+      "errors": []
+    },
+    {
+      "profile": "combine",
+      "httpStatus": 200,
+      "htmlBytes": 76344,
+      "elementor": true,
+      "combinedAssets": 1,
+      "delayedAssets": 0,
+      "before": [],
+      "afterInteraction": [],
+      "refused": [],
+      "afterConsent": [
+        "https://www.youtube.com/iframe_api",
+        "https://www.youtube.com/embed/privacy-probe"
+      ],
+      "functionalFlag": true,
+      "localButton": "Works",
+      "liveIframe": 1,
+      "errors": []
+    },
+    {
+      "profile": "delay",
+      "httpStatus": 200,
+      "htmlBytes": 82480,
+      "elementor": true,
+      "combinedAssets": 5,
+      "delayedAssets": 6,
+      "before": [],
+      "afterInteraction": [],
+      "refused": [],
+      "afterConsent": [
+        "https://www.youtube.com/iframe_api",
+        "https://www.youtube.com/embed/privacy-probe"
+      ],
+      "functionalFlag": true,
+      "localButton": "Works",
+      "liveIframe": 1,
+      "errors": []
+    },
+    {
+      "profile": "both",
+      "httpStatus": 200,
+      "htmlBytes": 78243,
+      "elementor": true,
+      "combinedAssets": 1,
+      "delayedAssets": 2,
+      "before": [],
+      "afterInteraction": [],
+      "refused": [],
+      "afterConsent": [
+        "https://www.youtube.com/iframe_api",
+        "https://www.youtube.com/embed/privacy-probe"
+      ],
+      "functionalFlag": true,
+      "localButton": "Works",
+      "liveIframe": 1,
+      "errors": []
+    }
+  ]
+}

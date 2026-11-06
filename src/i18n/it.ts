@@ -4,7 +4,7 @@ export const it: TranslationSchema = {
 	overlay: {
 		title: "Rispettiamo la tua privacy",
 		description:
-			"Questo sito utilizza cookie e tecnologie di tracciamento simili per migliorare la tua esperienza di navigazione, analizzare il traffico del sito e capire da dove provengono i nostri visitatori. Scegliendo le tue preferenze, ci aiuti a migliorare i nostri servizi rispettando il tuo diritto alla privacy.",
+			"I cookie facoltativi e i servizi esterni vengono attivati solo con il tuo consenso. Puoi rifiutare o modificare la tua scelta in qualsiasi momento. Consulta la nostra",
 		descriptionPolicyLink: "Per maggiori dettagli, consulta la nostra",
 		acceptAll: "Accetta tutti",
 		advancedSettings: "Impostazioni avanzate",
@@ -13,6 +13,8 @@ export const it: TranslationSchema = {
 		andOur: "e la nostra",
 	},
 	preferences: {
+		externalServices: "Servizi esterni rilevati su questo sito",
+		externalServicesDescription: "Consenso separato per ogni fornitore. Il caricamento può condividere il tuo indirizzo IP e i dati del browser.",
 		title: "Preferenze dei cookie",
 		description:
 			"Gestisci le tue preferenze sui cookie qui sotto. I cookie essenziali sono sempre attivi poiché necessari per il funzionamento del sito. Puoi attivare o disattivare le altre categorie in base alle tue preferenze.",

@@ -1,8 +1,9 @@
+import { getServices } from "@/services";
 import { ConsentButton } from "@/ui/consent-button";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { t } from "@/i18n";
 import { PreferencesPolicyLinks } from "@/components/policy-links";
-import type { ConsentState } from "@/types";
+import type { ConsentCategory, ConsentState } from "@/types";
 import { CONSENT_CATEGORIES } from "@/types";
 import { Toggle } from "@/ui/toggle";
 
@@ -23,11 +24,17 @@ export function PreferencesModal({
 	onAcceptAll,
 	onRejectAll,
 }: PreferencesModalProps) {
+	const [services, setServices] = useState(getServices);
+	useEffect(() => {
+		const update = () => setServices(getServices());
+		window.addEventListener("cb:services-changed", update);
+		return () => window.removeEventListener("cb:services-changed", update);
+	}, []);
 	const [state, setState] = useState<ConsentState>({
 		...initialState,
 	});
 
-	const handleToggle = (category: keyof ConsentState, checked: boolean) => {
+	const handleToggle = (category: ConsentCategory, checked: boolean) => {
 		setState((prev) => ({ ...prev, [category]: checked }));
 	};
 
@@ -70,9 +77,12 @@ export function PreferencesModal({
 							>
 								<div class="flex items-start justify-between gap-3">
 									<div class="min-w-0 flex-1">
-										<span class="text-sm font-semibold text-cb-text">
+										<label
+											for={`cb-toggle-${category}`}
+											class="text-sm font-semibold text-cb-text"
+										>
 											{catT.label}
-										</span>
+										</label>
 										<p class="mt-1 text-xs leading-relaxed text-cb-text/60">
 											{catT.description}
 										</p>
@@ -89,6 +99,53 @@ export function PreferencesModal({
 							</div>
 						);
 					})}
+					<h3 class="text-sm font-semibold text-cb-text">
+						{t.preferences.externalServices}
+					</h3>
+					{services.map((service) => (
+						<div
+							key={service.id}
+							class="rounded-cb border border-cb-border p-4"
+						>
+							<div class="flex items-center justify-between gap-3">
+								<label
+									for={`cb-service-${service.id}`}
+									class="text-sm font-semibold text-cb-text"
+								>
+									{service.name}
+								</label>
+								<Toggle
+									id={`cb-service-${service.id}`}
+									checked={state.services?.[service.id] === true}
+									onChange={(checked) =>
+										setState((prev) => ({
+											...prev,
+											services: { ...prev.services, [service.id]: checked },
+										}))
+									}
+								/>
+							</div>
+							<p class="mt-2 text-xs text-cb-text/70">
+								{service.description && (
+									<span>
+										{service.description}
+										<br />
+									</span>
+								)}
+								{t.preferences.externalServicesDescription}
+							</p>
+							{service.privacyUrl && (
+								<a
+									class="text-xs text-cb-primary underline"
+									href={service.privacyUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{t.overlay.privacyPolicy}
+								</a>
+							)}
+						</div>
+					))}
 				</div>
 			</div>
 			<div class="flex gap-3 border-t border-cb-border p-5 sm:p-6">

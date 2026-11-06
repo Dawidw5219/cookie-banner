@@ -1,3 +1,4 @@
+import { allServiceGrants } from "@/services";
 import { createContext } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
 import type {
@@ -14,7 +15,12 @@ import {
 	GTM_CONSENT_MAP,
 } from "@/types";
 import { injectGrantedScripts, isOnPolicyPage } from "@/utils";
-import { loadGtm, pushConsentDefault, pushConsentEvent, pushConsentToDataLayer } from "./use-gtm";
+import {
+	loadGtm,
+	pushConsentDefault,
+	pushConsentEvent,
+	pushConsentToDataLayer,
+} from "./use-gtm";
 import {
 	buildAcceptAllState,
 	buildRejectState,
@@ -39,7 +45,10 @@ function consentStateToGtmPayload(state: ConsentState): GTMConsentPayload {
 let consentInitSent = false;
 
 export function runConsentInit(config: BannerConfig): void {
-	if (config.mode !== "gtm") return;
+	if (config.mode !== "gtm") {
+		injectGrantedScripts(getConsentState(), config.scripts);
+		return;
+	}
 	if (consentInitSent) return;
 	consentInitSent = true;
 
@@ -47,47 +56,65 @@ export function runConsentInit(config: BannerConfig): void {
 	// So for returning visitors we push a `default` that already reflects their saved state —
 	// no `update` is needed on normal page loads, and GA tags on "All Pages" aren't blocked.
 	const hasSaved = hasConsented();
-	const grantsWithoutPrompt =
-		config.testMode === true || config.autoAcceptAll === true;
-	const defaultState = grantsWithoutPrompt
-		? buildAcceptAllState()
-		: hasSaved
-			? getConsentState()
-			: { essential: true, analytics: false, marketing: false };
+	const defaultState = hasSaved
+		? getConsentState()
+		: { ...DEFAULT_CONSENT_STATE };
 	const payload = consentStateToGtmPayload(defaultState);
 	pushConsentDefault(payload);
 
 	const shouldLoadGtm = config.loadGtm !== false && !!config.gtmId;
-	if (hasSaved || grantsWithoutPrompt) {
+	if (hasSaved) {
 		// Always fire cookie_consent_update when consent is known, so GTM tags
 		// can use it as their trigger (more reliable than "All Pages" under Consent Mode).
 		pushConsentEvent(payload);
-		if (shouldLoadGtm && config.gtmId) loadGtm(config.gtmId);
+		if (
+			defaultState.services?.gtm &&
+			(defaultState.analytics || defaultState.marketing) &&
+			shouldLoadGtm &&
+			config.gtmId
+		)
+			loadGtm(config.gtmId);
 	}
 	// First-time visitor: GTM stays unloaded until applyConsent() runs on opt-in.
 }
 
-export function applyAutomaticConsent(config: BannerConfig): ConsentState {
-	const state = buildAcceptAllState();
-	saveConsentState(state);
-	if (config.mode === "standalone") {
-		injectGrantedScripts(state, config.scripts);
-	}
-	return state;
-}
-
 export function applyConsent(config: BannerConfig, state: ConsentState): void {
+	const previous = getConsentState();
 	saveConsentState(state);
+	if (config.strictCsp) {
+		window.location.reload();
+		return;
+	}
+	const revoked =
+		(previous.analytics && !state.analytics) ||
+		(previous.marketing && !state.marketing) ||
+		Object.entries(previous.services || {}).some(
+			([id, granted]) => granted && !state.services?.[id],
+		);
+	if (revoked) {
+		window.dispatchEvent(
+			new CustomEvent("cb:consent-update", { detail: state }),
+		);
+		window.location.reload();
+		return;
+	}
+	window.dispatchEvent(new CustomEvent("cb:consent-update", { detail: state }));
 	if (config.mode === "gtm") {
 		pushConsentToDataLayer(consentStateToGtmPayload(state));
-		if (config.loadGtm !== false && config.gtmId) loadGtm(config.gtmId);
+		if (
+			state.services?.gtm &&
+			(state.analytics || state.marketing) &&
+			config.loadGtm !== false &&
+			config.gtmId
+		)
+			loadGtm(config.gtmId);
 	} else {
 		injectGrantedScripts(state, config.scripts);
 	}
 }
 
 export function getAcceptAllState(): ConsentState {
-	return buildAcceptAllState();
+	return { ...buildAcceptAllState(), services: allServiceGrants() };
 }
 
 export function getRejectAllState(): ConsentState {
@@ -110,7 +137,10 @@ export function useConsent() {
 	if (!config)
 		throw new Error("useConsent must be used within ConfigContext.Provider");
 
-	const suppressed = isOnPolicyPage(config.privacyPolicyUrl, config.cookiePolicyUrl);
+	const suppressed = isOnPolicyPage(
+		config.privacyPolicyUrl,
+		config.cookiePolicyUrl,
+	);
 	const [view, setView] = useState<BannerView>(() =>
 		suppressed ? "idle" : hasConsented() ? "idle" : "overlay",
 	);
@@ -152,14 +182,16 @@ export function useConsent() {
 		[persistConsent, toIdle],
 	);
 
-	const preferencesInitialState =
-		view === "overlay" ? { ...DEFAULT_CONSENT_STATE } : consentState;
-
 	useEffect(() => {
-		window.dispatchEvent(
-			new CustomEvent("cb:consent-update", { detail: consentState }),
-		);
-	}, [consentState]);
+		const update = (event: Event) => {
+			const state = (event as CustomEvent<ConsentState>).detail;
+			setConsentState(state);
+		};
+		window.addEventListener("cb:consent-update", update);
+		return () => window.removeEventListener("cb:consent-update", update);
+	}, []);
+
+	const preferencesInitialState = consentState;
 
 	// Always delegate clicks on `.open-consent-settings` links (privacy-policy
 	// pages embed them in CMS content, often rendered AFTER this hook mounts —

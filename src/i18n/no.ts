@@ -4,7 +4,7 @@ export const no: TranslationSchema = {
 	overlay: {
 		title: "Vi respekterer personvernet ditt",
 		description:
-			"Dette nettstedet bruker informasjonskapsler og lignende sporingsteknologier for å forbedre nettleseropplevelsen din, analysere trafikken på nettstedet og forstå hvor de besøkende kommer fra. Ved å velge preferansene dine hjelper du oss med å forbedre tjenestene våre samtidig som vi respekterer retten din til personvern.",
+			"Valgfrie informasjonskapsler og eksterne tjenester lastes bare med ditt samtykke. Du kan avslå eller endre valget når som helst. Les vår",
 		descriptionPolicyLink: "Du finner mer informasjon i",
 		acceptAll: "Godta alle",
 		advancedSettings: "Avanserte innstillinger",
@@ -13,6 +13,8 @@ export const no: TranslationSchema = {
 		andOur: "og",
 	},
 	preferences: {
+		externalServices: "Eksterne tjenester på dette nettstedet",
+		externalServicesDescription: "Eget samtykke for hver leverandør. Innlasting kan dele IP-adressen din og nettleserdata.",
 		title: "Innstillinger for informasjonskapsler",
 		description:
 			"Administrer innstillingene for informasjonskapsler nedenfor. Nødvendige informasjonskapsler er alltid aktive fordi nettstedet trenger dem for å fungere. Du kan aktivere eller deaktivere andre kategorier etter egne preferanser.",

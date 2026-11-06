@@ -45,8 +45,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const AUDIT_BADGE: Record<string, { class: string; label: string; icon: string }> = {
-	ok: { class: "bg-emerald-100 text-emerald-800 border-emerald-200", label: "Respects consent", icon: "M5 13l4 4L19 7" },
-	violation: { class: "bg-red-100 text-red-800 border-red-200", label: "Loads without consent", icon: "M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" },
+	ok: { class: "bg-emerald-100 text-emerald-800 border-emerald-200", label: "No request observed in audit", icon: "M5 13l4 4L19 7" },
+	violation: { class: "bg-red-100 text-red-800 border-red-200", label: "Request observed during deny-all", icon: "M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" },
 };
 
 export function TrackerServices({ trackers, auditActive, onStartAudit, onStopAudit }: TrackerServicesProps) {

@@ -6,6 +6,7 @@ interface ConsentOverlayProps {
 	privacyPolicyUrl?: string;
 	cookiePolicyUrl?: string;
 	onAcceptAll: () => void;
+	onRejectAll: () => void;
 	onOpenPreferences: () => void;
 }
 
@@ -13,6 +14,7 @@ export function ConsentOverlay({
 	privacyPolicyUrl,
 	cookiePolicyUrl,
 	onAcceptAll,
+	onRejectAll,
 	onOpenPreferences,
 }: ConsentOverlayProps) {
 	return (
@@ -27,7 +29,14 @@ export function ConsentOverlay({
 					cookiePolicyUrl={cookiePolicyUrl}
 				/>
 			</p>
-			<div class="mt-8 flex gap-3">
+			<div class="mt-8 flex flex-wrap gap-3">
+				<ConsentButton
+					type="button"
+					onClick={onRejectAll}
+					class="flex-1 cursor-pointer rounded-md border border-cb-primary bg-cb-bg px-4 h-11 text-sm font-semibold text-cb-primary"
+				>
+					{t.preferences.rejectAll}
+				</ConsentButton>
 				<ConsentButton
 					type="button"
 					onClick={onOpenPreferences}

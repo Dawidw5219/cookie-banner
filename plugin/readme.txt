@@ -1,10 +1,10 @@
 === Cookie Banner App4You ===
 Contributors: app4you
 Tags: cookie, gdpr, consent, google tag manager, consent mode
-Requires at least: 5.8
+Requires at least: 6.5
 Tested up to: 6.7
-Requires PHP: 7.4
-Stable tag: 1.2.1
+Requires PHP: 8.0
+Stable tag: 1.3.0
 License: GPL-2.0-or-later
 
 Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
@@ -40,7 +40,21 @@ Features:
 * **GTM Container ID** – Optional. If set, the banner loads GTM and manages consent signals.
 * **Language** – Choose English, Polish, French, German, Spanish, Italian, Dutch, Danish, Norwegian, Swedish, automatic WordPress locale detection, or custom text.
 
+== Upgrade Notice ==
+
+= 1.3.0 =
+Strict consent CSP is enabled by default. Optional external services require explicit consent and page reload. HTML page caching is bypassed; purge any additional CDN/proxy cache before enabling public traffic. Review external essential origins and custom integrations before upgrading.
+
 == Changelog ==
+
+= 1.3.0 =
+* Add per-service consent, automatic content placeholders, and server-safe npm integration helpers.
+* Block third-party resources before consent using HTTP CSP, HTML rewriting and dynamic loader interception.
+* Reload the document after consent changes and isolate consent-dependent HTML from shared caches.
+* Preserve Elementor video, WP Rocket and LiteSpeed script combining/delay after consent.
+* Reuse the scanner registry and include attributed community service/cookie databases.
+* Verify real YouTube playback and cache isolation on native PHP and OpenLiteSpeed.
+
 
 = 1.2.1 =
 * Fix consent buttons becoming unresponsive while WP Rocket loads delayed scripts.

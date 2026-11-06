@@ -1,0 +1,222 @@
+{
+  "playClickError": null,
+  "playback": {
+    "status": "playing",
+    "readyState": 4,
+    "startTime": 0.021333,
+    "endTime": 1.993008
+  },
+  "playerText": "Big Buck Bunny 60fps 4K - Official Blender Foundation Short Film\nBlender\nBlender\n1.25M subscribers\n0:01\nTime elapsed 1 second\n/10:34\nTime duration 10 minutes, 34 seconds\nMore videos\n9:57\nBig Buck Bunny\n18 years ago\n18:20\nSciExplorer: From Microscopy Data to Interactive Scientific Visualisation \u2014 BCON26\n1 month ago",
+  "base": "http://127.0.0.1:9403",
+  "blockedBeforeConsent": [],
+  "placeholders": 2,
+  "requests": [
+    {
+      "url": "https://www.youtube.com/embed/privacy-probe",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/www-player.css",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/ss/k=ytembeds.base.JERgw2L2HOI.L.W.O/am=AAAAQABgDA/d=1/br=1/rs=AGKMywF4qgdX4-Cbr_GxjjvgaO5A8b0mrQ/m=root,base",
+      "granted": true
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.rSuG5vVKKXo.es5.O/am=AAAAQABgDA/d=1/excm=base,root/br=1/rs=AGKMywGQPr9PNRiJctUT9iTW42zF9OuCBQ/m=root,base",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/player_embed.vflset/en_US/base.js",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/www-widgetapi.vflset/www-widgetapi.js",
+      "granted": true
+    },
+    {
+      "url": "https://googleads.g.doubleclick.net/pagead/id",
+      "granted": true
+    },
+    {
+      "url": "https://static.doubleclick.net/instream/ad_status.js",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.rSuG5vVKKXo.es5.O/ck=ytembeds.base.JERgw2L2HOI.L.W.O/am=AAAAQABgDA/d=1/exm=base,root/excm=base,root/ed=1/br=1/rs=AGKMywEc65JtboCf4TrpX7gLog6DAG844Q/m=r78Drb",
+      "granted": true
+    },
+    {
+      "url": "https://www.google.com/js/th/w7YMxAaLr8cGxVACAr7wkhWP-2E0xi-vGOo1LMUnAkg.js",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/embed/aqz-KE-bpKQ",
+      "granted": true
+    },
+    {
+      "url": "https://www.gstatic.com/youtube/img/icons/mweb/youtube_fill/logo/v2/67px.svg",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/generate_204",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/www-player.css",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/ss/k=ytembeds.base.JERgw2L2HOI.L.W.O/am=AAAAQA/d=1/br=1/rs=AGKMywEXFeL-_KaiIMn8Z51dHPhweoY3ew/m=root,base",
+      "granted": true
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2",
+      "granted": true
+    },
+    {
+      "url": "https://jnn-pa.googleapis.com/$rpc/google.internal.waa.v1.Waa/GenerateIT",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.rSuG5vVKKXo.es5.O/am=AAAAQA/d=1/excm=base,root/br=1/rs=AGKMywHUAdnRVRgB_EljU4AGHbZ9QkA2Tg/m=root,base",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/player_embed.vflset/en_US/base.js",
+      "granted": true
+    },
+    {
+      "url": "https://googleads.g.doubleclick.net/pagead/id",
+      "granted": true
+    },
+    {
+      "url": "https://static.doubleclick.net/instream/ad_status.js",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.rSuG5vVKKXo.es5.O/ck=ytembeds.base.JERgw2L2HOI.L.W.O/am=AAAAQA/d=1/exm=base,root/excm=base,root/ed=1/br=1/rs=AGKMywFuK4YM-_ZqP3cyx2HcJqJk7Xfc5w/m=r78Drb",
+      "granted": true
+    },
+    {
+      "url": "https://www.google.com/js/th/w7YMxAaLr8cGxVACAr7wkhWP-2E0xi-vGOo1LMUnAkg.js",
+      "granted": true
+    },
+    {
+      "url": "https://i.ytimg.com/vi_webp/aqz-KE-bpKQ/sddefault.webp",
+      "granted": true
+    },
+    {
+      "url": "https://yt3.ggpht.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s68-c-k-c0x00ffffff-no-rj",
+      "granted": true
+    },
+    {
+      "url": "https://www.gstatic.com/youtube/img/icons/mweb/youtube_fill/logo/v2/67px.svg",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/generate_204",
+      "granted": true
+    },
+    {
+      "url": "https://jnn-pa.googleapis.com/$rpc/google.internal.waa.v1.Waa/GenerateIT",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/youtubei/v1/player",
+      "granted": true
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/i/youtube_outline_experimental/player_full_enter_alt/v1/24px.svg",
+      "granted": true
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/i/youtube_fill_experimental/volume_max/v3/24px.svg",
+      "granted": true
+    },
+    {
+      "url": "https://yt3.ggpht.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s68-c-k-c0x00ffffff-no-rj",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/youtubei/v1/log_event",
+      "granted": true
+    },
+    {
+      "url": "https://rr3---sn-f5f7lnl7.googlevideo.com/videoplayback",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/youtubei/v1/next",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.rSuG5vVKKXo.es5.O/ck=ytembeds.base.JERgw2L2HOI.L.W.O/am=AAAAQA/d=1/exm=base,r78Drb,root/excm=base,root/ed=1/br=1/rs=AGKMywFuK4YM-_ZqP3cyx2HcJqJk7Xfc5w/m=Nuilue",
+      "granted": true
+    },
+    {
+      "url": "https://yt3.ggpht.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s88-c-k-c0x00ffffff-no-rj",
+      "granted": true
+    },
+    {
+      "url": "https://i.ytimg.com/vi/YE7VzlLtp-4/default.jpg",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/api/stats/qoe",
+      "granted": true
+    },
+    {
+      "url": "https://i.ytimg.com/vi_webp/aqz-KE-bpKQ/mqdefault.webp",
+      "granted": true
+    },
+    {
+      "url": "https://i.ytimg.com/vi_webp/aqz-KE-bpKQ/mqdefault.webp",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/youtubei/v1/log_event",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/api/stats/playback",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/ptracking",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/youtubei/v1/log_event",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/api/stats/watchtime",
+      "granted": true
+    }
+  ],
+  "errors": [],
+  "playerError": null,
+  "playerApiReady": true,
+  "diagnostics": {
+    "elementor": "object",
+    "ready": "complete",
+    "native": "<div data-cb-service=\"youtube\" class=\"elementor-element elementor-element-testnativevideo elementor-widget elementor-widget-video\" data-id=\"testnativevideo\" data-element_type=\"widget\" data-e-type=\"widget\" data-settings=\"{&quot;video_type&quot;:&quot;youtube&quot;,&quot;youtube_url&quot;:&quot;https:\\/\\/www.youtube.com\\/watch?v=aqz-KE-bpKQ&quot;,&quot;controls&quot;:&quot;yes&quot;}\" data-widget_type=\"video.default\">\n\t\t\t\t\t\t\t<div class=\"elementor-wrapper elementor-open-inline\">\n\t\t\t<iframe class=\"elementor-video\" frameborder=\"0\" allowfullscreen=\"\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" title=\"Big Buck Bunny 60fps 4K - Official Blender Foundation Short Film\" width=\"640\" height=\"360\" src=\"https://www.youtube.com/embed/aqz-KE-bpKQ?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=http%3A%2F%2F127.0.0.1%3A9403&amp;widgetid=1&amp;forigin=http%3A%2F%2F127.0.0.1%3A9403%2Felementor-consent-probe%2F&amp;aoriginsup=1&amp;gporigin=http%3A%2F%2F127.0.0.1%3A9403%2Felementor-consent-probe%2F&amp;vf=6\" id=\"widget2\"></iframe>\t\t</div>\n\t\t\t\t\t\t</div>",
+    "apiScripts": [
+      "<script type=\"text/javascript\" id=\"www-widgetapi-script\" src=\"https://www.youtube.com/s/player/a5c2aafe/www-widgetapi.vflset/www-widgetapi.js\" async=\"\"></script>",
+      "<script src=\"https://www.youtube.com/iframe_api\"></script>"
+    ],
+    "state": "{\"version\":2,\"at\":1793987010871,\"services\":{\"youtube\":true}}"
+  },
+  "badScripts": [],
+  "nativeIframes": 1
+}

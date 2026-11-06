@@ -4,7 +4,7 @@ export const de: TranslationSchema = {
 	overlay: {
 		title: "Wir respektieren Ihre Privatsphäre",
 		description:
-			"Diese Website verwendet Cookies und ähnliche Tracking-Technologien, um Ihr Surferlebnis zu verbessern, den Website-Verkehr zu analysieren und zu verstehen, woher unsere Besucher kommen. Indem Sie Ihre Präferenzen wählen, helfen Sie uns, unsere Dienste zu verbessern und gleichzeitig Ihr Recht auf Privatsphäre zu respektieren.",
+			"Optionale Cookies und externe Dienste werden erst nach Ihrer Einwilligung geladen. Sie können ablehnen oder Ihre Auswahl jederzeit ändern. Weitere Informationen finden Sie in unserer",
 		descriptionPolicyLink: "Weitere Informationen finden Sie in unserer",
 		acceptAll: "Alle akzeptieren",
 		advancedSettings: "Erweiterte Einstellungen",
@@ -13,6 +13,8 @@ export const de: TranslationSchema = {
 		andOur: "und unsere",
 	},
 	preferences: {
+		externalServices: "Auf dieser Website erkannte externe Dienste",
+		externalServicesDescription: "Separate Einwilligung für jeden Anbieter. Beim Laden können Ihre IP-Adresse und Browserdaten übermittelt werden.",
 		title: "Cookie-Einstellungen",
 		description:
 			"Verwalten Sie unten Ihre Cookie-Einstellungen. Essenzielle Cookies sind immer aktiv, da sie für das Funktionieren der Website erforderlich sind. Sie können andere Kategorien nach Ihren Wünschen aktivieren oder deaktivieren.",

@@ -2,7 +2,7 @@ export const en = {
 	overlay: {
 		title: "We value your privacy",
 		description:
-			"We use cookies to personalize content and ads based on your interests. By browsing our site, you consent to their use and accept our",
+			"Optional cookies and external services load only after your consent. You can refuse them or change your choice at any time. Learn more in our",
 		descriptionPolicyLink: "",
 		acceptAll: "Accept All",
 		advancedSettings: "Advanced Settings",
@@ -11,6 +11,8 @@ export const en = {
 		andOur: "and our",
 	},
 	preferences: {
+		externalServices: "External services detected on this website",
+		externalServicesDescription: "Separate consent for each provider. Loading may share your IP address and browser data with that provider.",
 		title: "Cookie Preferences",
 		description:
 			"Manage your cookie preferences below. Essential cookies are always active as they are necessary for the website to function. You can enable or disable other categories based on your preferences.",

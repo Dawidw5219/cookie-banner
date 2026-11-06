@@ -89,6 +89,7 @@
     }
     .dev-panel button:hover { background: #555; }
   </style>
+<style>@media (max-width: 640px) { .dev-panel { display: none; } }</style>
 </head>
 <body>
   <div class="dev-panel">
@@ -180,11 +181,11 @@
     veniam, quis nostrud exercitation ullamco laboris.
   </p>
 
+  <div id="consent-demo"></div>
   <script>
     window.__cookieConsent = {
-      mode: 'gtm',
+      mode: 'standalone',
       variant: 'bar',
-      gtmId: 'GTM-TEST123',
       lang: 'pl',
       privacyPolicyUrl: '/privacy-policy',
       theme: {
@@ -232,6 +233,6 @@
     updateDebugPanel(null);
     setInterval(() => { updateDebugPanel(null); }, 1000);
   </script>
-  <script type="module" src="/src/app.tsx"></script>
+  <script type="module" src="/src/demo.tsx"></script>
 </body>
 </html>

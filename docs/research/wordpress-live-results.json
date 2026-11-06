@@ -1,0 +1,68 @@
+{
+  "url": "https://www.fertilityclinicsabroad.com/",
+  "scope": "Read-only public page. External requests aborted. Local runtime substitution does NOT install the PHP blocker or validate the new plugin with purged/warm server cache.",
+  "results": [
+    {
+      "mode": "deployed",
+      "status": 200,
+      "substituted": 0,
+      "beforeInteraction": 3,
+      "externalAttempts": [
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.googleapis.com/css",
+        "https://www.googletagmanager.com/gtm.js",
+        "https://www.google.com/recaptcha/api.js"
+      ],
+      "errors": [
+        "Unexpected token 'var'",
+        "Unexpected token 'var'",
+        "grecaptcha is not defined"
+      ],
+      "cacheHeaders": {
+        "cache-control": "max-age=0",
+        "cf-cache-status": "DYNAMIC",
+        "last-modified": "Fri, 06 Nov 2026 13:02:58 GMT"
+      },
+      "dom": {
+        "title": "Find the Best Fertility Clinic in Europe | Fertility Clinics Abroad",
+        "theme": [
+          "sdk-front-end"
+        ],
+        "autoBlock": false,
+        "host": true,
+        "inert": 0
+      }
+    },
+    {
+      "mode": "local-runtime-substitution",
+      "status": 200,
+      "substituted": 1,
+      "beforeInteraction": 3,
+      "externalAttempts": [
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.googleapis.com/css",
+        "https://www.googletagmanager.com/gtm.js",
+        "https://www.google.com/recaptcha/api.js"
+      ],
+      "errors": [
+        "Unexpected token 'var'",
+        "Unexpected token 'var'",
+        "grecaptcha is not defined"
+      ],
+      "cacheHeaders": {
+        "cache-control": "max-age=0",
+        "cf-cache-status": "DYNAMIC",
+        "last-modified": "Fri, 06 Nov 2026 13:02:58 GMT"
+      },
+      "dom": {
+        "title": "Find the Best Fertility Clinic in Europe | Fertility Clinics Abroad",
+        "theme": [
+          "sdk-front-end"
+        ],
+        "autoBlock": true,
+        "host": true,
+        "inert": 0
+      }
+    }
+  ]
+}

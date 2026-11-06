@@ -1,0 +1,7 @@
+{
+ "steps": [
+  {"step":"activatePlugin","pluginPath":"cookie-banner-wp/cookie-banner-wp.php"},
+  {"step":"installPlugin","pluginData":{"resource":"wordpress.org/plugins","slug":"cache-enabler"},"options":{"activate":true}},
+  {"step":"runPHP","code":"<?php require '/wordpress/wp-load.php'; update_option('cookie4_variant','bar'); update_option('cookie4_lang','pl'); $id=wp_insert_post(['post_type'=>'page','post_status'=>'publish','post_title'=>'Consent hostile integration tests','post_content'=>'[cb_hostile_fixture]']); update_option('show_on_front','page'); update_option('page_on_front',$id);"}
+ ]
+}

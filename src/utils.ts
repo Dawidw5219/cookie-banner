@@ -19,6 +19,7 @@ function isOnPage(url?: string): boolean {
 }
 
 const injectedUrls = new Set<string>();
+const injectedInline = new Set<string>();
 
 function injectScript(def: ScriptDef): void {
 	if (def.src) {
@@ -29,7 +30,8 @@ function injectScript(def: ScriptDef): void {
 		if (def.async) el.async = true;
 		document.head.appendChild(el);
 	}
-	if (def.inline) {
+	if (def.inline && !injectedInline.has(def.inline)) {
+		injectedInline.add(def.inline);
 		const el = document.createElement("script");
 		el.textContent = def.inline;
 		document.head.appendChild(el);

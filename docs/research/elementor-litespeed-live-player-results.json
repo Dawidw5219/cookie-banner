@@ -1,0 +1,55 @@
+{
+  "base": "http://127.0.0.1:9403",
+  "blockedBeforeConsent": [],
+  "placeholders": 2,
+  "requests": [
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/embed/privacy-probe",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/www-widgetapi.vflset/www-widgetapi.js",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/www-player.css",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/ss/k=ytembeds.base.JERgw2L2HOI.L.W.O/am=AAAAQA/d=1/br=1/rs=AGKMywEXFeL-_KaiIMn8Z51dHPhweoY3ew/m=root,base",
+      "granted": true
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.rSuG5vVKKXo.es5.O/am=AAAAQA/d=1/excm=base,root/br=1/rs=AGKMywHUAdnRVRgB_EljU4AGHbZ9QkA2Tg/m=root,base",
+      "granted": true
+    },
+    {
+      "url": "https://www.youtube.com/s/player/a5c2aafe/player_embed.vflset/en_US/base.js",
+      "granted": true
+    }
+  ],
+  "errors": [],
+  "playerError": null,
+  "playerApiReady": true,
+  "diagnostics": {
+    "elementor": "object",
+    "ready": "complete",
+    "native": "<div data-cb-service=\"youtube\" class=\"elementor-element elementor-element-testnativevideo elementor-widget elementor-widget-video\" data-id=\"testnativevideo\" data-element_type=\"widget\" data-e-type=\"widget\" data-settings=\"{&quot;video_type&quot;:&quot;youtube&quot;,&quot;youtube_url&quot;:&quot;https:\\/\\/www.youtube.com\\/watch?v=aqz-KE-bpKQ&quot;,&quot;controls&quot;:&quot;yes&quot;}\" data-widget_type=\"video.default\">\n\t\t\t\t\t\t\t<div class=\"elementor-wrapper elementor-open-inline\">\n\t\t\t<div class=\"elementor-video\"></div>\t\t</div>\n\t\t\t\t\t\t</div>",
+    "apiScripts": [
+      "<script type=\"text/javascript\" id=\"www-widgetapi-script\" src=\"https://www.youtube.com/s/player/a5c2aafe/www-widgetapi.vflset/www-widgetapi.js\" async=\"\"></script>",
+      "<script data-cb-service=\"youtube\" data-cb-src=\"https://www.youtube.com/iframe_api\" data-cb-type=\"true/text/plain\" data-cb-executed=\"true\"></script>",
+      "<script type=\"text/javascript\" src=\"https://www.youtube.com/iframe_api\"></script>"
+    ],
+    "state": "{\"version\":2,\"at\":1793985074082,\"services\":{\"youtube\":true}}"
+  },
+  "badScripts": [],
+  "nativeIframes": 0
+}

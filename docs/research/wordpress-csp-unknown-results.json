@@ -1,0 +1,8 @@
+{
+  "base": "http://127.0.0.1:9403",
+  "csp": "default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'self' https://unknown.vendor.test; media-src 'self'; worker-src 'self'",
+  "network": [
+    "https://unknown.vendor.test/embed"
+  ],
+  "forgedCookieBlocked": true
+}

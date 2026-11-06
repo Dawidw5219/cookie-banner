@@ -28,30 +28,105 @@
 
 	/* ── Tracker detection ────────────────────── */
 	const trackerDb = config.trackerDb || {};
+	const networkTrackers = new Set();
 	const detectedTrackers = new Set();   // tracker IDs already sent to backend
 	let trackerCount = 0;
 
 	/** Check if a URL matches any pattern in the tracker database. */
 	function matchTracker(url) {
 		if (!url) return null;
-		const lower = url.toLowerCase();
-		for (const [name, tracker] of Object.entries(trackerDb)) {
-			const patterns = (tracker.scriptPatterns || []).concat(tracker.networkPatterns || []);
-			for (const pattern of patterns) {
-				if (lower.includes(pattern.toLowerCase())) {
-					return { id: tracker.id, name: name, tracker: tracker };
-				}
-			}
+		let parsed;
+		try {
+			parsed = new URL(url, location.href);
+		} catch {
+			return null;
 		}
-		return null;
+		if (!['https:', 'http:'].includes(parsed.protocol)) return null;
+		for (const [name, tracker] of Object.entries(trackerDb)) {
+			const patterns = (tracker.scriptPatterns || []).concat(
+				tracker.networkPatterns || [],
+			);
+			if (
+				(tracker.domains || []).some((domain) =>
+					domain.startsWith('*.')
+						? parsed.hostname === domain.slice(2) ||
+							parsed.hostname.endsWith(domain.slice(1))
+						: parsed.hostname === domain,
+				) ||
+				patterns.some((pattern) => {
+					const target = new URL('https://' + pattern);
+					return (
+						target.hostname.includes('.') &&
+						(parsed.hostname === target.hostname ||
+							parsed.hostname.endsWith('.' + target.hostname)) &&
+						parsed.pathname.startsWith(target.pathname)
+					);
+				})
+			)
+				return { id: tracker.id, name, tracker };
+		}
+		if (parsed.origin === location.origin) return null;
+		return {
+			id: 'external-' + parsed.hostname,
+			name: parsed.hostname,
+			tracker: {
+				category: 'Unknown',
+				description:
+					'Unclassified third-party resource. Review its purpose and configure consent before use.',
+				privacyLink: '',
+			},
+		};
 	}
+
+	function resourceUrl(url) {
+		try {
+			const parsed = new URL(url, location.href);
+			return parsed.origin + parsed.pathname;
+		} catch {
+			return '';
+		}
+	}
+
+	function scanBlockedRequests() {
+		const found = [];
+		for (const id of window.__cookieConsent?.detectedServices || []) {
+			if (detectedTrackers.has(id)) continue;
+			const entry = Object.entries(trackerDb).find(
+				([, tracker]) => tracker.id === id,
+			);
+			if (!entry) continue;
+			const [name, tracker] = entry;
+			detectedTrackers.add(id);
+			found.push({
+				tracker_id: id,
+				name,
+				category: tracker.category,
+				description: tracker.description,
+				privacy_link: tracker.privacyLink || '',
+				detected_via: 'blocked',
+				detected_url: '',
+				page: pageUrl,
+			});
+		}
+		return found;
+	}
+	window.addEventListener('cb:request-blocked', () =>
+		reportTrackers(scanBlockedRequests()),
+	);
 
 	/** Collect trackers from existing script/iframe/img elements. */
 	function scanDomForTrackers() {
 		const found = [];
-		const elements = document.querySelectorAll('script[src], iframe[src], img[src]');
+		const elements = document.querySelectorAll(
+			'script[src], iframe[src], img[src], [data-cb-src], script[data-src], iframe[data-src], script[data-lazy-src], iframe[data-lazy-src]',
+		);
 		for (const el of elements) {
-			const src = el.getAttribute('src') || '';
+			const src =
+				el.getAttribute('data-cb-src') ||
+				el.getAttribute('src') ||
+				el.getAttribute('data-src') ||
+				el.getAttribute('data-lazy-src') ||
+				'';
 			const match = matchTracker(src);
 			if (match && !detectedTrackers.has(match.id)) {
 				detectedTrackers.add(match.id);
@@ -61,8 +136,10 @@
 					category: match.tracker.category,
 					description: match.tracker.description,
 					privacy_link: match.tracker.privacyLink || '',
-					detected_via: el.tagName.toLowerCase(),
-					detected_url: src.substring(0, 200),
+					detected_via: el.hasAttribute('data-cb-service')
+						? 'blocked'
+						: el.tagName.toLowerCase(),
+					detected_url: resourceUrl(src).substring(0, 200),
 					page: pageUrl,
 				});
 			}
@@ -77,7 +154,8 @@
 			const entries = performance.getEntriesByType('resource');
 			for (const entry of entries) {
 				const match = matchTracker(entry.name);
-				if (match && !detectedTrackers.has(match.id)) {
+				if (match && !networkTrackers.has(match.id)) {
+					networkTrackers.add(match.id);
 					detectedTrackers.add(match.id);
 					found.push({
 						tracker_id: match.id,
@@ -86,68 +164,66 @@
 						description: match.tracker.description,
 						privacy_link: match.tracker.privacyLink || '',
 						detected_via: 'network',
-						detected_url: entry.name.substring(0, 200),
+						detected_url: resourceUrl(entry.name).substring(0, 200),
 						page: pageUrl,
 					});
 				}
 			}
-		} catch (e) { /* PerformanceObserver may not be available */ }
+		} catch (e) {
+			/* PerformanceObserver may not be available */
+		}
 		return found;
 	}
 
 	/** Send detected trackers to backend. */
 	async function reportTrackers(trackers) {
 		if (trackers.length === 0) return;
-		trackerCount += trackers.length;
+		trackerCount = detectedTrackers.size;
 		updateTrackerBadge();
 		try {
 			const baseUrl = config.restUrl.replace(/\/scan$/, '');
 			await fetch(baseUrl + '/trackers', {
 				method: 'POST',
-				headers: { 'X-WP-Nonce': config.nonce, 'Content-Type': 'application/json' },
+				headers: {
+					'X-WP-Nonce': config.nonce,
+					'Content-Type': 'application/json',
+				},
 				body: JSON.stringify(trackers),
 			});
 
 			// In audit mode, also record which trackers loaded despite deny-all.
 			if (config.auditMode) {
-				const ids = trackers.map(function(t) { return t.tracker_id; });
+				const ids = trackers
+					.filter(function (t) {
+						return t.detected_via === 'network';
+					})
+					.map(function (t) {
+						return t.tracker_id;
+					});
 				await fetch(baseUrl + '/audit-detections', {
 					method: 'POST',
-					headers: { 'X-WP-Nonce': config.nonce, 'Content-Type': 'application/json' },
+					headers: {
+						'X-WP-Nonce': config.nonce,
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({ ids: ids }),
 				});
 			}
-		} catch (e) { /* Silently fail */ }
+		} catch (e) {
+			/* Silently fail */
+		}
 	}
 
 	/** MutationObserver to catch dynamically injected scripts. */
-	const trackerObserver = new MutationObserver(function (mutations) {
-		const found = [];
-		for (const mutation of mutations) {
-			for (const node of mutation.addedNodes) {
-				if (node.nodeType !== 1) continue;
-				const src = node.getAttribute && node.getAttribute('src');
-				if (src) {
-					const match = matchTracker(src);
-					if (match && !detectedTrackers.has(match.id)) {
-						detectedTrackers.add(match.id);
-						found.push({
-							tracker_id: match.id,
-							name: match.name,
-							category: match.tracker.category,
-							description: match.tracker.description,
-							privacy_link: match.tracker.privacyLink || '',
-							detected_via: node.tagName.toLowerCase(),
-							detected_url: src.substring(0, 200),
-							page: pageUrl,
-						});
-					}
-				}
-			}
-		}
-		if (found.length > 0) reportTrackers(found);
+	const trackerObserver = new MutationObserver(function () {
+		reportTrackers(scanDomForTrackers());
 	});
-	trackerObserver.observe(document.documentElement, { childList: true, subtree: true });
+	trackerObserver.observe(document.documentElement, {
+		childList: true,
+		subtree: true,
+		attributes: true,
+		attributeFilter: ['src', 'data-cb-src', 'data-src', 'data-lazy-src'],
+	});
 
 	/* ── Styles ───────────────────────────────── */
 	const style = document.createElement('style');
@@ -514,6 +590,7 @@
 	/** Combined tracker scan — DOM + performance entries. */
 	async function scanTrackers() {
 		const found = [
+			...scanBlockedRequests(),
 			...scanDomForTrackers(),
 			...scanPerformanceForTrackers(),
 		];

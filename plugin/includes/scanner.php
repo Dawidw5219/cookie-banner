@@ -664,6 +664,21 @@ function cookie4_get_tracker_database(): array {
 
 	$raw = json_decode( file_get_contents( $file ), true );
 	$db  = is_array( $raw ) ? $raw : [];
+    $providers = json_decode(file_get_contents(COOKIE4_PLUGIN_DIR . 'includes/service-database.json'), true) ?: [];
+    foreach ($providers as $provider) {
+        if (isset($db[$provider['name']])) { continue; }
+        $category = $provider['category'];
+        $requires_consent = in_array($category, ['ad', 'analytics', 'marketing', 'social', 'video', 'customer-success', 'tag-manager', 'content'], true);
+        $db[$provider['name']] = [
+            'id' => $provider['id'],
+            'category' => $category === 'analytics' ? 'Analytics' : ($requires_consent ? 'Marketing' : 'Unknown'),
+            'domains' => $provider['domains'],
+            'scriptPatterns' => [], 'networkPatterns' => [],
+            'requiresConsent' => $requires_consent,
+            'description' => 'Third-party provider: ' . $provider['name'] . ' (' . $category . '). Review the purpose used on this website.',
+            'privacyLink' => '',
+        ];
+    }
 	return $db;
 }
 
@@ -694,7 +709,7 @@ function cookie4_maybe_inject_scanner(): void {
 	$audit_mode = get_option( 'cookie4_audit_mode', '' ) === '1';
 	$tracker_db = cookie4_get_tracker_database();
 	?>
-	<script>
+	<script id="cookie4-scanner-config">
 	window.__cookieScanConfig = {
 		restUrl: <?php echo wp_json_encode( rest_url( 'cookie4/v1/scan' ) ); ?>,
 		nonce: <?php echo wp_json_encode( wp_create_nonce( 'wp_rest' ) ); ?>,
@@ -705,7 +720,7 @@ function cookie4_maybe_inject_scanner(): void {
 	};
 	</script>
 	<?php if ( $audit_mode ) : ?>
-	<script>
+	<script id="cookie4-scanner-audit">
 	/* Audit mode: force deny-all consent before anything else loads. */
 	(function() {
 		window.dataLayer = window.dataLayer || [];

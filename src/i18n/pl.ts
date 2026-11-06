@@ -4,7 +4,7 @@ export const pl: TranslationSchema = {
 	overlay: {
 		title: "Szanujemy Twoją prywatność",
 		description:
-			"Korzystamy z plików cookies, aby dostosować treści i reklamy do Twoich zainteresowań. Przeglądając naszą stronę, wyrażasz zgodę na ich użycie oraz akceptujesz naszą",
+			"Opcjonalne cookies i usługi zewnętrzne uruchamiamy dopiero po Twojej zgodzie. Możesz odmówić lub zmienić wybór w dowolnym momencie. Więcej informacji zawierają nasza",
 		descriptionPolicyLink: "",
 		acceptAll: "Zaakceptuj wszystkie",
 		advancedSettings: "Ustawienia zaawansowane",
@@ -13,6 +13,8 @@ export const pl: TranslationSchema = {
 		andOur: "oraz naszą",
 	},
 	preferences: {
+		externalServices: "Usługi zewnętrzne wykryte na tej witrynie",
+		externalServicesDescription: "Osobna zgoda na każdego dostawcę. Włączenie może przekazać mu Twój adres IP i dane przeglądarki.",
 		title: "Preferencje plików cookie",
 		description:
 			"Zarządzaj swoimi preferencjami dotyczącymi plików cookie poniżej. Niezbędne pliki cookie są zawsze aktywne, ponieważ są konieczne do prawidłowego działania strony. Możesz włączyć lub wyłączyć pozostałe kategorie według swoich preferencji.",

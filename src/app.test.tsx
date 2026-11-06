@@ -105,7 +105,7 @@ describe("cookie banner app teardown", () => {
 		expect(document.body.style.overflow).toBe("auto");
 	});
 
-	it("auto-accepts every category without mounting banner UI", async () => {
+	it("ignores legacy auto-accept and requires an explicit choice", async () => {
 		window.__cookieConsent = {
 			mode: "standalone",
 			variant: "modal",
@@ -115,15 +115,15 @@ describe("cookie banner app teardown", () => {
 
 		await import("./app");
 
-		expect(localStorage.getItem("cb_has_consented")).toBe("1");
-		expect(localStorage.getItem("cb_consent_essential")).toBe("granted");
-		expect(localStorage.getItem("cb_consent_analytics")).toBe("granted");
-		expect(localStorage.getItem("cb_consent_marketing")).toBe("granted");
-		expect(document.getElementById("cookie-consent-host")).toBeNull();
-		expect(document.body.style.overflow).toBe("auto");
+		expect(localStorage.getItem("cb_has_consented")).toBeNull();
+		expect(localStorage.getItem("cb_consent_essential")).toBeNull();
+		expect(localStorage.getItem("cb_consent_analytics")).toBeNull();
+		expect(localStorage.getItem("cb_consent_marketing")).toBeNull();
+		expect(document.getElementById("cookie-consent-host")).not.toBeNull();
+		await waitFor(() => document.body.style.overflow === "hidden");
 	});
 
-	it("grants every Consent Mode signal in auto-accept mode", async () => {
+	it("does not silently grant Consent Mode signals in legacy auto-accept mode", async () => {
 		window.dataLayer = [];
 		delete window.gtag;
 		window.__cookieConsent = {
@@ -143,14 +143,14 @@ describe("cookie banner app teardown", () => {
 
 		expect(consentDefault?.[1]).toBe("default");
 		expect(consentDefault?.[2]).toEqual({
-			ad_storage: "granted",
-			analytics_storage: "granted",
-			ad_user_data: "granted",
-			ad_personalization: "granted",
-			functionality_storage: "granted",
+			ad_storage: "denied",
+			analytics_storage: "denied",
+			ad_user_data: "denied",
+			ad_personalization: "denied",
+			functionality_storage: "denied",
 			security_storage: "granted",
-			personalization_storage: "granted",
+			personalization_storage: "denied",
 		});
-		expect(document.getElementById("cookie-consent-host")).toBeNull();
+		expect(document.getElementById("cookie-consent-host")).not.toBeNull();
 	});
 });
