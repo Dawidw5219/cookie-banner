@@ -1,3 +1,4 @@
+import { ConsentButton } from "@/ui/consent-button";
 import type { ComponentChildren } from "preact";
 import { render } from "preact";
 import { useEffect } from "preact/hooks";
@@ -64,21 +65,21 @@ function ConsentBar({
 						/>
 					</p>
 					<div class="grid grid-cols-2 gap-2.5 sm:gap-3 shrink-0 sm:w-auto sm:min-w-80">
-						<button
+						<ConsentButton
 							type="button"
 							onClick={onOpenPreferences}
 							style={{ border: "1px solid var(--cb-primary)" }}
 							class="cursor-pointer rounded-md bg-cb-bg px-3 sm:px-4 h-9 sm:h-10 text-[11px] sm:text-sm font-semibold text-cb-primary transition-colors hover:bg-cb-primary/5 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
 						>
 							{t.overlay.advancedSettings}
-						</button>
-						<button
+						</ConsentButton>
+						<ConsentButton
 							type="button"
 							onClick={onAcceptAll}
 							class="cursor-pointer rounded-md bg-cb-primary px-3 sm:px-4 h-9 sm:h-10 text-[11px] sm:text-sm font-semibold text-white transition-colors hover:bg-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
 						>
 							{t.overlay.acceptAll}
-						</button>
+						</ConsentButton>
 					</div>
 				</div>
 			</div>

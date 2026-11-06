@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, google tag manager, consent mode
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPL-2.0-or-later
 
 Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
@@ -41,6 +41,11 @@ Features:
 * **Language** – Choose English, Polish, French, German, Spanish, Italian, Dutch, Danish, Norwegian, Swedish, automatic WordPress locale detection, or custom text.
 
 == Changelog ==
+
+= 1.2.1 =
+* Fix consent buttons becoming unresponsive while WP Rocket loads delayed scripts.
+* Keep accept, reject, category toggles, saving and reopening preferences responsive.
+* Exclude consent configuration and bundle from WP Rocket script delay.
 
 = 1.2.0 =
 * Added Dutch, Danish, Norwegian, and Swedish banner translations.

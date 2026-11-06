@@ -147,9 +147,9 @@ function cookie4_print_banner(): void {
     // that trigger on "All Pages" / "Initialization". Pushing the correct default straight from JS
     // avoids the update entirely on normal page loads.
     ?>
-<script>window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};</script>
-<script>window.__cookieConsent=<?php echo wp_json_encode($config); ?>;</script>
-<script src="<?php echo esc_url($js_url); ?>"></script>
+<script data-nowprocket>window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};</script>
+<script data-nowprocket>window.__cookieConsent=<?php echo wp_json_encode($config); ?>;</script>
+<script data-nowprocket src="<?php echo esc_url($js_url); ?>"></script>
     <?php
 }
 

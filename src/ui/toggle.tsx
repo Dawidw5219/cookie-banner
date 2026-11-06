@@ -1,3 +1,4 @@
+import { ConsentButton } from "@/ui/consent-button";
 interface ToggleProps {
 	checked: boolean;
 	disabled?: boolean;
@@ -7,7 +8,7 @@ interface ToggleProps {
 
 export function Toggle({ checked, disabled, onChange, id }: ToggleProps) {
 	return (
-		<button
+		<ConsentButton
 			id={id}
 			role="switch"
 			type="button"
@@ -48,6 +49,6 @@ export function Toggle({ checked, disabled, onChange, id }: ToggleProps) {
 					display: "block",
 				}}
 			/>
-		</button>
+		</ConsentButton>
 	);
 }

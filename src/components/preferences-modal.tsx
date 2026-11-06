@@ -1,3 +1,4 @@
+import { ConsentButton } from "@/ui/consent-button";
 import { useState } from "preact/hooks";
 import { t } from "@/i18n";
 import { PreferencesPolicyLinks } from "@/components/policy-links";
@@ -41,13 +42,13 @@ export function PreferencesModal({
 					<h2 class="text-lg sm:text-xl font-bold text-cb-text">
 						{t.preferences.title}!
 					</h2>
-					<button
+					<ConsentButton
 						type="button"
 						onClick={onRejectAll}
 						class="cursor-pointer text-sm text-cb-primary underline underline-offset-2 transition-colors hover:text-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:outline-none"
 					>
 						{t.preferences.rejectAll}
-					</button>
+					</ConsentButton>
 				</div>
 				<p class="mt-2 text-sm leading-relaxed text-cb-text/60">
 					{t.preferences.description}
@@ -91,21 +92,21 @@ export function PreferencesModal({
 				</div>
 			</div>
 			<div class="flex gap-3 border-t border-cb-border p-5 sm:p-6">
-				<button
+				<ConsentButton
 					type="button"
 					onClick={handleSave}
 					style={{ border: "1px solid var(--cb-primary)" }}
 					class="flex-1 cursor-pointer rounded-md bg-cb-bg px-4 sm:px-6 h-10 sm:h-11 text-xs sm:text-sm font-semibold text-cb-primary transition-colors hover:bg-cb-primary/5 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
 				>
 					{t.preferences.save}
-				</button>
-				<button
+				</ConsentButton>
+				<ConsentButton
 					type="button"
 					onClick={onAcceptAll}
 					class="flex-1 cursor-pointer rounded-md bg-cb-primary px-4 sm:px-6 h-10 sm:h-11 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
 				>
 					{t.preferences.acceptAllAndContinue}
-				</button>
+				</ConsentButton>
 			</div>
 		</>
 	);

@@ -3,7 +3,7 @@
  * Plugin Name: Cookie Banner App4You
  * Plugin URI: https://app4you.dev
  * Description: Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: App4You.dev
  * Author URI: https://app4you.dev
  * License: GPL-2.0-or-later
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('COOKIE4_VERSION', '1.2.0');
+define('COOKIE4_VERSION', '1.2.1');
 define('COOKIE4_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('COOKIE4_PLUGIN_URL', plugin_dir_url(__FILE__));
 

@@ -7,16 +7,16 @@
   },
   "scripts": {
     "prep": "mkdir -p assets && cp ../dist/cookie-banner.js assets/cookie-banner.js",
-    "dev": "pnpm run prep && concurrently \"vite build --watch\" \"grunt dev\"",
+    "dev": "bun run prep && concurrently \"vite build --watch\" \"grunt dev\"",
     "dev:vite": "vite build --watch",
-    "build": "pnpm run prep && vite build && grunt build",
+    "build": "bun run prep && vite build && grunt build",
     "typecheck": "tsc --noEmit",
     "zip": "grunt compress",
     "lint": "grunt lint",
     "assets": "grunt assets",
     "makepot": "grunt makepot",
     "deploy:wp": "grunt deploy:wp",
-    "deploy": "pnpm --dir .. run deploy"
+    "deploy": "bun run --cwd .. deploy"
   },
   "dependencies": {
     "cookie-banner": "workspace:*"
@@ -39,5 +39,6 @@
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.10"
-  }
+  },
+  "packageManager": "bun@1.4.4"
 }

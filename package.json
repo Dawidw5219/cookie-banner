@@ -1,10 +1,13 @@
 {
   "name": "cookie-banner",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.",
   "type": "module",
   "main": "dist/cookie-banner.js",
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Dawidw5219/cookie-banner.git"
@@ -14,12 +17,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "pnpm run build:banner && pnpm --dir plugin run build",
+    "build": "bun run build:banner && bun run --cwd plugin build",
     "build:banner": "vite build",
-    "deploy": "pnpm run build && ghdeploy --release 'plugin/builds/cookie-banner-wp-{version}.zip'",
+    "deploy": "bun run build && ghdeploy --release 'plugin/builds/cookie-banner-wp-{version}.zip'",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "build:all": "pnpm run build"
+    "build:all": "bun run build"
   },
   "dependencies": {
     "preact": "^10"
@@ -32,5 +35,14 @@
     "typescript": "^5",
     "vite": "^6",
     "vitest": "^4.1.2"
-  }
+  },
+  "packageManager": "bun@1.4.4",
+  "workspaces": [
+    "plugin"
+  ],
+  "trustedDependencies": [
+    "@parcel/watcher",
+    "@swc/core",
+    "esbuild"
+  ]
 }

@@ -17,9 +17,9 @@ Pakiet publikuje gotowy bundle z katalogu `dist/`. Katalog `plugin/` jest
 częścią repozytorium GitHub, ale jest celowo wykluczony z paczki npm.
 
 ```bash
-pnpm build
-pnpm test
-pnpm typecheck
+bun run build
+bun run test
+bun run typecheck
 ```
 
 ## Plugin WordPress
@@ -28,6 +28,6 @@ pnpm typecheck
 samego buildu cookie bannera i może być pakowany niezależnie:
 
 ```bash
-pnpm build:all
-pnpm --dir plugin run zip
+bun run build:all
+bun run --cwd plugin zip
 ```

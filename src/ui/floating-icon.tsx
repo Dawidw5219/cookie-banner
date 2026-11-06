@@ -1,3 +1,4 @@
+import { ConsentButton } from "@/ui/consent-button";
 interface FloatingIconProps {
 	label: string;
 	onClick: () => void;
@@ -5,7 +6,7 @@ interface FloatingIconProps {
 
 export function FloatingIcon({ label, onClick }: FloatingIconProps) {
 	return (
-		<button
+		<ConsentButton
 			type="button"
 			onClick={onClick}
 			aria-label={label}
@@ -30,6 +31,6 @@ export function FloatingIcon({ label, onClick }: FloatingIconProps) {
 				<circle cx="7" cy="15" r="1" fill="white" opacity="0.6" />
 				<circle cx="15" cy="11" r="1" fill="white" opacity="0.6" />
 			</svg>
-		</button>
+		</ConsentButton>
 	);
 }
