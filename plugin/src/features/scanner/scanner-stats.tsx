@@ -10,9 +10,8 @@ interface ScannerStatsProps {
 
 export function ScannerStats({ total, categorized, uncategorized, trackerCount, lastScan }: ScannerStatsProps) {
 	return (
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+		<div class="cb-scanner-stats">
 			<StatCard
-				iconBg="bg-gray-900"
 				value={total}
 				label="Total Detected"
 				icon={
@@ -22,7 +21,6 @@ export function ScannerStats({ total, categorized, uncategorized, trackerCount, 
 				}
 			/>
 			<StatCard
-				iconBg="bg-emerald-600"
 				value={categorized}
 				label="Auto-categorized"
 				icon={
@@ -32,7 +30,6 @@ export function ScannerStats({ total, categorized, uncategorized, trackerCount, 
 				}
 			/>
 			<StatCard
-				iconBg="bg-amber-500"
 				value={uncategorized}
 				label="Needs Review"
 				icon={
@@ -42,7 +39,6 @@ export function ScannerStats({ total, categorized, uncategorized, trackerCount, 
 				}
 			/>
 			<StatCard
-				iconBg="bg-purple-600"
 				value={trackerCount}
 				label="Trackers"
 				icon={
@@ -52,8 +48,8 @@ export function ScannerStats({ total, categorized, uncategorized, trackerCount, 
 				}
 			/>
 			<StatCard
-				iconBg="bg-blue-600"
-				value={lastScan || "Never"}
+				value={lastScan ? lastScan.replace(/^\d{2}(\d{2})-(\d{2})-(\d{2})[ T]/, "$3.$2.$1 ") : "Never"}
+				valueTitle={lastScan || undefined}
 				label="Last Scan"
 				icon={
 					<svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

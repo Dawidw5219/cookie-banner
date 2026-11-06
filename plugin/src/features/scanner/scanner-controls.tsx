@@ -1,4 +1,5 @@
 import { useRef, useState } from "preact/hooks";
+import { Badge } from "@/shared/ui/badge";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { toast } from "@/shared/ui/toast";
@@ -71,40 +72,17 @@ export function ScannerControls({
 
 	return (
 		<>
-			<Card>
-				<div class="flex items-center justify-between mb-4">
-					<div>
-						<h2 class="text-lg font-semibold text-gray-900">Scanner Controls</h2>
-						<p class="text-sm text-gray-500 mt-1">
-							Open your site with scan mode to detect cookies. Browse all pages as both logged-in and logged-out user.
-						</p>
-					</div>
-					<div class="flex items-center gap-2">
-						{scanActive ? (
-							<>
-								<span class="relative flex h-3 w-3">
-									<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-									<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
-								</span>
-								<span class="text-sm font-medium text-emerald-700">Scanning</span>
-							</>
-						) : (
-							<>
-								<span class="relative flex h-3 w-3">
-									<span class="relative inline-flex rounded-full h-3 w-3 bg-gray-300" />
-								</span>
-								<span class="text-sm font-medium text-gray-500">Inactive</span>
-							</>
-						)}
-					</div>
-				</div>
-
+			<Card
+				title="Scanner Controls"
+				description="Open your site with scan mode to detect cookies. Browse all pages as both logged-in and logged-out user."
+				actions={<Badge tone={scanActive ? "success" : "neutral"}>{scanActive ? "Scanning" : "Inactive"}</Badge>}
+			>
 				<div class="flex flex-wrap gap-3">
 					<a
 						href={scanUrl}
 						target="_blank"
 						rel="noopener"
-						class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-medium text-sm rounded-lg transition-colors no-underline"
+						class="cb-admin-button cb-admin-button--primary"
 					>
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />

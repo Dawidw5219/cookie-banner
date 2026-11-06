@@ -4,7 +4,7 @@ export const sv: TranslationSchema = {
 	overlay: {
 		title: "Vi respekterar din integritet",
 		description:
-			"Valfria cookies och externa tjänster laddas bara med ditt samtycke. Du kan avvisa eller ändra ditt val när som helst. Läs vår",
+			"Valfria cookies och externa tjänster laddas bara med ditt samtycke. Du kan avvisa eller ändra ditt val när som helst.",
 		descriptionPolicyLink: "Mer information finns i vår",
 		acceptAll: "Godkänn alla",
 		advancedSettings: "Avancerade inställningar",

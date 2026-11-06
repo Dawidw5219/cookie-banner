@@ -1,3 +1,5 @@
+import { StatCard } from "@/shared/ui/stat-card";
+import { SectionIcon } from "@/shared/ui/section-icon";
 import { Card } from "@/shared/ui/card";
 import type { useSettings } from "@/features/settings/use-settings";
 import type { useScanner } from "@/features/scanner/use-scanner";
@@ -59,16 +61,16 @@ export function SetupOverview({
 	];
 	const complete = checks.filter((item) => item.ready).length;
 	return (
-		<div class="space-y-6">
-			<div class="rounded-2xl bg-gray-900 text-white p-6 sm:p-8 flex flex-col sm:flex-row gap-6 justify-between">
+		<div class="cb-section-stack">
+			<div class="cb-overview-intro">
 				<div>
-					<p class="text-xs uppercase tracking-widest text-gray-400">
+					<p class="cb-eyebrow">
 						Your consent workspace
 					</p>
-					<h2 class="text-2xl font-semibold mt-2" style={{ color: "#fff" }}>
+					<h2 class="cb-intro-title">
 						Make privacy part of your website.
 					</h2>
-					<p class="text-sm text-gray-300 mt-3 max-w-xl">
+					<p class="cb-intro-description">
 						Set up the banner, review what your site loads and keep optional
 						services behind a visitor's choice. Everything stays in WordPress.
 					</p>
@@ -77,28 +79,24 @@ export function SetupOverview({
 					href={wp.homeUrl}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="self-start shrink-0 rounded-lg border border-gray-600 px-4 py-2 text-sm text-white"
-					style={{ color: "#fff" }}
+					class="cb-admin-button cb-admin-button--secondary self-start shrink-0"
 				>
 					Open website ↗
 				</a>
 			</div>
 			<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-				{[
-					["Cookies found", scanner.total],
-					["Providers found", scanner.trackerCount],
-					["Need review", scanner.uncategorized],
-					["Custom integrations", services.services.length],
-				].map(([label, value]) => (
-					<div
+				{([
+					["Cookies found", scanner.total, "cookies"],
+					["Providers found", scanner.trackerCount, "services"],
+					["Need review", scanner.uncategorized, "diagnostics"],
+					["Custom integrations", services.services.length, "integration"],
+				] as const).map(([label, value, icon]) => (
+					<StatCard
 						key={label}
-						class="rounded-xl border border-gray-200 bg-white p-5"
-					>
-						<p class="text-xs text-gray-500">{label}</p>
-						<p class="text-2xl font-semibold mt-2 text-gray-900">
-							{scanner.loading || services.loading ? "—" : value}
-						</p>
-					</div>
+						label={label}
+						value={scanner.loading || services.loading ? "—" : value}
+						icon={<SectionIcon section={icon} />}
+					/>
 				))}
 			</div>
 			<Card
@@ -126,9 +124,9 @@ export function SetupOverview({
 				</div>
 				<ul class="divide-y divide-gray-100">
 					{checks.map((check, index) => (
-						<li key={check.title} class="py-4 flex items-start gap-4">
+						<li key={check.title} class="cb-checklist-row">
 							<span
-								class={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-xs ${check.ready ? "bg-emerald-50 text-emerald-800" : "bg-gray-100 text-gray-500"}`}
+								class={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-xs ${check.ready ? "bg-emerald-50 text-emerald-800" : "bg-gray-100 text-gray-600"}`}
 							>
 								{check.ready ? "✓" : index + 1}
 							</span>
@@ -139,7 +137,7 @@ export function SetupOverview({
 								<p class="text-xs text-gray-500 mt-1">{check.description}</p>
 							</div>
 							<button
-								class="text-sm underline underline-offset-4 shrink-0"
+								class="cb-review-link"
 								onClick={() => navigate(check.section)}
 							>
 								Review

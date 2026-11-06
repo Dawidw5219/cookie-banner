@@ -1,5 +1,6 @@
 import type { CustomService } from "@/features/services/use-services";
 import { useState, useMemo } from "preact/hooks";
+import { Badge } from "@/shared/ui/badge";
 import { Card } from "@/shared/ui/card";
 import { Field } from "@/shared/ui/field";
 import { Button } from "@/shared/ui/button";
@@ -7,7 +8,6 @@ import type { useSettings } from "./use-settings";
 import { BannerPreview } from "./banner-preview";
 import { CustomTexts } from "./custom-texts";
 import { getLanguageDefaults } from "./i18n-defaults";
-import { wp } from "@/shared/types/wp";
 
 /** Convert flat dot-notation keys to nested object. */
 function dotToNested(flat: Record<string, string>): Record<string, unknown> {
@@ -80,25 +80,29 @@ export function BannerSettings({ model, services }: {
 	if (!settings) {
 		return (
 			<Card title="Banner Settings">
-				<div class="text-sm text-gray-400 animate-pulse">Loading...</div>
+				<p class="cb-help" role="status">{model.error ? "Settings are unavailable. Use Retry settings above to reload them." : "Loading settings…"}</p>
 			</Card>
 		);
 	}
 
-	const regularFields = fields.filter((f) => f.type !== "checkbox" && f.key !== "lang");
+	const colorFields = fields.filter((f) => f.type === "color");
+	const regularFields = fields.filter((f) => f.type !== "checkbox" && f.type !== "color" && f.key !== "lang");
 	const langField = fields.find((f) => f.key === "lang");
 	const checkboxFields = fields.filter((f) => f.type === "checkbox");
 	const isCustomLang = settings.lang === "custom";
 
 	return (
-		<div class="flex flex-col xl:flex-row gap-6 items-start">
+		<div class="cb-appearance-layout">
 			{/* LEFT: Settings editor */}
 			<div class="w-full flex-1 min-w-0">
 				<Card
 					title="Banner Settings"
 					description="Configure the appearance and behavior of the consent banner."
 				>
-					<div class="space-y-0">
+					<div class="cb-color-fields">
+						{colorFields.map((field) => <Field key={field.key} type="color" label={field.label} value={settings[field.key] ?? field.default} onChange={(value) => update(field.key, value)} />)}
+					</div>
+					<div class="cb-settings-fields">
 						{regularFields.map((f) => (
 							<Field
 								key={f.key}
@@ -135,14 +139,14 @@ export function BannerSettings({ model, services }: {
 
 					{/* Custom texts editor */}
 					{isCustomLang && (
-						<div class="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+						<div class="cb-custom-text-panel">
 							<div class="flex items-center gap-2 mb-4">
-								<svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
 								</svg>
 								<h4 class="text-sm font-semibold text-gray-900">Custom Texts</h4>
 							</div>
-							<p class="text-xs text-gray-500 mb-4">
+							<p class="cb-help mb-4">
 								Edit the banner texts below. Leave empty to use the default English text.
 							</p>
 							<CustomTexts
@@ -154,7 +158,7 @@ export function BannerSettings({ model, services }: {
 					)}
 
 					{checkboxFields.length > 0 && (
-						<div class="mt-6 pt-4 border-t border-gray-200">
+						<div class="cb-toggle-group">
 							{checkboxFields.map((f) => (
 								<Field
 									key={f.key}
@@ -168,29 +172,26 @@ export function BannerSettings({ model, services }: {
 						</div>
 					)}
 
-					<div class="mt-6 flex items-center gap-3">
+					<div class="cb-form-footer">
 						<Button onClick={save} disabled={saving || !dirty}>
 							{saving ? "Saving..." : "Save Settings"}
 						</Button>
-						{dirty && <span class="text-xs text-amber-600">Unsaved changes</span>}
+						{dirty && <Badge tone="warning">Unsaved changes</Badge>}
 					</div>
 				</Card>
 			</div>
 
 			{/* RIGHT: Live preview */}
-			<div class="w-full xl:w-[420px] shrink-0 xl:sticky top-4">
-				<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-					<div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-						<h3 class="text-sm font-semibold text-gray-900">Live Preview</h3>
-						<div class="flex gap-1">
+			<div class="cb-preview-column">
+				<div class="cb-card cb-preview-card">
+					<div class="cb-preview-header">
+						<div class="cb-preview-title"><h2>Live Preview</h2><p>Updates as you edit.</p></div>
+						<div class="cb-segmented" role="group" aria-label="Preview layout">
 							{(["modal", "bar"] as const).map((v) => (
 								<button
 									key={v}
-									class={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-										(previewVariant || settings.variant) === v
-											? "bg-gray-900 text-white"
-											: "bg-gray-100 text-gray-600 hover:bg-gray-200"
-									}`}
+									class="cb-segment"
+									aria-pressed={(previewVariant || settings.variant) === v}
 									onClick={() => setPreviewVariant(v)}
 								>
 									{v === "modal" ? "Modal" : "Bar"}
@@ -202,7 +203,7 @@ export function BannerSettings({ model, services }: {
 						config={previewConfig}
 						previewVariant={previewVariant || settings.variant}
 					/>
-					<p class="px-4 py-3 text-xs text-gray-500">Preview choices do not change your website consent.</p>
+					<p class="cb-preview-note">Interactive preview · Your website consent stays unchanged.</p>
 				</div>
 			</div>
 		</div>

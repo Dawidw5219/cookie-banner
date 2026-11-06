@@ -51,37 +51,41 @@ function ConsentBar({
 	onOpenPreferences: () => void;
 	onRejectAll: () => void;
 }) {
+	const buttonClass = "cursor-pointer rounded-md px-4 h-10 text-[13px] sm:text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap";
+	const secondaryClass = `${buttonClass} bg-cb-bg text-cb-primary hover:bg-cb-primary/5`;
+	const secondaryStyle = { border: "1px solid var(--cb-primary)" };
 	return (
 		<div class="fixed bottom-0 left-0 right-0 z-2147483647">
 			<div class="w-full bg-cb-bg shadow-[0_-4px_24px_rgba(0,0,0,0.15)] border-t border-cb-text/10">
-				<div class="mx-auto max-w-7xl px-3 sm:px-8 py-2.5 sm:py-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8">
-					<p class="flex-1 text-[11px] sm:text-sm leading-tight sm:leading-relaxed text-cb-text/70">
+				<div class="mx-auto max-w-7xl px-4 sm:px-8 py-3 sm:py-5 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-8">
+					<p class="flex-1 text-xs sm:text-sm leading-relaxed text-cb-text/70">
 						{t.overlay.description}
 						<PolicyLinks
 							privacyPolicyUrl={privacyPolicyUrl}
 							cookiePolicyUrl={cookiePolicyUrl}
 						/>
 					</p>
-					<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 shrink-0 sm:w-auto sm:min-w-[32rem]">
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3 shrink-0 w-full lg:w-auto lg:min-w-max">
 						<ConsentButton
 							type="button"
 							onClick={onOpenPreferences}
-							style={{ border: "1px solid var(--cb-primary)" }}
-							class="cursor-pointer rounded-md bg-cb-bg px-3 sm:px-4 h-9 sm:h-10 text-[11px] sm:text-sm font-semibold text-cb-primary transition-colors hover:bg-cb-primary/5 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
+							style={secondaryStyle}
+							class={secondaryClass}
 						>
 							{t.overlay.advancedSettings}
 						</ConsentButton>
 						<ConsentButton
 							type="button"
 							onClick={onRejectAll}
-							class="cursor-pointer rounded-md border border-cb-primary px-3 h-10 text-sm font-semibold text-cb-primary"
+							style={secondaryStyle}
+							class={secondaryClass}
 						>
 							{t.preferences.rejectAll}
 						</ConsentButton>
 						<ConsentButton
 							type="button"
 							onClick={onAcceptAll}
-							class="cursor-pointer rounded-md bg-cb-primary px-3 sm:px-4 h-9 sm:h-10 text-[11px] sm:text-sm font-semibold text-white transition-colors hover:bg-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
+							class={`${buttonClass} bg-cb-primary text-white hover:bg-cb-primary-hover`}
 						>
 							{t.overlay.acceptAll}
 						</ConsentButton>

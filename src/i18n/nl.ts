@@ -4,7 +4,7 @@ export const nl: TranslationSchema = {
 	overlay: {
 		title: "Wij respecteren uw privacy",
 		description:
-			"Optionele cookies en externe diensten worden alleen met uw toestemming geladen. U kunt weigeren of uw keuze op elk moment wijzigen. Lees ons",
+			"Optionele cookies en externe diensten worden alleen met uw toestemming geladen. U kunt weigeren of uw keuze op elk moment wijzigen.",
 		descriptionPolicyLink: "Meer informatie vindt u in ons",
 		acceptAll: "Alles accepteren",
 		advancedSettings: "Geavanceerde instellingen",

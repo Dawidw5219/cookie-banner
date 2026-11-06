@@ -26,35 +26,39 @@ function cookie4_render_preview(): void {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-html, body { margin:0; padding:0; background:#ffffff; font-family:-apple-system,sans-serif; min-height:100vh; color:#374151; }
-body { padding:40px 24px; }
-.ph { max-width:400px; margin:0 auto; }
-.ph-bar { height:48px; background:#f3f4f6; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; padding:0 16px; gap:12px; }
-.ph-bar span { display:block; height:10px; background:#e5e7eb; border-radius:4px; }
-.ph-title { height:24px; width:60%; background:#e5e7eb; border-radius:6px; margin-bottom:12px; }
-.ph-text { height:10px; background:#f3f4f6; border-radius:4px; margin-bottom:8px; }
+*, *::before, *::after { box-sizing:border-box; }
+html, body { width:100%; margin:0; padding:0; background:#f8fafc; font-family:-apple-system,sans-serif; min-height:100vh; color:#374151; }
+body { padding:20px 16px; }
+.ph { width:100%; max-width:400px; margin:0 auto; }
+.ph-bar { height:40px; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.ph-logo { width:28px; height:28px; flex-shrink:0; background:#e2e8f0; border-radius:7px; }
+.ph-bar span { display:block; height:7px; width:32px; background:#e2e8f0; border-radius:4px; }
+.ph-bar span:first-of-type { width:60px; margin-right:auto; }
+.ph-hero { padding:20px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; }
+.ph-title { height:14px; width:75%; background:#dbe1e8; border-radius:4px; margin-bottom:14px; }
+.ph-text { height:7px; background:#edf0f4; border-radius:4px; margin-bottom:8px; }
 .ph-text.w75 { width:75%; }
 .ph-text.w90 { width:90%; }
 .ph-text.w50 { width:50%; }
-.ph-img { height:120px; background:#f3f4f6; border-radius:12px; margin:20px 0; }
+.ph-img { height:76px; background:#edf0f4; border-radius:6px; margin:18px 0 0; }
 </style>
 </head>
 <body>
-<div class="ph">
-	<div class="ph-bar"><span style="width:80px"></span><span style="width:60px"></span><span style="flex:1"></span><span style="width:40px"></span></div>
-	<div class="ph-title"></div>
-	<div class="ph-text w90"></div>
-	<div class="ph-text w75"></div>
-	<div class="ph-text w50"></div>
-	<div class="ph-img"></div>
-	<div class="ph-text w90"></div>
-	<div class="ph-text w75"></div>
-	<div class="ph-text w50"></div>
+<div class="ph" aria-hidden="true">
+	<div class="ph-bar"><div class="ph-logo"></div><span></span><span></span><span></span></div>
+	<div class="ph-hero">
+		<div class="ph-title"></div>
+		<div class="ph-text w90"></div>
+		<div class="ph-text w75"></div>
+		<div class="ph-text w50"></div>
+		<div class="ph-img"></div>
+	</div>
 </div>
 <script>
 // Listen for config from parent.
 window.addEventListener('message', function(e) {
 	if (e.source === window.parent && e.origin === new URL(<?php echo wp_json_encode(admin_url()); ?>).origin && e.data && e.data.type === 'cookie4_preview') {
+		var requestId = e.data.requestId;
 		// The opaque sandbox cannot read or write the site's real consent storage.
 		if (window.CookieConsent && window.CookieConsent.teardown) window.CookieConsent.teardown();
 		// Remove existing banner.
@@ -68,6 +72,8 @@ window.addEventListener('message', function(e) {
 		var s = document.createElement('script');
 		s.id = 'cb-preview-script';
 		s.src = <?php echo wp_json_encode( $js_url ); ?>;
+		s.onload = function() { window.parent.postMessage({ type: 'cookie4_preview_rendered', requestId: requestId }, '*'); };
+		s.onerror = function() { window.parent.postMessage({ type: 'cookie4_preview_error', requestId: requestId }, '*'); };
 		document.body.appendChild(s);
 	}
 });

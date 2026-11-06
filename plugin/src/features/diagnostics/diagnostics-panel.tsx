@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import { Badge } from "@/shared/ui/badge";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { api } from "@/shared/hooks/use-api";
@@ -69,9 +70,9 @@ export function DiagnosticsPanel({
 	}
 	const data = model.data;
 	return (
-		<div class="space-y-6">
+		<div class="cb-section-stack">
 			{(model.error || error) && (
-				<div role="alert" class="rounded-xl bg-red-50 text-red-800 p-4 text-sm">
+				<div role="alert" class="cb-alert cb-alert--error">
 					{model.error || error}{" "}
 					{model.error && (
 						<button onClick={model.reload} class="underline">
@@ -86,7 +87,7 @@ export function DiagnosticsPanel({
 			>
 				{data ? (
 					<>
-						<dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						<dl class="cb-diagnostics-grid">
 							{[
 								[
 									"Strict network CSP",
@@ -107,9 +108,9 @@ export function DiagnosticsPanel({
 									`WordPress ${data.wordpress} · PHP ${data.php}`,
 								],
 							].map(([label, value]) => (
-								<div key={label} class="rounded-xl bg-gray-50 p-4">
-									<dt class="text-xs text-gray-500">{label}</dt>
-									<dd class="text-sm font-medium text-gray-900 mt-1">
+								<div key={label} class="cb-diagnostic-item">
+									<dt class="cb-help">{label}</dt>
+									<dd class="cb-diagnostic-value">
 										{value}
 									</dd>
 								</div>
@@ -118,7 +119,7 @@ export function DiagnosticsPanel({
 						{data.otherConsentPlugins.length > 0 && (
 							<div
 								role="alert"
-								class="mt-5 rounded-lg bg-amber-50 p-4 text-sm text-amber-900"
+								class="cb-alert cb-alert--warning mt-5"
 							>
 								Other consent plugins are active:{" "}
 								{data.otherConsentPlugins.join(", ")}. Running multiple banners
@@ -152,16 +153,14 @@ export function DiagnosticsPanel({
 								["HTML no-store", /\bno-store\b/i.test(check.cache)],
 								["DNS prefetch off", check.dns.toLowerCase() === "off"],
 							].map(([label, ok]) => (
-								<span
-									class={`rounded-full px-3 py-1 ${ok ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`}
-								>
+								<Badge key={String(label)} tone={ok ? "success" : "warning"}>
 									{ok ? "✓" : "!"} {label}
-								</span>
+								</Badge>
 							))}
 						</div>
-						<details class="text-xs text-gray-600">
-							<summary class="cursor-pointer">Response headers</summary>
-							<pre class="mt-3 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap break-all">{`Content-Security-Policy: ${check.csp || "missing"}\nCache-Control: ${check.cache || "missing"}\nX-DNS-Prefetch-Control: ${check.dns || "missing"}`}</pre>
+						<details class="cb-details">
+							<summary>Response headers</summary>
+							<pre class="cb-response-code">{`Content-Security-Policy: ${check.csp || "missing"}\nCache-Control: ${check.cache || "missing"}\nX-DNS-Prefetch-Control: ${check.dns || "missing"}`}</pre>
 						</details>
 					</div>
 				)}

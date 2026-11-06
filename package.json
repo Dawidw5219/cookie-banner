@@ -1,6 +1,6 @@
 {
   "name": "cookie-banner",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.",
   "type": "module",
   "main": "dist/cookie-banner.js",

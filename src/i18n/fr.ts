@@ -4,7 +4,7 @@ export const fr: TranslationSchema = {
 	overlay: {
 		title: "Nous respectons votre vie privée",
 		description:
-			"Les cookies facultatifs et services externes sont activés uniquement avec votre consentement. Vous pouvez refuser ou modifier votre choix à tout moment. Consultez notre",
+			"Les cookies facultatifs et services externes sont activés uniquement avec votre consentement. Vous pouvez refuser ou modifier votre choix à tout moment.",
 		descriptionPolicyLink: "Pour plus de détails, consultez notre",
 		acceptAll: "Tout accepter",
 		advancedSettings: "Paramètres avancés",

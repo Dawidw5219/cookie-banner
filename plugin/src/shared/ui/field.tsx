@@ -1,4 +1,5 @@
-import type { JSX } from "preact";
+import { useId } from "preact/hooks";
+import { ColorInput } from "./color-input";
 
 interface FieldBaseProps {
 	label: string;
@@ -36,49 +37,42 @@ type FieldProps = TextFieldProps | ColorFieldProps | SelectFieldProps | Checkbox
 
 export function Field(props: FieldProps) {
 	const { label, description, type } = props;
+	const id = useId();
 
 	if (type === "checkbox") {
 		return (
-			<label class="flex items-start gap-3 py-4 border-b border-gray-100 last:border-0 cursor-pointer">
-				<input
-					type="checkbox"
-					checked={props.value === "1"}
-					onChange={(e) =>
-						props.onChange((e.target as HTMLInputElement).checked ? "1" : "")
-					}
-					class="mt-0.5 w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-900"
-				/>
+			<div class="cb-toggle-row">
 				<div>
-					<span class="text-sm font-medium text-gray-900">{label}</span>
-					{description && (
-						<p
-							class="text-xs text-gray-500 mt-0.5"
-							dangerouslySetInnerHTML={{ __html: description }}
-						/>
-					)}
+					<label for={id} class="cb-field-label">{label}</label>
+					{description && <p id={`${id}-description`} class="cb-field-description" dangerouslySetInnerHTML={{ __html: description }} />}
 				</div>
-			</label>
+				<label class="cb-switch">
+					<input id={id} type="checkbox" role="switch" aria-describedby={description ? `${id}-description` : undefined}
+						checked={props.value === "1"} onChange={(event) => props.onChange(event.currentTarget.checked ? "1" : "")} />
+					<span aria-hidden="true" />
+				</label>
+			</div>
 		);
 	}
 
 	return (
-		<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 py-4 border-b border-gray-100 last:border-0">
-			<div class="min-w-0 sm:shrink-0 sm:max-w-[50%]">
-				<label class="text-sm font-medium text-gray-900">{label}</label>
+		<div class="cb-field">
+			<div class="min-w-0">
+				<label for={id} class="cb-field-label">{label}</label>
 				{description && (
 					<p
-						class="text-xs text-gray-500 mt-0.5"
+						class="cb-field-description"
 						dangerouslySetInnerHTML={{ __html: description }}
 					/>
 				)}
 			</div>
-			<div class="w-full min-w-0 flex-1 sm:max-w-xs">
-				{type === "color" && <ColorInput value={props.value} onChange={props.onChange} />}
+			<div class="w-full min-w-0">
+				{type === "color" && <ColorInput id={id} label={label} value={props.value} onChange={props.onChange} />}
 				{type === "select" && (
 					<select
+						id={id}
 						value={props.value}
 						onChange={(e) => props.onChange((e.target as HTMLSelectElement).value)}
-						class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
 					>
 						{Object.entries(props.options).map(([val, text]) => (
 							<option key={val} value={val}>{text}</option>
@@ -88,32 +82,13 @@ export function Field(props: FieldProps) {
 				{(type === "text" || type === "url") && (
 					<input
 						type={type}
+						id={id}
 						value={props.value}
-						placeholder={(props as TextFieldProps).placeholder}
+						placeholder={props.placeholder}
 						onInput={(e) => props.onChange((e.target as HTMLInputElement).value)}
-						class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"
 					/>
 				)}
 			</div>
-		</div>
-	);
-}
-
-function ColorInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-	return (
-		<div class="flex items-center gap-2">
-			<input
-				type="color"
-				value={value}
-				onInput={(e) => onChange((e.target as HTMLInputElement).value)}
-				class="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-			/>
-			<input
-				type="text"
-				value={value}
-				onInput={(e) => onChange((e.target as HTMLInputElement).value)}
-				class="w-24 text-sm font-mono border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-900"
-			/>
 		</div>
 	);
 }

@@ -2,8 +2,8 @@ export const en = {
 	overlay: {
 		title: "We value your privacy",
 		description:
-			"Optional cookies and external services load only after your consent. You can refuse them or change your choice at any time. Learn more in our",
-		descriptionPolicyLink: "",
+			"Optional cookies and external services load only after your consent. You can refuse them or change your choice at any time.",
+		descriptionPolicyLink: "Learn more in our",
 		acceptAll: "Accept All",
 		advancedSettings: "Advanced Settings",
 		privacyPolicy: "privacy policy",

@@ -3,22 +3,24 @@ import type { ComponentChildren } from "preact";
 interface CardProps {
 	title?: string;
 	description?: string;
+	actions?: ComponentChildren;
 	children: ComponentChildren;
 	class?: string;
 }
 
-export function Card({ title, description, children, class: className }: CardProps) {
+export function Card({ title, description, actions, children, class: className }: CardProps) {
 	return (
-		<div class={`bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden ${className ?? ""}`}>
+		<section class={`cb-card ${className ?? ""}`}>
 			{title && (
-				<div class="p-6 border-b border-gray-200">
-					<h2 class="text-lg font-semibold text-gray-900">{title}</h2>
-					{description && (
-						<p class="text-sm text-gray-500 mt-1">{description}</p>
-					)}
+				<div class="cb-card-header">
+					<div class="min-w-0">
+						<h2>{title}</h2>
+						{description && <p>{description}</p>}
+					</div>
+					{actions && <div class="cb-card-actions">{actions}</div>}
 				</div>
 			)}
-			<div class="p-6">{children}</div>
-		</div>
+			<div class="cb-card-body">{children}</div>
+		</section>
 	);
 }

@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import { EmptyState } from "@/shared/ui/empty-state";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import type { CustomService, useServices } from "./use-services";
@@ -27,7 +28,7 @@ export function ServiceManager({
 	) => setDraft((current) => ({ ...current, [key]: value }));
 	async function add(event: Event) {
 		event.preventDefault();
-		if (model.saving || model.loading) return;
+		if (model.saving || model.loading || !model.ready) return;
 		const next = {
 			...draft,
 			urls: urls
@@ -41,7 +42,7 @@ export function ServiceManager({
 		}
 	}
 	return (
-		<div class="space-y-6">
+		<div class="cb-section-stack">
 			<Card
 				title="Custom services"
 				description="Register an integration once. The consent banner, HTML blocker and CSP use the same service registry."
@@ -54,7 +55,7 @@ export function ServiceManager({
 				{model.error && (
 					<div
 						role="alert"
-						class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800"
+						class="cb-alert cb-alert--error mb-4"
 					>
 						{model.error}{" "}
 						<button class="underline" type="button" onClick={model.reload}>
@@ -64,27 +65,21 @@ export function ServiceManager({
 				)}
 				{model.loading ? (
 					<p role="status">Loading services…</p>
+				) : !model.ready ? (
+					<p class="cb-help">Saved integrations are unavailable. Reload them before adding or changing services.</p>
 				) : model.services.length === 0 ? (
-					<div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center">
-						<p class="font-medium text-gray-900">
-							Your scanner and built-in catalog are ready
-						</p>
-						<p class="text-sm text-gray-500 mt-1">
-							Use the form below for your own widgets, CRM or analytics
-							provider.
-						</p>
-					</div>
+					<EmptyState icon="services" title="Your scanner and built-in catalog are ready" description="Use the form below for your own widgets, CRM or analytics provider." />
 				) : (
 					<ul class="divide-y divide-gray-100">
 						{model.services.map((service) => (
 							<li
 								key={service.id}
-								class="py-4 flex flex-col sm:flex-row justify-between gap-4"
+								class="cb-service-row"
 							>
 								<div class="min-w-0">
 									<h3 class="font-semibold text-gray-900">
 										{service.name}{" "}
-										<code class="ml-2 font-normal text-xs text-gray-500 break-all">
+										<code class="cb-service-id">
 											{service.id}
 										</code>
 									</h3>
@@ -148,12 +143,12 @@ export function ServiceManager({
 				title="Add an integration"
 				description="Choose a stable ID. Use a new ID if the purpose or destinations change so an old consent cannot silently authorize a new integration."
 			>
-				<form onSubmit={add} class="space-y-4">
+				<form onSubmit={add} class="cb-form-stack">
 					<div class="grid gap-4 sm:grid-cols-2">
-						<label class="space-y-1 block">
+						<label class="cb-input-label">
 							<span class="text-sm font-medium">Service name</span>
 							<input
-								disabled={model.saving || model.loading}
+								disabled={model.saving || model.loading || !model.ready}
 								required
 								maxLength={120}
 								value={draft.name}
@@ -162,10 +157,10 @@ export function ServiceManager({
 								onInput={(e) => update("name", e.currentTarget.value)}
 							/>
 						</label>
-						<label class="space-y-1 block">
+						<label class="cb-input-label">
 							<span class="text-sm font-medium">Service ID</span>
 							<input
-								disabled={model.saving || model.loading}
+								disabled={model.saving || model.loading || !model.ready}
 								required
 								pattern="[a-z][a-z0-9_-]{1,79}"
 								maxLength={80}
@@ -176,12 +171,12 @@ export function ServiceManager({
 							/>
 						</label>
 					</div>
-					<label class="space-y-1 block">
+					<label class="cb-input-label">
 						<span class="text-sm font-medium">
 							What is this service used for?
 						</span>
 						<textarea
-							disabled={model.saving || model.loading}
+							disabled={model.saving || model.loading || !model.ready}
 							required
 							maxLength={2000}
 							rows={2}
@@ -191,12 +186,12 @@ export function ServiceManager({
 							onInput={(e) => update("description", e.currentTarget.value)}
 						/>
 					</label>
-					<div class="space-y-1">
+					<div class="cb-field">
 						<label for="cb-service-urls" class="text-sm font-medium block">
 							HTTPS URL prefixes — one per line
 						</label>
 						<textarea
-							disabled={model.saving || model.loading}
+							disabled={model.saving || model.loading || !model.ready}
 							id="cb-service-urls"
 							aria-describedby="cb-service-urls-help"
 							required
@@ -208,18 +203,18 @@ export function ServiceManager({
 							}
 							onInput={(e) => setUrls(e.currentTarget.value)}
 						/>
-						<p id="cb-service-urls-help" class="text-xs text-gray-500">
+						<p id="cb-service-urls-help" class="cb-help">
 							Prefixes identify resources to block. After consent, CSP permits
 							the listed HTTPS origins. Do not enter wildcards or unrelated
 							domains.
 						</p>
 					</div>
-					<label class="space-y-1 block">
+					<label class="cb-input-label">
 						<span class="text-sm font-medium">
 							Provider privacy policy (optional)
 						</span>
 						<input
-							disabled={model.saving || model.loading}
+							disabled={model.saving || model.loading || !model.ready}
 							type="url"
 							value={draft.privacyUrl}
 							class={inputClass}
@@ -227,7 +222,7 @@ export function ServiceManager({
 							onInput={(e) => update("privacyUrl", e.currentTarget.value)}
 						/>
 					</label>
-					<Button type="submit" disabled={model.loading || model.saving}>
+					<Button type="submit" disabled={model.loading || model.saving || !model.ready}>
 						{model.saving ? "Saving…" : "Add service"}
 					</Button>
 				</form>

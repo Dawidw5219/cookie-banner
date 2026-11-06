@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, google tag manager, consent mode
 Requires at least: 6.5
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPL-2.0-or-later
 
 Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
@@ -46,6 +46,15 @@ Features:
 Strict consent CSP is enabled by default. Optional external services require explicit consent and page reload. HTML page caching is bypassed; purge any additional CDN/proxy cache before enabling public traffic. Review external essential origins and custom integrations before upgrading.
 
 == Changelog ==
+
+= 1.4.1 =
+* Refine all administrator sections with consistent cards, typography, controls and accessible contrast.
+* Add a palette and validated HEX editor, synchronized full-width live preview and preview retry states.
+* Frame the interactive preview clearly and align consent-bar button sizes and responsive spacing.
+* Keep banner descriptions complete when policy links are not configured in all supported languages.
+* Make navigation fit its contents and keep the last scan date on one line.
+* Improve populated cookie tables, filters, shortcode copying, import dialogs and mobile layouts.
+* Preserve import selections after errors and prevent service writes before existing services load.
 
 = 1.4.0 =
 * Use shared cookie branding and keep third-party plugin notices off the Cookie Banner settings screen.

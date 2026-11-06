@@ -4,7 +4,7 @@ export const de: TranslationSchema = {
 	overlay: {
 		title: "Wir respektieren Ihre Privatsphäre",
 		description:
-			"Optionale Cookies und externe Dienste werden erst nach Ihrer Einwilligung geladen. Sie können ablehnen oder Ihre Auswahl jederzeit ändern. Weitere Informationen finden Sie in unserer",
+			"Optionale Cookies und externe Dienste werden erst nach Ihrer Einwilligung geladen. Sie können ablehnen oder Ihre Auswahl jederzeit ändern.",
 		descriptionPolicyLink: "Weitere Informationen finden Sie in unserer",
 		acceptAll: "Alle akzeptieren",
 		advancedSettings: "Erweiterte Einstellungen",

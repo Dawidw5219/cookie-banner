@@ -16,12 +16,6 @@ interface ButtonProps extends ButtonAttributes {
 	type?: "button" | "submit" | "reset";
 }
 
-const variants: Record<Variant, string> = {
-	primary: "bg-gray-900 hover:bg-gray-800 text-white",
-	secondary: "bg-white hover:bg-gray-50 border border-gray-300 text-gray-700",
-	danger: "bg-white hover:bg-red-50 border border-gray-300 hover:border-red-300 text-gray-700 hover:text-red-700",
-};
-
 export function Button({
 	variant = "primary",
 	icon,
@@ -31,7 +25,7 @@ export function Button({
 }: ButtonProps) {
 	return (
 		<button
-			class={`inline-flex items-center gap-2 px-5 py-2.5 font-medium text-sm rounded-lg transition-colors cursor-pointer ${variants[variant]} ${className ?? ""}`}
+			class={`cb-admin-button cb-admin-button--${variant} ${className ?? ""}`}
 			{...rest}
 		>
 			{icon}

@@ -13,6 +13,7 @@ export interface CustomService {
 export function useServices() {
 	const [services, setServices] = useState<CustomService[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [ready, setReady] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState("");
 	const reload = useCallback(async () => {
@@ -22,6 +23,7 @@ export function useServices() {
 			setServices(
 				(await api<{ services: CustomService[] }>("/services")).services,
 			);
+			setReady(true);
 		} catch (error) {
 			setError(
 				error instanceof Error ? error.message : "Could not load services",
@@ -34,6 +36,7 @@ export function useServices() {
 		void reload();
 	}, [reload]);
 	const save = async (next: CustomService[]) => {
+		if (!ready) return false;
 		setSaving(true);
 		setError("");
 		try {
@@ -53,5 +56,5 @@ export function useServices() {
 			setSaving(false);
 		}
 	};
-	return { services, loading, saving, error, reload, save };
+	return { services, loading, ready, saving, error, reload, save };
 }

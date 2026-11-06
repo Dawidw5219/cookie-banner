@@ -7,6 +7,7 @@ import { useDiagnostics } from "@/features/diagnostics/use-diagnostics";
 import { DiagnosticsPanel } from "@/features/diagnostics/diagnostics-panel";
 import { SetupOverview } from "@/features/overview/setup-overview";
 import { Button } from "@/shared/ui/button";
+import { SectionIcon } from "@/shared/ui/section-icon";
 import { Header } from "@/shared/layout/header";
 import { ToastContainer } from "@/shared/ui/toast";
 import { BannerSettings } from "@/features/settings/banner-settings";
@@ -63,7 +64,7 @@ export function App() {
 	}, [settings.dirty]);
 
 	return (
-		<div class="max-w-7xl mx-auto py-8 px-4">
+		<div class="cb-workspace">
 			<Header
 				title="Cookie Banner"
 				description="Consent, content blocking and cookie discovery — managed in WordPress."
@@ -98,7 +99,7 @@ export function App() {
 
 			<nav
 				aria-label="Cookie Banner sections"
-				class="flex flex-wrap gap-1 rounded-xl border border-gray-200 bg-white p-2 mb-6"
+				class="cb-navigation"
 			>
 				{sections.map(([id, label]) => (
 					<button
@@ -106,8 +107,9 @@ export function App() {
 						key={id}
 						aria-current={section === id ? "page" : undefined}
 						onClick={() => navigate(id)}
-						class={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${section === id ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-50"}`}
+						class="cb-navigation-item"
 					>
+						<SectionIcon section={id} />
 						{label}
 					</button>
 				))}
@@ -115,7 +117,7 @@ export function App() {
 			{settings.dirty && (
 				<div
 					role="status"
-					class="mb-5 rounded-xl bg-amber-50 text-amber-900 text-sm p-4 flex flex-wrap justify-between items-center gap-3"
+					class="cb-draft-notice"
 				>
 					<span>
 						Your banner settings have unsaved changes. Switching sections keeps
@@ -129,7 +131,7 @@ export function App() {
 			{settings.error && (
 				<div
 					role="alert"
-					class="mb-5 rounded-xl bg-red-50 p-4 text-red-800 text-sm"
+					class="cb-alert cb-alert--error mb-5"
 				>
 					{settings.error}{" "}
 					<button class="underline" onClick={settings.reload}>
@@ -140,7 +142,7 @@ export function App() {
 			{scanner.error && (
 				<div
 					role="alert"
-					class="mb-5 rounded-xl bg-red-50 p-4 text-red-800 text-sm"
+					class="cb-alert cb-alert--error mb-5"
 				>
 					{scanner.error}{" "}
 					<button class="underline" onClick={scanner.refresh}>
@@ -167,7 +169,7 @@ export function App() {
 					<ServiceManager model={services} />
 				</div>
 			)}
-			<div hidden={section !== "cookies"} class="space-y-8">
+			<div hidden={section !== "cookies"} class="cb-section-stack">
 				<ScannerStats
 					total={scanner.total}
 					categorized={scanner.categorized}

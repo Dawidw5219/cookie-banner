@@ -4,7 +4,7 @@ export const it: TranslationSchema = {
 	overlay: {
 		title: "Rispettiamo la tua privacy",
 		description:
-			"I cookie facoltativi e i servizi esterni vengono attivati solo con il tuo consenso. Puoi rifiutare o modificare la tua scelta in qualsiasi momento. Consulta la nostra",
+			"I cookie facoltativi e i servizi esterni vengono attivati solo con il tuo consenso. Puoi rifiutare o modificare la tua scelta in qualsiasi momento.",
 		descriptionPolicyLink: "Per maggiori dettagli, consulta la nostra",
 		acceptAll: "Accetta tutti",
 		advancedSettings: "Impostazioni avanzate",

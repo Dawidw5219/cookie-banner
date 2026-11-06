@@ -4,8 +4,8 @@ export const pl: TranslationSchema = {
 	overlay: {
 		title: "Szanujemy Twoją prywatność",
 		description:
-			"Opcjonalne cookies i usługi zewnętrzne uruchamiamy dopiero po Twojej zgodzie. Możesz odmówić lub zmienić wybór w dowolnym momencie. Więcej informacji zawierają nasza",
-		descriptionPolicyLink: "",
+			"Opcjonalne cookies i usługi zewnętrzne uruchamiamy dopiero po Twojej zgodzie. Możesz odmówić lub zmienić wybór w dowolnym momencie.",
+		descriptionPolicyLink: "Zobacz naszą",
 		acceptAll: "Zaakceptuj wszystkie",
 		advancedSettings: "Ustawienia zaawansowane",
 		privacyPolicy: "politykę prywatności",
