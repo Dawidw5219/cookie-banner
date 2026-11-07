@@ -5,7 +5,7 @@
  * Description: Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
  * Requires at least: 6.5
  * Requires PHP: 8.0
- * Version: 1.4.1
+ * Version: 2.0.0
  * Author: App4You.dev
  * Author URI: https://app4you.dev
  * License: GPL-2.0-or-later
@@ -17,23 +17,26 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('COOKIE4_VERSION', '1.4.1');
+define('COOKIE4_VERSION', '2.0.0');
 define('COOKIE4_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('COOKIE4_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 require_once COOKIE4_PLUGIN_DIR . 'includes/settings.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/rest-settings.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/admin-page.php';
+require_once COOKIE4_PLUGIN_DIR . 'includes/multilingual.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/frontend.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/content-blocker.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/scanner.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/csp.php';
+require_once COOKIE4_PLUGIN_DIR . 'includes/consent-records.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/services-admin.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/diagnostics.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/preview.php';
 require_once COOKIE4_PLUGIN_DIR . 'includes/github-updater.php';
 
 register_activation_hook(__FILE__, 'cookie4_activate');
+register_deactivation_hook(__FILE__, function () { wp_clear_scheduled_hook('cookie4_expire_receipts'); });
 
 function cookie4_activate(): void {
     $defaults = [

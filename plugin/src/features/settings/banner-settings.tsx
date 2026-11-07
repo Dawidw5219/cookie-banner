@@ -1,3 +1,5 @@
+import { mergeTexts } from "../../../../src/locale";
+import { LocaleEditor } from "./locale-editor";
 import type { CustomService } from "@/features/services/use-services";
 import { useState, useMemo } from "preact/hooks";
 import { Badge } from "@/shared/ui/badge";
@@ -9,30 +11,13 @@ import { BannerPreview } from "./banner-preview";
 import { CustomTexts } from "./custom-texts";
 import { getLanguageDefaults } from "./i18n-defaults";
 
-/** Convert flat dot-notation keys to nested object. */
-function dotToNested(flat: Record<string, string>): Record<string, unknown> {
-	const result: Record<string, unknown> = {};
-	for (const [dotKey, value] of Object.entries(flat)) {
-		if (!value) continue;
-		const parts = dotKey.split(".");
-		let current: Record<string, unknown> = result;
-		for (let i = 0; i < parts.length - 1; i++) {
-			if (!current[parts[i]] || typeof current[parts[i]] !== "object") {
-				current[parts[i]] = {};
-			}
-			current = current[parts[i]] as Record<string, unknown>;
-		}
-		current[parts[parts.length - 1]] = value;
-	}
-	return result;
-}
-
 export function BannerSettings({ model, services }: {
 	model: ReturnType<typeof useSettings>;
 	services: CustomService[];
 }) {
 	const { settings, fields, update, save, saving, dirty } = model;
-	const [previewVariant, setPreviewVariant] = useState<string | null>(null);
+	const [previewLocale, setPreviewLocale] = useState("");
+ const [previewVariant, setPreviewVariant] = useState<string | null>(null);
 	const [customTexts, setCustomTexts] = useState<Record<string, string>>({});
 	const [textsLoaded, setTextsLoaded] = useState(false);
 
@@ -59,10 +44,15 @@ export function BannerSettings({ model, services }: {
 		if (!settings) return {};
 		const lang = settings.lang === "auto" || settings.lang === "custom" ? "en" : settings.lang;
 		const config: Record<string, unknown> = {
+			controller: { name: settings.controller_name || "" },
+			purposes: settings.purposes || "",
+			noticeVersion: settings.notice_version || "1",
 			services,
+			buttonStyle: settings.button_style || "equal",
 			mode: settings.gtm_id ? "gtm" : "standalone",
 			variant: previewVariant || settings.variant || "modal",
-			lang,
+			lang: previewLocale || lang,
+   localizations: JSON.parse(settings.localizations || "{}"),
 			theme: {
 				primary: settings.primary_color || "#2563eb",
 				background: settings.background_color || "#ffffff",
@@ -72,10 +62,10 @@ export function BannerSettings({ model, services }: {
 		if (settings.privacy_policy_url) config.privacyPolicyUrl = settings.privacy_policy_url;
 		if (settings.cookie_policy_url) config.cookiePolicyUrl = settings.cookie_policy_url;
 		if (settings.lang === "custom" && Object.keys(customTexts).some((k) => customTexts[k])) {
-			config.customTexts = dotToNested(customTexts);
+			config.customTexts = mergeTexts({}, customTexts);
 		}
 		return config;
-	}, [settings, customTexts, previewVariant, services]);
+	}, [settings, customTexts, previewVariant, previewLocale, services]);
 
 	if (!settings) {
 		return (
@@ -95,6 +85,7 @@ export function BannerSettings({ model, services }: {
 		<div class="cb-appearance-layout">
 			{/* LEFT: Settings editor */}
 			<div class="w-full flex-1 min-w-0">
+				<LocaleEditor value={settings.localizations || "{}"} onChange={value => update("localizations", value)} locale={previewLocale || (settings.lang === "auto" || settings.lang === "custom" ? "en" : settings.lang)} onLocale={setPreviewLocale} />
 				<Card
 					title="Banner Settings"
 					description="Configure the appearance and behavior of the consent banner."

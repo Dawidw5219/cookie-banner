@@ -2,10 +2,13 @@ import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9403";
 const rows = [];
+const initialHtml = await (await fetch(base + "/elementor-consent-probe/")).text();
+const config = JSON.parse(initialHtml.match(/window\.__cookieConsent=(\{.*?\});<\/script>/)[1]);
+const grantCookie = "cb_csp_consent=" + encodeURIComponent(JSON.stringify({version: config.noticeVersion, services: ["youtube"], expires: Date.now() + 60000}));
 for (let i = 0; i < 12; i++) {
 	const granted = i % 2 === 1;
 	const response = await fetch(base + "/elementor-consent-probe/", {
-		headers: { cookie: granted ? "cb_csp_consent=%5B%22youtube%22%5D" : "" },
+		headers: { cookie: granted ? grantCookie : "" },
 	});
 	assert.equal(response.status, 200);
 	assert.notEqual(response.headers.get("x-litespeed-cache"), "hit");

@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { consentConfig } from "./test/consent-config";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { installAutoBlocker } from "./auto-blocker";
 import { getRejectAllState } from "./hooks/use-consent";
@@ -8,7 +9,7 @@ let stop: (() => void) | undefined;
 beforeEach(() => {
 	localStorage.clear();
 	document.body.replaceChildren();
-	window.__cookieConsent = { mode: "standalone", lang: "pl" };
+	window.__cookieConsent = consentConfig();
 });
 afterEach(() => {
 	stop?.();

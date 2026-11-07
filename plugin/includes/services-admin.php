@@ -17,7 +17,7 @@ function cookie4_validate_services($items) {
         if (isset($ids[$id]) || in_array($id, $reserved, true) || str_starts_with($id, 'external-')) {
             return new WP_Error('cookie4_service_duplicate', 'Service IDs must be unique and must not override the built-in registry.', ['status' => 400]);
         }
-        foreach (['name', 'description', 'privacyUrl'] as $field) {
+        foreach (['name', 'description', 'privacyUrl', 'retention'] as $field) {
             if (isset($item[$field]) && !is_string($item[$field])) {
                 return new WP_Error('cookie4_service_field', 'Service fields must be text.', ['status' => 400]);
             }
@@ -40,7 +40,7 @@ function cookie4_validate_services($items) {
         if ($privacy !== '' && (strlen($privacy) > 2048 || !filter_var($privacy, FILTER_VALIDATE_URL) || wp_parse_url($privacy, PHP_URL_SCHEME) !== 'https')) {
             return new WP_Error('cookie4_service_privacy', 'The privacy policy must be a valid public HTTPS URL.', ['status' => 400]);
         }
-        $services[] = ['id' => $id, 'name' => $name, 'description' => $description, 'privacyUrl' => esc_url_raw($privacy), 'urls' => array_values(array_unique($clean_urls))];
+        $services[] = ['id' => $id, 'name' => $name, 'description' => $description, 'privacyUrl' => esc_url_raw($privacy), 'retention' => sanitize_text_field($item['retention'] ?? ''), 'urls' => array_values(array_unique($clean_urls))];
         $ids[$id] = true;
     }
     return $services;
@@ -68,6 +68,47 @@ add_action('rest_api_init', function () {
             update_option('cookie4_services', $services, false);
             if ($before !== $services) { cookie4_csp_refresh_cache(); }
             return rest_ensure_response(['services' => $services]);
+        }],
+    ]);
+});
+
+/** Reviewed disclosures share tracker IDs with the scanner; no second URL registry. */
+function cookie4_disclosure_catalog(): array {
+    $catalog = [];
+    $observed = get_option('cookie4_detected_trackers', []);
+    $reviewed = get_option('cookie4_service_disclosures', []);
+    foreach (cookie4_get_tracker_database() as $name => $tracker) {
+        $id = $tracker['id'];
+        if (!isset($observed[$id]) && !isset($reviewed[$id])) { continue; }
+        $retentions = [];
+        foreach (get_option('cookie4_scanned_cookies', []) as $cookie) {
+            if (($cookie['platform'] ?? '') === $name && !empty($cookie['retention'])) { $retentions[] = $cookie['retention']; }
+        }
+        $catalog[] = ['id' => $id, 'name' => $name, 'description' => $tracker['description'] ?? '',
+            'privacyUrl' => $tracker['privacyLink'] ?? '', 'retention' => implode('; ', array_unique($retentions))];
+    }
+    return $catalog;
+}
+
+add_action('rest_api_init', function () {
+    register_rest_route('cookie4/v1', '/disclosures', [
+        ['methods' => 'GET', 'permission_callback' => fn() => current_user_can('manage_options'),
+            'callback' => fn() => rest_ensure_response(['catalog' => cookie4_disclosure_catalog(), 'disclosures' => (object) get_option('cookie4_service_disclosures', [])])],
+        ['methods' => 'PUT', 'permission_callback' => fn() => current_user_can('manage_options'), 'callback' => function (WP_REST_Request $request) {
+            $items = $request->get_param('disclosures');
+            if (!is_array($items) || count($items) > 100) { return new WP_Error('cookie4_disclosures', 'Provide at most 100 provider disclosures.', ['status' => 400]); }
+            $clean = [];
+            foreach ($items as $id => $item) {
+                if (!is_string($id) || !preg_match('/^[a-z0-9_.-]{1,100}$/iD', $id) || !is_array($item)) { return new WP_Error('cookie4_disclosure', 'Invalid provider disclosure.', ['status' => 400]); }
+                foreach (['description', 'privacyUrl', 'retention'] as $key) {
+                    if (!is_string($item[$key] ?? null) || trim($item[$key]) === '' || strlen($item[$key]) > 2000) { return new WP_Error('cookie4_disclosure_required', 'Each disclosure needs a purpose, privacy URL and retention period or criteria.', ['status' => 400]); }
+                }
+                if (!filter_var($item['privacyUrl'], FILTER_VALIDATE_URL) || wp_parse_url($item['privacyUrl'], PHP_URL_SCHEME) !== 'https') { return new WP_Error('cookie4_disclosure_url', 'Use an HTTPS privacy policy URL.', ['status' => 400]); }
+                $clean[$id] = ['description' => sanitize_textarea_field($item['description']), 'privacyUrl' => esc_url_raw($item['privacyUrl']), 'retention' => sanitize_text_field($item['retention'])];
+            }
+            update_option('cookie4_service_disclosures', $clean, false);
+            cookie4_csp_refresh_cache();
+            return rest_ensure_response(['disclosures' => (object) $clean]);
         }],
     ]);
 });

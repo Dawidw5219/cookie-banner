@@ -1,8 +1,18 @@
 import { getServices } from "@/services";
-import { ConsentButton } from "@/ui/consent-button";
+import { ConsentDecisionButton } from "@/ui/consent-button";
+import {
+	hasCompleteDisclosure,
+	hasServiceDisclosure,
+	isPolicyUrl,
+} from "../disclosure";
+import { ConfigContext } from "../hooks/use-consent";
+import { useContext } from "preact/hooks";
 import { useEffect, useState } from "preact/hooks";
 import { t } from "@/i18n";
-import { PreferencesPolicyLinks } from "@/components/policy-links";
+import {
+	PreferencesPolicyLinks,
+	ConsentNotice,
+} from "@/components/policy-links";
 import type { ConsentCategory, ConsentState } from "@/types";
 import { CONSENT_CATEGORIES } from "@/types";
 import { Toggle } from "@/ui/toggle";
@@ -24,6 +34,8 @@ export function PreferencesModal({
 	onAcceptAll,
 	onRejectAll,
 }: PreferencesModalProps) {
+	const config = useContext(ConfigContext);
+	const disclosed = hasCompleteDisclosure(config || undefined);
 	const [services, setServices] = useState(getServices);
 	useEffect(() => {
 		const update = () => setServices(getServices());
@@ -49,15 +61,9 @@ export function PreferencesModal({
 					<h2 class="text-lg sm:text-xl font-bold text-cb-text">
 						{t.preferences.title}!
 					</h2>
-					<ConsentButton
-						type="button"
-						onClick={onRejectAll}
-						class="cursor-pointer text-sm text-cb-primary underline underline-offset-2 transition-colors hover:text-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:outline-none"
-					>
-						{t.preferences.rejectAll}
-					</ConsentButton>
 				</div>
-				<p class="mt-2 text-sm leading-relaxed text-cb-text/60">
+				<p class="mt-2 text-sm leading-relaxed text-cb-text">
+					<ConsentNotice />
 					{t.preferences.description}
 					<PreferencesPolicyLinks
 						privacyPolicyUrl={privacyPolicyUrl}
@@ -83,7 +89,7 @@ export function PreferencesModal({
 										>
 											{catT.label}
 										</label>
-										<p class="mt-1 text-xs leading-relaxed text-cb-text/60">
+										<p class="mt-1 text-xs leading-relaxed text-cb-text">
 											{catT.description}
 										</p>
 									</div>
@@ -91,7 +97,7 @@ export function PreferencesModal({
 										<Toggle
 											id={`cb-toggle-${category}`}
 											checked={isEssential ? true : state[category]}
-											disabled={isEssential}
+											disabled={isEssential || !disclosed}
 											onChange={(checked) => handleToggle(category, checked)}
 										/>
 									</div>
@@ -117,6 +123,7 @@ export function PreferencesModal({
 								<Toggle
 									id={`cb-service-${service.id}`}
 									checked={state.services?.[service.id] === true}
+									disabled={!disclosed || !hasServiceDisclosure(service)}
 									onChange={(checked) =>
 										setState((prev) => ({
 											...prev,
@@ -125,7 +132,7 @@ export function PreferencesModal({
 									}
 								/>
 							</div>
-							<p class="mt-2 text-xs text-cb-text/70">
+							<p class="mt-2 text-xs text-cb-text">
 								{service.description && (
 									<span>
 										{service.description}
@@ -133,8 +140,16 @@ export function PreferencesModal({
 									</span>
 								)}
 								{t.preferences.externalServicesDescription}
+								{service.retention && (
+									<span class="block">
+										{t.disclosure.retention}: {service.retention}
+									</span>
+								)}
+								{!hasServiceDisclosure(service) && (
+									<span class="block">{t.disclosure.unavailable}</span>
+								)}
 							</p>
-							{service.privacyUrl && (
+							{isPolicyUrl(service.privacyUrl) && (
 								<a
 									class="text-xs text-cb-primary underline"
 									href={service.privacyUrl}
@@ -148,22 +163,20 @@ export function PreferencesModal({
 					))}
 				</div>
 			</div>
-			<div class="flex gap-3 border-t border-cb-border p-5 sm:p-6">
-				<ConsentButton
-					type="button"
-					onClick={handleSave}
-					style={{ border: "1px solid var(--cb-primary)" }}
-					class="flex-1 cursor-pointer rounded-md bg-cb-bg px-4 sm:px-6 h-10 sm:h-11 text-xs sm:text-sm font-semibold text-cb-primary transition-colors hover:bg-cb-primary/5 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
-				>
+			<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-cb-border p-5 sm:p-6">
+				<ConsentDecisionButton variant="outline" type="button" onClick={onRejectAll}>
+					{t.preferences.rejectAll}
+				</ConsentDecisionButton>
+				<ConsentDecisionButton variant="subtle" type="button" onClick={handleSave}>
 					{t.preferences.save}
-				</ConsentButton>
-				<ConsentButton
+				</ConsentDecisionButton>
+				<ConsentDecisionButton
 					type="button"
 					onClick={onAcceptAll}
-					class="flex-1 cursor-pointer rounded-md bg-cb-primary px-4 sm:px-6 h-10 sm:h-11 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
+					disabled={!disclosed}
 				>
 					{t.preferences.acceptAllAndContinue}
-				</ConsentButton>
+				</ConsentDecisionButton>
 			</div>
 		</>
 	);

@@ -46,3 +46,10 @@ Tryb rygorystyczny używa CSP w odpowiedzi HTTP i przeładowania po zmianie zgod
 Npm udostępnia `consentCspHeaders`; WordPress włącza ten tryb domyślnie.
 HTML zależny od zgód omija współdzielony cache, a optymalizacje JS/CSS pozostają aktywne.
 [Wyniki testów CSP z Elementorem, WP Rocket i rzeczywistym OpenLiteSpeed](docs/research/strict-csp-verification.md).
+
+## Migracja do 2.0
+
+[Wymagane informacje, zapis zgód, wycofanie i ograniczenia](docs/consent-compliance.md).
+Wersja 2.0 celowo blokuje opcjonalne usługi przy niepełnych informacjach i wymaga nowego wyboru dla starych zgód.
+
+Multilingual setup (npm, WPML, Polylang): [docs/multilingual.md](docs/multilingual.md).

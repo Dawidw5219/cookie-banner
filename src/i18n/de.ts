@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const de: TranslationSchema = {
+	policy: {
+		name: "Name",
+		provider: "Anbieter",
+		purpose: "Zweck",
+		retention: "Speicherdauer",
+		category: "Kategorie",
+		functional: "Funktional",
+		security: "Sicherheit",
+		personalization: "Personalisierung",
+		other: "Sonstige",
+		empty: "Es wurden noch keine Cookies erkannt.",
+		uncategorized: "Keine kategorisierten Cookies gefunden.",
+		functionalDescription: "Prüfen Sie, ob jedes Element für den angeforderten Dienst unbedingt erforderlich ist.",
+		session: "Sitzung",
+	},
+	content: {
+		blocked: "Blockierter externer Inhalt",
+		external: "Externer Inhalt",
+		videoTitle: "YouTube-Video ansehen",
+		videoDescription: "Die Wiedergabe verbindet Sie mit YouTube und übermittelt Ihre IP-Adresse und Browserdaten.",
+		description: "Beim Anzeigen werden Ihre IP-Adresse und Browserdaten an den Anbieter übermittelt.",
+		allowPlay: "Zustimmen und abspielen",
+		allowShow: "Zustimmen und anzeigen",
+		privacyDetails: "Datenschutzhinweise",
+		providerPrivacy: "Datenschutz des Anbieters",
+	},
+	disclosure: {
+		unavailable: "Optionale Inhalte bleiben deaktiviert, bis die Datenschutzhinweise vollständig sind. Sie können ohne Zustimmung fortfahren.",
+		retention: "Speicherdauer",
+		withdraw: "Alle optionalen Einwilligungen widerrufen",
+		saveError: "Die Auswahl konnte nicht gespeichert werden. Optionale Verarbeitung bleibt gesperrt.",
+	},
 	overlay: {
 		title: "Wir respektieren Ihre Privatsphäre",
 		description:
@@ -31,7 +63,7 @@ export const de: TranslationSchema = {
 			analytics: {
 				label: "Analyse-Cookies",
 				description:
-					"Helfen uns zu verstehen, wie Besucher auf unserer Website navigieren und mit ihr interagieren, indem anonyme Nutzungsdaten gesammelt und gemeldet werden. Dies ermöglicht es uns, die Leistung der Website und das Benutzererlebnis zu verbessern.",
+					"Helfen uns zu verstehen, wie Besucher auf unserer Website navigieren und mit ihr interagieren, indem Nutzungsdaten gesammelt und gemeldet werden. Dies ermöglicht es uns, die Leistung der Website und das Benutzererlebnis zu verbessern.",
 			},
 			marketing: {
 				label: "Marketing-Cookies",

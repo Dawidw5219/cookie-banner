@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { consentCspHeaders } from "../dist/native.js";
 const options = {
+	noticeVersion: "test-notice-1",
 	services: {
 		probe: {
 			"script-src": ["https://third.party.test"],
@@ -27,7 +28,7 @@ const server = createServer((req, res) => {
 		...consentCspHeaders(options, req.headers.cookie),
 	});
 	res.end(
-		`<!doctype html><html><head><script>window.__cookieConsent={strictCsp:true,mode:'standalone',lang:'pl',services:[{id:'probe',name:'Probe',description:'Test vendor',urls:['https://third.party.test']}]}</script><script src="/banner.js"></script><script src="https://third.party.test/vendor.js"></script><style>body{background-image:url(https://unregistered.test/pixel)}</style></head><body><iframe data-cb-service="probe" data-cb-src="https://third.party.test/embed" hidden></iframe><button onclick="this.textContent='Works'" id="functional">Local</button></body></html>`,
+		`<!doctype html><html><head><script>window.__cookieConsent={strictCsp:true,mode:'standalone',lang:'pl',noticeVersion:'test-notice-1',controller:{name:'Test controller'},purposes:'Test optional player',privacyPolicyUrl:'/privacy',services:[{id:'probe',name:'Probe',description:'Test vendor',privacyUrl:'https://third.party.test/privacy',retention:'Session',urls:['https://third.party.test']}]}</script><script src="/banner.js"></script><script src="https://third.party.test/vendor.js"></script><style>body{background-image:url(https://unregistered.test/pixel)}</style></head><body><iframe data-cb-service="probe" data-cb-src="https://third.party.test/embed" hidden></iframe><button onclick="this.textContent='Works'" id="functional">Local</button></body></html>`,
 	);
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -88,7 +89,7 @@ try {
 	assert.equal(await page.locator("#functional").innerText(), "Works");
 	// Alternate consent and no-consent HTTP clients at the identical URL.
 	for (let i = 0; i < 8; i++) {
-		const cookie = i % 2 ? "cb_csp_consent=%5B%22probe%22%5D" : "";
+		const cookie = i % 2 ? `cb_csp_consent=${encodeURIComponent(JSON.stringify({version: options.noticeVersion, services: ["probe"], expires: Date.now() + 10000}))}` : "";
 		const r = await fetch(base, { headers: { cookie } });
 		const csp = r.headers.get("content-security-policy");
 		assert.equal(csp.includes("third.party.test"), !!cookie);

@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const pl: TranslationSchema = {
+	policy: {
+		name: "Nazwa",
+		provider: "Dostawca",
+		purpose: "Cel",
+		retention: "Przechowywanie",
+		category: "Kategoria",
+		functional: "Funkcjonalne",
+		security: "Bezpieczeństwo",
+		personalization: "Personalizacja",
+		other: "Pozostałe",
+		empty: "Nie wykryto jeszcze plików cookie.",
+		uncategorized: "Nie znaleziono sklasyfikowanych plików cookie.",
+		functionalDescription: "Sprawdź, czy każdy element jest ściśle niezbędny do żądanej usługi.",
+		session: "Sesja",
+	},
+	content: {
+		blocked: "Zablokowana treść zewnętrzna",
+		external: "Treść zewnętrzna",
+		videoTitle: "Obejrzyj film z YouTube",
+		videoDescription: "Odtworzenie połączy Cię z YouTube i udostępni dostawcy Twój adres IP oraz dane przeglądarki.",
+		description: "Wyświetlenie treści udostępni dostawcy Twój adres IP i dane przeglądarki.",
+		allowPlay: "Zgadzam się — odtwórz",
+		allowShow: "Zgadzam się — pokaż",
+		privacyDetails: "Informacje o prywatności",
+		providerPrivacy: "Prywatność dostawcy",
+	},
+	disclosure: {
+		unavailable: "Treści opcjonalne pozostają wyłączone do czasu uzupełnienia informacji o prywatności. Możesz korzystać ze strony bez zgody.",
+		retention: "Przechowywanie danych",
+		withdraw: "Wycofaj wszystkie opcjonalne zgody",
+		saveError: "Nie udało się zapisać wyboru. Opcjonalne przetwarzanie pozostaje zablokowane.",
+	},
 	overlay: {
 		title: "Szanujemy Twoją prywatność",
 		description:
@@ -31,7 +63,7 @@ export const pl: TranslationSchema = {
 			analytics: {
 				label: "Analityczne pliki cookie",
 				description:
-					"Pomagają nam zrozumieć, w jaki sposób odwiedzający poruszają się po naszej stronie i wchodzą z nią w interakcję, zbierając i raportując anonimowe dane o użytkowaniu. Pozwala nam to poprawić wydajność strony i doświadczenie użytkownika.",
+					"Pomagają nam zrozumieć, w jaki sposób odwiedzający poruszają się po naszej stronie i wchodzą z nią w interakcję, zbierając i raportując dane o użytkowaniu. Pozwala nam to poprawić wydajność strony i doświadczenie użytkownika.",
 			},
 			marketing: {
 				label: "Marketingowe pliki cookie",

@@ -1,0 +1,20 @@
+{
+  "testedAt": "2026-11-06T23:33:48.932Z",
+  "results": [
+    "Guest refusal, per-provider consent and withdrawal each retained server-side; zero external requests before/refusal/after withdrawal; interactive Elementor embed works after consent; unknown provider disabled; tracker cookie deleted and essential cookie preserved",
+    "One-click withdrawal in another WordPress tab reloads the original tab with denied CSP, including previously active inert SDK scripts",
+    "Consent evidence export and unverified writes are denied to unauthenticated callers",
+    "Administrator export contains matching receipt IDs, server time, categories, service choices and immutable disclosure snapshot without visitor IP/user-agent fields",
+    "Opaque admin preview accepts, withdraws and accepts again in isolated memory without navigation or changes to the real site consent",
+    "Editing and saving provider retention in the real admin changes the consent revision while historical evidence remains unchanged",
+    "New controller/purpose/version fields and provider disclosure editor render in the real WordPress admin",
+    "Administrator can download the consent evidence from the Diagnostics panel"
+  ],
+  "network": [
+    "https://www.youtube.com/embed/privacy-probe",
+    "https://www.youtube.com/iframe_api",
+    "https://www.youtube.com/embed/privacy-probe",
+    "https://www.youtube.com/iframe_api",
+    "https://www.youtube.com/embed/privacy-probe"
+  ]
+}

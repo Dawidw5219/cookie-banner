@@ -1,13 +1,27 @@
+import { getServices } from "./services";
+import type { ServiceDefinition } from "./types";
+import { resolveLocalizedConfig } from "./locale";
+export { resolveLocalizedConfig } from "./locale";
 export { buildConsentCsp, consentCspHeaders, readCspConsent } from "./csp";
 export type { ConsentCspOptions, CspSources } from "./csp";
-import type { BannerConfig } from "./types";
+import {
+	getConsentReceipt as readConsentReceipt,
+	resetConsent,
+} from "./hooks/use-storage";
+import type { BannerConfig, ConsentReceipt } from "./types";
 export {
 	hasServiceConsent,
 	setServiceConsent,
 	onServiceConsent,
 } from "./service-consent";
 
-export type { BannerConfig, ConsentState, ServiceDefinition } from "./types";
+export type {
+	BannerConfig,
+ LocalizedContent,
+	ConsentState,
+	ServiceDefinition,
+	ConsentCleanup,
+} from "./types";
 
 /** Safe in server components/SSR: never supplies a live src. */
 export function blockedContentProps(service: string, src?: string) {
@@ -31,10 +45,24 @@ export async function initializeConsent(
 ): Promise<() => void> {
 	if (typeof window === "undefined")
 		throw new Error("Initialize consent in the browser, after hydration.");
+	config = resolveLocalizedConfig(config);
+	const previous = window.__cookieConsent;
+	const changed = !!previous && JSON.stringify(previous) !== JSON.stringify(config);
+	if (
+		previous?.strictCsp &&
+		config.strictCsp &&
+		(previous.noticeVersion !== config.noticeVersion || previous.lang !== config.lang)
+	) {
+		resetConsent();
+		window.__cookieConsent = config;
+		window.location.reload();
+		return () => {};
+	}
 	window.__cookieConsent = config;
 	activeClients += 1;
 	try {
 		const banner = await import("./app");
+		if (changed) banner.teardown();
 		banner.init();
 		let released = false;
 		return () => {
@@ -46,4 +74,13 @@ export async function initializeConsent(
 		activeClients -= 1;
 		throw error;
 	}
+}
+
+export const getConsentReceipt: () => ConsentReceipt | null =
+	readConsentReceipt;
+export type { ConsentReceipt } from "./types";
+
+/** Current observed services, using the same registry as the consent UI and blocker. */
+export function getDetectedServices(): ServiceDefinition[] {
+ return typeof window === "undefined" ? [] : getServices();
 }

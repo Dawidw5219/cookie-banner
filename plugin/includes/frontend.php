@@ -10,20 +10,23 @@ add_shortcode('cookie_policy_table', 'cookie4_shortcode_policy_table');
 
 function cookie4_shortcode_preferences_link($atts): string {
     $atts = shortcode_atts(['text' => ''], $atts, 'cookie_preferences_link');
-    $text = $atts['text'] !== '' ? $atts['text'] : __('Cookie preferences', 'cookie-banner-wp');
+    $text = $atts['text'] !== '' ? $atts['text'] : cookie4_frontend_translation()['floatingIcon']['label'];
     return sprintf('<a href="#" class="open-consent-settings" role="button">%s</a>', esc_html($text));
 }
 
 function cookie4_shortcode_policy_table($atts): string {
     $atts = shortcode_atts([
-        'show_unknown' => 'no',
+        'show_unknown' => 'yes',
         'group'        => 'yes',
     ], $atts, 'cookie_policy_table');
 
+    $config = cookie4_build_config();
+    $copy = cookie4_frontend_translation($config);
+    $tracker_database = cookie4_get_tracker_database();
     $cookies = get_option( 'cookie4_scanned_cookies', [] );
 
     if ( empty( $cookies ) ) {
-        return '<p>' . esc_html__( 'No cookies have been detected yet. Run the Cookie Scanner from the admin panel.', 'cookie-banner-wp' ) . '</p>';
+        return '<p>' . esc_html($copy['policy']['empty']) . '</p>';
     }
 
     // Filter out Unknown if requested.
@@ -32,7 +35,7 @@ function cookie4_shortcode_policy_table($atts): string {
     }
 
     if ( empty( $cookies ) ) {
-        return '<p>' . esc_html__( 'No categorized cookies found. Assign categories in the Cookie Scanner.', 'cookie-banner-wp' ) . '</p>';
+        return '<p>' . esc_html($copy['policy']['uncategorized']) . '</p>';
     }
 
     // Group by category.
@@ -52,21 +55,17 @@ function cookie4_shortcode_policy_table($atts): string {
     }
 
     $category_labels = [
-        'Functional'      => __( 'Functional', 'cookie-banner-wp' ),
-        'Analytics'       => __( 'Analytics', 'cookie-banner-wp' ),
-        'Marketing'       => __( 'Marketing', 'cookie-banner-wp' ),
-        'Security'        => __( 'Security', 'cookie-banner-wp' ),
-        'Personalization' => __( 'Personalization', 'cookie-banner-wp' ),
-        'Unknown'         => __( 'Other', 'cookie-banner-wp' ),
+        'Functional' => $copy['policy']['functional'],
+        'Analytics' => $copy['preferences']['categories']['analytics']['label'],
+        'Marketing' => $copy['preferences']['categories']['marketing']['label'],
+        'Security' => $copy['policy']['security'],
+        'Personalization' => $copy['policy']['personalization'],
+        'Unknown' => $copy['policy']['other'],
     ];
-
     $category_descriptions = [
-        'Functional'      => __( 'Necessary for the website to function. Cannot be disabled.', 'cookie-banner-wp' ),
-        'Analytics'       => __( 'Help us understand how visitors use our website.', 'cookie-banner-wp' ),
-        'Marketing'       => __( 'Used to deliver relevant ads and track campaigns.', 'cookie-banner-wp' ),
-        'Security'        => __( 'Protect the website against fraud and abuse.', 'cookie-banner-wp' ),
-        'Personalization' => __( 'Allow the website to remember your preferences.', 'cookie-banner-wp' ),
-        'Unknown'         => __( 'Other cookies not yet categorized.', 'cookie-banner-wp' ),
+        'Functional' => $copy['policy']['functionalDescription'],
+        'Analytics' => $copy['preferences']['categories']['analytics']['description'],
+        'Marketing' => $copy['preferences']['categories']['marketing']['description'],
     ];
 
     ob_start();
@@ -92,12 +91,12 @@ function cookie4_shortcode_policy_table($atts): string {
         <table>
             <thead>
                 <tr>
-                    <th><?php esc_html_e( 'Name', 'cookie-banner-wp' ); ?></th>
-                    <th><?php esc_html_e( 'Provider', 'cookie-banner-wp' ); ?></th>
-                    <th><?php esc_html_e( 'Purpose', 'cookie-banner-wp' ); ?></th>
-                    <th><?php esc_html_e( 'Retention', 'cookie-banner-wp' ); ?></th>
+                    <th><?php echo esc_html($copy['policy']['name']); ?></th>
+                    <th><?php echo esc_html($copy['policy']['provider']); ?></th>
+                    <th><?php echo esc_html($copy['policy']['purpose']); ?></th>
+                    <th><?php echo esc_html($copy['policy']['retention']); ?></th>
                     <?php if ( $atts['group'] !== 'yes' ) : ?>
-                        <th><?php esc_html_e( 'Category', 'cookie-banner-wp' ); ?></th>
+                        <th><?php echo esc_html($copy['policy']['category']); ?></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -105,6 +104,15 @@ function cookie4_shortcode_policy_table($atts): string {
                 <?php foreach ( $items as $cookie ) :
                     $provider = $cookie['platform'] ?? '';
                     $link     = $cookie['privacy_link'] ?? '';
+                    $id = $tracker_database[$provider]['id'] ?? null;
+                    $disclosure = $id ? ((array) $config['serviceDisclosures'])[$id] ?? [] : [];
+                    $translated = cookie4_translate_content(['description' => $cookie['description'] ?? '', 'retention' => $cookie['retention'] ?? ''], cookie4_provider_language($config['lang']), 'cookies.' . $cookie['name']);
+                    $purpose = $translated['description'] !== ($cookie['description'] ?? '') ? $translated['description'] : ($disclosure['description'] ?? $translated['description']);
+                    $retention = $translated['retention'] !== ($cookie['retention'] ?? '') ? $translated['retention'] : ($disclosure['retention'] ?? $translated['retention']);
+                    if (strtolower($retention) === 'session') { $retention = $copy['policy']['session']; }
+                    $link = $disclosure['privacyUrl'] ?? $link;
+                    $provider = $disclosure['name'] ?? $provider;
+
                 ?>
                 <tr>
                     <td><span class="cookie4-name"><?php echo esc_html( $cookie['name'] ); ?></span></td>
@@ -115,8 +123,8 @@ function cookie4_shortcode_policy_table($atts): string {
                             <?php echo esc_html( $provider ?: '—' ); ?>
                         <?php endif; ?>
                     </td>
-                    <td><?php echo esc_html( $cookie['description'] ?: '—' ); ?></td>
-                    <td><?php echo esc_html( $cookie['retention'] ?: '—' ); ?></td>
+                    <td><?php echo esc_html( $purpose ?: '—' ); ?></td>
+                    <td><?php echo esc_html( $retention ?: '—' ); ?></td>
                     <?php if ( $atts['group'] !== 'yes' ) : ?>
                         <td><?php echo esc_html( $category_labels[ $cookie['category'] ] ?? $cookie['category'] ); ?></td>
                     <?php endif; ?>
@@ -144,42 +152,16 @@ function cookie4_print_banner(): void {
     echo cookie4_banner_markup();
 }
 
-function cookie4_resolve_lang(): string {
-    $lang = get_option('cookie4_lang', 'auto');
-
-    // "custom" means use English as base + customTexts overrides.
-    if ($lang === 'custom') {
-        return 'en';
-    }
-
-    if ($lang !== 'auto') {
-        return $lang;
-    }
-
-    $locale = get_locale();
-    $code   = strtolower(substr($locale, 0, 2));
-    $aliases = [
-        'nb' => 'no',
-        'nn' => 'no',
-    ];
-    $code = $aliases[$code] ?? $code;
-
-    $supported = ['en', 'pl', 'fr', 'de', 'es', 'it', 'nl', 'da', 'no', 'sv'];
-
-    return in_array($code, $supported, true) ? $code : 'en';
-}
-
 function cookie4_build_config(): array {
     $primary    = get_option('cookie4_primary_color', '#2563eb');
     $background = get_option('cookie4_background_color', '#ffffff');
     $text       = get_option('cookie4_text_color', '#1a1a1a');
-    $privacy    = get_option('cookie4_privacy_policy_url', '');
+    $privacy    = get_option('cookie4_privacy_policy_url', '') ?: get_privacy_policy_url();
     $cookie_pol = get_option('cookie4_cookie_policy_url', '');
     $gtm_id     = get_option('cookie4_gtm_id', '');
 
     $has_gtm         = !empty($gtm_id);
     $load_gtm        = get_option('cookie4_load_gtm', '1') === '1';
-    $use_link        = get_option('cookie4_use_settings_link', '') === '1';
 
     $variant = get_option('cookie4_variant', 'modal');
 
@@ -187,14 +169,21 @@ function cookie4_build_config(): array {
         in_array($tracker['category'] ?? '', ['Analytics', 'Marketing'], true) || ($tracker['detected_via'] ?? '') === 'blocked'
     );
     $config = [
+        'controller' => ['name' => get_option('cookie4_controller_name', '')],
+        'purposes' => get_option('cookie4_purposes', ''),
+        'noticeVersion' => get_option('cookie4_notice_version', '1'),
+        'receiptEndpoint' => rest_url('cookie4/v1/consent-receipts'),
+        'receiptNonce' => wp_create_nonce('wp_rest'),
         'autoBlock' => true,
         'strictCsp' => function_exists('cookie4_csp_enabled') && cookie4_csp_enabled(),
         'auditMode' => get_option('cookie4_audit_mode', '') === '1' && current_user_can('manage_options'),
         'mode'    => $has_gtm ? 'gtm' : 'standalone',
         'variant' => $variant,
+        'buttonStyle' => get_option('cookie4_button_style', 'equal'),
         'lang'    => cookie4_resolve_lang(),
         'detectedServices' => array_keys($observed),
         'services' => get_option('cookie4_services', []),
+        'serviceDisclosures' => (object) get_option('cookie4_service_disclosures', []),
         'theme'   => [
             'primary'    => $primary,
             'background' => $background,
@@ -217,9 +206,6 @@ function cookie4_build_config(): array {
         }
     }
 
-    if ($use_link) {
-        $config['useCustomSettingsLink'] = true;
-    }
 
     // Custom texts: convert flat dot-notation keys to nested object.
     $custom_texts_raw = get_option( 'cookie4_custom_texts', '' );
@@ -249,5 +235,35 @@ function cookie4_build_config(): array {
         }
     }
 
-    return apply_filters('cookie4_config', $config);
+    $config = cookie4_localize_config(apply_filters('cookie4_config', $config));
+    $disclosures = (array) ($config['serviceDisclosures'] ?? []);
+    $category_cleanup = array_merge(['analytics' => ['cookies' => []], 'marketing' => ['cookies' => []]], (array) ($config['categoryCleanup'] ?? []));
+    $trackers = cookie4_get_tracker_database();
+    $host = wp_parse_url(home_url(), PHP_URL_HOST);
+    foreach (get_option('cookie4_scanned_cookies', []) as $cookie) {
+        $category = strtolower($cookie['category'] ?? '');
+        $name = $cookie['name'] ?? '';
+        $domain = ltrim($cookie['domain'] ?? '', '.');
+        if (!isset($category_cleanup[$category]) || !preg_match('/^[a-z0-9_.-]+$/iD', $name) ||
+            ($domain !== '' && $host !== $domain && !str_ends_with($host, '.' . $domain))) { continue; }
+        $category_cleanup[$category]['cookies'][] = $name;
+        $id = $trackers[$cookie['platform'] ?? '']['id'] ?? null;
+        if ($id && isset($disclosures[$id])) { $disclosures[$id]['cleanup']['cookies'][] = $name; }
+    }
+    $config['serviceDisclosures'] = (object) $disclosures;
+    $config['categoryCleanup'] = $category_cleanup;
+    // Changing disclosure data invalidates the network grant before HTML parsing.
+    $notice = array_intersect_key($config, array_flip(['controller', 'purposes', 'privacyPolicyUrl', 'cookiePolicyUrl', 'services', 'serviceDisclosures', 'customTexts', 'lang', 'noticeVersion']));
+    $policy_revisions = [];
+    foreach (['privacyPolicyUrl', 'cookiePolicyUrl'] as $key) {
+        $post_id = !empty($config[$key]) ? url_to_postid($config[$key]) : 0;
+        if ($post_id) { $policy_revisions[$key] = hash('sha256', (string) get_post_field('post_content', $post_id)); }
+    }
+    static $runtime_hash;
+    if ($runtime_hash === null) {
+        $runtime = COOKIE4_PLUGIN_DIR . 'assets/cookie-banner.js';
+        $runtime_hash = is_file($runtime) ? hash_file('sha256', $runtime) : '';
+    }
+    $config['noticeVersion'] = hash('sha256', 'disclosure-schema-4:' . wp_json_encode([$notice, $policy_revisions, $runtime_hash]));
+    return $config;
 }

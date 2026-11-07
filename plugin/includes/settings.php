@@ -25,6 +25,15 @@ function cookie4_add_settings_page(): void {
 
 function cookie4_get_fields(): array {
     return [
+        'cookie4_controller_name' => [
+            'label' => 'Data controller (legal name)', 'type' => 'text', 'default' => '',
+        ],
+        'cookie4_purposes' => [
+            'label' => 'Purposes of optional processing', 'type' => 'text', 'default' => '',
+        ],
+        'cookie4_notice_version' => [
+            'label' => 'Privacy notice version (change when purposes or policy change)', 'type' => 'text', 'default' => '1',
+        ],
         'cookie4_primary_color' => [
             'label'   => 'Primary Color',
             'type'    => 'color',
@@ -60,7 +69,7 @@ function cookie4_get_fields(): array {
             'type'    => 'select',
             'default' => 'auto',
             'options'  => [
-                'auto' => 'Auto (WordPress language)',
+                'auto' => 'Auto (page language: WPML / Polylang / WordPress)',
                 'en'   => 'English',
                 'pl'   => 'Polski',
                 'fr'   => 'Français',
@@ -73,6 +82,11 @@ function cookie4_get_fields(): array {
                 'sv'   => 'Svenska',
                 'custom' => 'Custom (edit texts)',
             ],
+        ],
+        'cookie4_button_style' => [
+            'label' => 'Consent button style', 'type' => 'select', 'default' => 'equal',
+            'options' => ['standard' => 'Standard — filled acceptance, outlined refusal', 'equal' => 'Strict — identical acceptance and refusal'],
+            'description' => 'Appearance only. Both modes require consent, block optional services before consent and keep refusal available. This is not a legal compliance certification.',
         ],
         'cookie4_variant' => [
             'label'   => 'Banner Style',
@@ -89,12 +103,7 @@ function cookie4_get_fields(): array {
             'default' => '1',
             'description' => 'On: banner loads GTM automatically. Off: banner only manages consent signals — load GTM yourself (e.g. via Stape).',
         ],
-        'cookie4_use_settings_link' => [
-            'label'   => 'Use custom settings link (no floating icon)',
-            'type'    => 'checkbox',
-            'default' => '',
-            'description' => 'On: hide floating icon; add class <code>open-consent-settings</code> to a link or button to open preferences. Off: show floating icon.',
-        ],
+
     ];
 }
 

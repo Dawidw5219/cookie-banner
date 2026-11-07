@@ -32,7 +32,6 @@ export function Toggle({ checked, disabled, onChange, id }: ToggleProps) {
 				display: "inline-flex",
 				alignItems: "center",
 				flexShrink: 0,
-				outline: "none",
 				position: "relative",
 			}}
 		>
@@ -41,7 +40,7 @@ export function Toggle({ checked, disabled, onChange, id }: ToggleProps) {
 					width: "24px",
 					height: "24px",
 					borderRadius: "12px",
-					backgroundColor: "#ffffff",
+					backgroundColor: checked ? "var(--cb-on-primary)" : "#374151",
 					boxShadow: "0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.12)",
 					transition: "transform 200ms ease",
 					transform: checked ? "translateX(24px)" : "translateX(0px)",

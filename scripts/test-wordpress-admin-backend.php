@@ -11,7 +11,7 @@ function check($ok, $message) {
     if (!$ok) { throw new Exception($message); }
     echo "PASS $message\n";
 }
-$service = ['id' => 'qa-backend-service', 'name' => 'Local test integration', 'description' => 'External appointment booking', 'privacyUrl' => 'https://example.com/privacy', 'urls' => ['https://api.example.com/embed/']];
+$service = ['id' => 'qa-backend-service', 'name' => 'Local test integration', 'description' => 'External appointment booking', 'privacyUrl' => 'https://example.com/privacy', 'retention' => 'Session', 'urls' => ['https://api.example.com/embed/']];
 $original = get_option('cookie4_services', []);
 $cookies = $_COOKIE;
 try {
@@ -33,8 +33,14 @@ try {
     $registered = array_values(array_filter(cookie4_get_tracker_database(), fn($entry) => $entry['id'] === $service['id']));
     check(count($registered) === 1 && $registered[0]['custom'] && $registered[0]['description'] === $service['description'], 'scanner derives the same custom service without duplicate records');
     check(cookie4_service_for_url('https://api.example.com/embed/calendar') === $service['id'], 'server blocker reuses custom URL rules');
-    $_COOKIE['cb_csp_consent'] = wp_json_encode([$service['id']]);
+    $_COOKIE['cb_csp_consent'] = wp_json_encode(['version' => cookie4_build_config()['noticeVersion'], 'services' => [$service['id']], 'expires' => (time() + 600) * 1000]);
     check(str_contains(cookie4_csp_policy(), 'https://api.example.com'), 'CSP grants the configured custom origin after consent');
+    $purpose = get_option('cookie4_purposes', '');
+    update_option('cookie4_purposes', $purpose . ' Changed purpose.');
+    check(!str_contains(cookie4_csp_policy(), 'https://api.example.com'), 'changed disclosure invalidates old network grant before rendering');
+    update_option('cookie4_purposes', $purpose);
+    $_COOKIE['cb_csp_consent'] = wp_json_encode(['version' => cookie4_build_config()['noticeVersion'], 'services' => [$service['id']], 'expires' => (time() - 1) * 1000]);
+    check(!str_contains(cookie4_csp_policy(), 'https://api.example.com'), 'expired grant cannot unlock server CSP');
     $health = cookie4_site_health();
     check($health['test'] === 'cookie4_blocking' && $health['status'] === 'good', 'Site Health reports configured prerequisites');
     $hooks = apply_filters('site_status_tests', []);

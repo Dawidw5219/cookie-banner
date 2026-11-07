@@ -1,11 +1,13 @@
+import { resolveLocalizedConfig } from "./locale";
 import { installAutoBlocker } from "./auto-blocker";
 import { startContentBlocker } from "@/content-blocker";
-import { ConsentButton } from "@/ui/consent-button";
+import { ConsentDecisionButton, ConsentSettingsButton } from "@/ui/consent-button";
 import type { ComponentChildren } from "preact";
 import { render } from "preact";
-import { useEffect } from "preact/hooks";
+import { hasCompleteDisclosure } from "./disclosure";
+import { useEffect, useRef } from "preact/hooks";
 import { ConsentOverlay } from "@/components/consent-overlay";
-import { PolicyLinks } from "@/components/policy-links";
+import { PolicyLinks, BannerDescription } from "@/components/policy-links";
 import { PreferencesModal } from "@/components/preferences-modal";
 import { ConfigContext, runConsentInit, useConsent } from "@/hooks/use-consent";
 import { applyCustomTexts, setLang, t } from "@/i18n";
@@ -27,10 +29,51 @@ function ConsentPanel({
 	children: ComponentChildren;
 	class?: string;
 }) {
+	const panel = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		const previous = document.getElementById("cookie-consent-host")?.shadowRoot
+			?.activeElement as HTMLElement | null;
+		const element = panel.current;
+		if (!element) return;
+		element.focus();
+		const trap = (event: KeyboardEvent) => {
+			if (event.key !== "Tab") return;
+			const focusable = [
+				...element.querySelectorAll<HTMLElement>(
+					'button:not([disabled]),a[href],input:not([disabled]),[tabindex="0"]',
+				),
+			];
+			const active =
+				element.getRootNode() instanceof ShadowRoot
+					? (element.getRootNode() as ShadowRoot).activeElement
+					: document.activeElement;
+			const index = focusable.indexOf(active as HTMLElement);
+			if (event.shiftKey && index <= 0) {
+				event.preventDefault();
+				focusable[focusable.length - 1]?.focus();
+			} else if (
+				!event.shiftKey &&
+				(index === -1 || index === focusable.length - 1)
+			) {
+				event.preventDefault();
+				focusable[0]?.focus();
+			}
+		};
+		element.addEventListener("keydown", trap);
+		return () => {
+			element.removeEventListener("keydown", trap);
+			previous?.focus();
+		};
+	}, []);
 	return (
 		<div class="fixed inset-0 z-2147483647 flex items-end sm:items-center justify-center bg-cb-overlay backdrop-blur-sm">
 			<div
-				class={`w-full sm:mx-4 sm:max-w-xl rounded-t-cb sm:rounded-cb bg-cb-bg shadow-2xl ${extra}`.trim()}
+				ref={panel}
+				tabIndex={-1}
+				role="dialog"
+				aria-modal="true"
+				aria-label={t.overlay.title}
+				class={`max-h-[90vh] overflow-y-auto outline-none w-full sm:mx-4 sm:max-w-xl rounded-t-cb sm:rounded-cb bg-cb-bg shadow-2xl ${extra}`.trim()}
 			>
 				{children}
 			</div>
@@ -51,44 +94,33 @@ function ConsentBar({
 	onOpenPreferences: () => void;
 	onRejectAll: () => void;
 }) {
-	const buttonClass = "cursor-pointer rounded-md px-4 h-10 text-[13px] sm:text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap";
-	const secondaryClass = `${buttonClass} bg-cb-bg text-cb-primary hover:bg-cb-primary/5`;
-	const secondaryStyle = { border: "1px solid var(--cb-primary)" };
 	return (
 		<div class="fixed bottom-0 left-0 right-0 z-2147483647">
 			<div class="w-full bg-cb-bg shadow-[0_-4px_24px_rgba(0,0,0,0.15)] border-t border-cb-text/10">
 				<div class="mx-auto max-w-7xl px-4 sm:px-8 py-3 sm:py-5 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-8">
-					<p class="flex-1 text-xs sm:text-sm leading-relaxed text-cb-text/70">
-						{t.overlay.description}
+					<p class="flex-1 text-xs sm:text-sm leading-relaxed text-cb-text">
+						<BannerDescription />
 						<PolicyLinks
 							privacyPolicyUrl={privacyPolicyUrl}
 							cookiePolicyUrl={cookiePolicyUrl}
 						/>
 					</p>
-					<div class="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3 shrink-0 w-full lg:w-auto lg:min-w-max">
-						<ConsentButton
-							type="button"
-							onClick={onOpenPreferences}
-							style={secondaryStyle}
-							class={secondaryClass}
-						>
+					<div class="cb-bar-actions shrink-0 w-full lg:w-auto lg:min-w-max">
+						<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
 							{t.overlay.advancedSettings}
-						</ConsentButton>
-						<ConsentButton
-							type="button"
-							onClick={onRejectAll}
-							style={secondaryStyle}
-							class={secondaryClass}
-						>
-							{t.preferences.rejectAll}
-						</ConsentButton>
-						<ConsentButton
-							type="button"
-							onClick={onAcceptAll}
-							class={`${buttonClass} bg-cb-primary text-white hover:bg-cb-primary-hover`}
-						>
-							{t.overlay.acceptAll}
-						</ConsentButton>
+						</ConsentSettingsButton>
+							<div class="cb-decisions">
+							<ConsentDecisionButton variant="outline" type="button" onClick={onRejectAll}>
+								{t.preferences.rejectAll}
+							</ConsentDecisionButton>
+							<ConsentDecisionButton
+								type="button"
+								onClick={onAcceptAll}
+								disabled={!hasCompleteDisclosure(window.__cookieConsent)}
+							>
+								{t.overlay.acceptAll}
+							</ConsentDecisionButton>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -107,6 +139,8 @@ function App({ config }: { config: BannerConfig }) {
 function AppContent() {
 	const {
 		view,
+		consentState,
+		error,
 		suppressed,
 		hasConsented,
 		config,
@@ -117,10 +151,16 @@ function AppContent() {
 		preferencesInitialState,
 	} = useConsent();
 
+	const hasOptionalConsent =
+		consentState.analytics ||
+		consentState.marketing ||
+		Object.values(consentState.services || {}).some(Boolean);
 	const isBar = config.variant === "bar";
 	const isVisible = !suppressed || hasConsented;
 	const blocksPage =
-		isVisible && (view === "overlay" || view === "preferences") && !isBar;
+		isVisible &&
+		(view === "overlay" || view === "preferences") &&
+		(view === "preferences" || !isBar);
 
 	useEffect(() => {
 		const host = document.getElementById("cookie-consent-host");
@@ -136,6 +176,14 @@ function AppContent() {
 
 	return (
 		<>
+			{error && (
+				<p
+					role="alert"
+					class="fixed top-4 left-4 right-4 z-2147483647 rounded-md border bg-cb-bg p-4 text-cb-text"
+				>
+					{t.disclosure.saveError}
+				</p>
+			)}
 			{view === "overlay" && !isBar && (
 				<ConsentPanel class="p-6 sm:p-8">
 					<ConsentOverlay
@@ -168,7 +216,14 @@ function AppContent() {
 					/>
 				</ConsentPanel>
 			)}
-			{view === "idle" && !config.useCustomSettingsLink && (
+			{view === "idle" && hasOptionalConsent && (
+				<div class="fixed bottom-4 left-20 right-4 sm:right-auto z-2147483646 max-w-xs">
+					<ConsentDecisionButton variant="outline" type="button" onClick={rejectAll}>
+						{t.disclosure.withdraw}
+					</ConsentDecisionButton>
+				</div>
+			)}
+			{view === "idle" && (
 				<FloatingIcon label={t.floatingIcon.label} onClick={openPreferences} />
 			)}
 		</>
@@ -214,14 +269,16 @@ export function teardown(): void {
 export function init(): void {
 	if (document.getElementById("cookie-consent-host")) return;
 	if (!window.__cookieConsent) return;
-	const config: BannerConfig = window.__cookieConsent;
-	stopContentBlocker ||= startContentBlocker(config);
+	const config = resolveLocalizedConfig(window.__cookieConsent);
+ window.__cookieConsent = config;
+	if (!config.preview) stopContentBlocker ||= startContentBlocker(config);
 	if (config.auditMode) return;
 	setLang(config.lang ?? "en");
 	if (config.customTexts) {
 		applyCustomTexts(config.customTexts);
 	}
 	const { host, root } = createBannerHost(cssText, config.theme);
+ host.lang = config.lang;
 	const stopObserving = observeBannerHostRemoval(host, teardown);
 	mountedBanner = { host, root, stopObserving };
 	render(<App config={config} />, root);
@@ -233,7 +290,9 @@ if (document.readyState === "loading") {
 }
 
 function handlePageShow(event: PageTransitionEvent): void {
-	if (event.persisted) init();
+	if (event.persisted && window.__cookieConsent?.strictCsp)
+		window.location.reload();
+	else if (event.persisted) init();
 }
 
 window.addEventListener("pagehide", teardown);

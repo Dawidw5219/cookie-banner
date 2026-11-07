@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const es: TranslationSchema = {
+	policy: {
+		name: "Nombre",
+		provider: "Proveedor",
+		purpose: "Finalidad",
+		retention: "Conservación",
+		category: "Categoría",
+		functional: "Funcionales",
+		security: "Seguridad",
+		personalization: "Personalización",
+		other: "Otros",
+		empty: "Todavía no se han detectado cookies.",
+		uncategorized: "No se encontraron cookies clasificadas.",
+		functionalDescription: "Comprueba si cada elemento es estrictamente necesario para el servicio solicitado.",
+		session: "Sesión",
+	},
+	content: {
+		blocked: "Contenido externo bloqueado",
+		external: "Contenido externo",
+		videoTitle: "Ver este vídeo de YouTube",
+		videoDescription: "La reproducción conecta con YouTube y comparte tu dirección IP y los datos del navegador.",
+		description: "Mostrar este contenido comparte tu dirección IP y los datos del navegador con el proveedor.",
+		allowPlay: "Aceptar y reproducir",
+		allowShow: "Aceptar y mostrar",
+		privacyDetails: "Información de privacidad",
+		providerPrivacy: "Privacidad del proveedor",
+	},
+	disclosure: {
+		unavailable: "El contenido opcional permanece desactivado hasta completar la información de privacidad. Puedes continuar sin aceptar.",
+		retention: "Conservación",
+		withdraw: "Retirar todos los consentimientos opcionales",
+		saveError: "No se pudo guardar la elección. El tratamiento opcional sigue bloqueado.",
+	},
 	overlay: {
 		title: "Valoramos su privacidad",
 		description:
@@ -31,7 +63,7 @@ export const es: TranslationSchema = {
 			analytics: {
 				label: "Cookies analíticas",
 				description:
-					"Nos ayudan a comprender cómo los visitantes navegan e interactúan con nuestro sitio web, recopilando y reportando datos de uso anónimos. Esto nos permite mejorar el rendimiento del sitio y la experiencia del usuario.",
+					"Nos ayudan a comprender cómo los visitantes navegan e interactúan con nuestro sitio web, recopilando y reportando datos de uso. Esto nos permite mejorar el rendimiento del sitio y la experiencia del usuario.",
 			},
 			marketing: {
 				label: "Cookies de marketing",

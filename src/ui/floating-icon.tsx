@@ -12,7 +12,7 @@ export function FloatingIcon({ label, onClick }: FloatingIconProps) {
 			onClick={onClick}
 			aria-label={label}
 			title={label}
-			class="fixed bottom-4 left-4 z-2147483646 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-cb-primary text-white shadow-lg transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
+			class="fixed bottom-4 left-4 z-2147483646 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-cb-primary text-cb-on-primary shadow-lg transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
 		>
 			<svg
 				width="24"
@@ -24,7 +24,7 @@ export function FloatingIcon({ label, onClick }: FloatingIconProps) {
 			>
 				<path d={COOKIE_SHAPE} fill="currentColor" opacity="0.9" />
 				{COOKIE_CHIPS.map((chip) => (
-					<circle key={`${chip.cx}-${chip.cy}`} {...chip} fill="white" />
+					<circle key={`${chip.cx}-${chip.cy}`} {...chip} fill="var(--cb-primary)" />
 				))}
 			</svg>
 		</ConsentButton>

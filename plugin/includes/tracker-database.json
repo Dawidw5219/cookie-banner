@@ -5,7 +5,7 @@
 		"icon": "ga4",
 		"scriptPatterns": ["gtag/js", "google-analytics.com/analytics.js", "googletagmanager.com/gtag/js"],
 		"networkPatterns": ["google-analytics.com/g/collect", "analytics.google.com/g/collect"],
-		"description": "Measures website traffic and user behavior using anonymized data.",
+		"description": "Measures website traffic and user behavior. Review the data collected and the configured retention on this website.",
 		"privacyLink": "https://policies.google.com/privacy"
 	},
 	"Google Tag Manager": {

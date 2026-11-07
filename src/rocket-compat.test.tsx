@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { consentConfig } from "./test/consent-config";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 let teardown: (() => void) | undefined;
@@ -16,12 +17,12 @@ beforeEach(() => {
   vi.resetModules();
   localStorage.clear();
   document.body.replaceChildren();
-  window.__cookieConsent = {
+  window.__cookieConsent = consentConfig({
     mode: "standalone",
     variant: "modal",
     lang: "en",
     useCustomSettingsLink: true,
-  };
+  });
   // WP Rocket queues user-event listeners until all delayed scripts finish.
   const original = EventTarget.prototype.addEventListener;
   vi.spyOn(EventTarget.prototype, "addEventListener").mockImplementation(
@@ -56,8 +57,8 @@ it.each(["modal", "bar"] as const)(
     expect(
       document
         .getElementById("cookie-consent-host")!
-        .shadowRoot!.querySelector("button"),
-    ).toBeNull();
+        .shadowRoot!.querySelector("button[aria-label=\"Cookie preferences\"]"),
+    ).not.toBeNull();
   },
 );
 

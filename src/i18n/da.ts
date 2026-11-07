@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const da: TranslationSchema = {
+	policy: {
+		name: "Navn",
+		provider: "Udbyder",
+		purpose: "Formål",
+		retention: "Opbevaring",
+		category: "Kategori",
+		functional: "Funktionelle",
+		security: "Sikkerhed",
+		personalization: "Personalisering",
+		other: "Andre",
+		empty: "Der er endnu ikke registreret cookies.",
+		uncategorized: "Ingen kategoriserede cookies fundet.",
+		functionalDescription: "Kontrollér, om hvert element er strengt nødvendigt for den ønskede tjeneste.",
+		session: "Session",
+	},
+	content: {
+		blocked: "Blokeret eksternt indhold",
+		external: "Eksternt indhold",
+		videoTitle: "Se denne YouTube-video",
+		videoDescription: "Afspilning opretter forbindelse til YouTube og deler din IP-adresse og browserdata.",
+		description: "Visning deler din IP-adresse og browserdata med udbyderen.",
+		allowPlay: "Tillad og afspil",
+		allowShow: "Tillad og vis",
+		privacyDetails: "Oplysninger om privatliv",
+		providerPrivacy: "Udbyderens privatlivspolitik",
+	},
+	disclosure: {
+		unavailable: "Valgfrit indhold er deaktiveret, indtil privatlivsoplysningerne er komplette. Du kan fortsætte uden at acceptere.",
+		retention: "Opbevaring",
+		withdraw: "Træk alle valgfrie samtykker tilbage",
+		saveError: "Valget kunne ikke gemmes. Valgfri behandling forbliver blokeret.",
+	},
 	overlay: {
 		title: "Vi respekterer dit privatliv",
 		description:
@@ -31,7 +63,7 @@ export const da: TranslationSchema = {
 			analytics: {
 				label: "Analysecookies",
 				description:
-					"Hjælper os med at forstå, hvordan besøgende navigerer på og interagerer med vores websted, ved at indsamle og rapportere anonyme brugsdata. Det gør det muligt at forbedre webstedets ydeevne og brugeroplevelse.",
+					"Hjælper os med at forstå, hvordan besøgende navigerer på og interagerer med vores websted, ved at indsamle og rapportere brugsdata. Det gør det muligt at forbedre webstedets ydeevne og brugeroplevelse.",
 			},
 			marketing: {
 				label: "Marketingcookies",

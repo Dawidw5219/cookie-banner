@@ -1,6 +1,10 @@
-import { ConsentButton } from "@/ui/consent-button";
+import { hasCompleteDisclosure } from "../disclosure";
+import { useContext } from "preact/hooks";
+import { ConfigContext } from "../hooks/use-consent";
+import { ConsentDecisionButton, ConsentSettingsButton } from "@/ui/consent-button";
+import { COOKIE_SHAPE, COOKIE_CHIPS } from "../ui/cookie-icon";
 import { t } from "@/i18n";
-import { PolicyLinks } from "@/components/policy-links";
+import { PolicyLinks, BannerDescription } from "@/components/policy-links";
 
 interface ConsentOverlayProps {
 	privacyPolicyUrl?: string;
@@ -17,42 +21,44 @@ export function ConsentOverlay({
 	onRejectAll,
 	onOpenPreferences,
 }: ConsentOverlayProps) {
+	const disclosed = hasCompleteDisclosure(
+		useContext(ConfigContext) || undefined,
+	);
 	return (
 		<>
-			<h2 class="mb-5 text-xl sm:text-2xl font-bold text-cb-text">
+			<div class="cb-intro-icon" aria-hidden="true">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+					<path d={COOKIE_SHAPE} fill="currentColor" />
+					{COOKIE_CHIPS.map((chip) => (
+						<circle key={`${chip.cx}-${chip.cy}`} {...chip} fill="var(--cb-bg)" />
+					))}
+				</svg>
+			</div>
+			<h2 class="mb-3 text-xl sm:text-2xl font-semibold text-cb-text">
 				{t.overlay.title}
 			</h2>
-			<p class="mb-8 text-sm leading-relaxed text-cb-text/70">
-				{t.overlay.description}
+			<p class="mb-6 text-sm leading-relaxed text-cb-text">
+				<BannerDescription />
 				<PolicyLinks
 					privacyPolicyUrl={privacyPolicyUrl}
 					cookiePolicyUrl={cookiePolicyUrl}
 				/>
 			</p>
-			<div class="mt-8 flex flex-wrap gap-3">
-				<ConsentButton
-					type="button"
-					onClick={onRejectAll}
-					class="flex-1 cursor-pointer rounded-md border border-cb-primary bg-cb-bg px-4 h-11 text-sm font-semibold text-cb-primary"
-				>
+			<div class="cb-decisions">
+				<ConsentDecisionButton variant="outline" type="button" onClick={onRejectAll}>
 					{t.preferences.rejectAll}
-				</ConsentButton>
-				<ConsentButton
-					type="button"
-					onClick={onOpenPreferences}
-					style={{ border: "1px solid var(--cb-primary)" }}
-					class="flex-1 cursor-pointer rounded-md bg-cb-bg px-4 sm:px-6 h-10 sm:h-11 text-xs sm:text-sm font-semibold text-cb-primary transition-colors hover:bg-cb-primary/5 focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
-				>
-					{t.overlay.advancedSettings}
-				</ConsentButton>
-				<ConsentButton
+				</ConsentDecisionButton>
+				<ConsentDecisionButton
 					type="button"
 					onClick={onAcceptAll}
-					class="flex-1 cursor-pointer rounded-md bg-cb-primary px-4 sm:px-6 h-10 sm:h-11 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-cb-primary-hover focus-visible:ring-2 focus-visible:ring-cb-primary focus-visible:ring-offset-2 focus-visible:outline-none"
+					disabled={!disclosed}
 				>
 					{t.overlay.acceptAll}
-				</ConsentButton>
+				</ConsentDecisionButton>
 			</div>
+			<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
+				{t.overlay.advancedSettings}
+			</ConsentSettingsButton>
 		</>
 	);
 }

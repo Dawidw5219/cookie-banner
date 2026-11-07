@@ -187,6 +187,13 @@
       mode: 'standalone',
       variant: 'bar',
       lang: 'pl',
+      noticeVersion: 'demo-privacy-1',
+      controller: { name: 'Example controller — development demo' },
+      purposes: 'Demonstration of optional embedded video consent.',
+      serviceDisclosures: {
+        youtube: { description: 'Play an optional YouTube video.', privacyUrl: 'https://policies.google.com/privacy', retention: 'Demo session; review production settings' },
+        vimeo: { description: 'Play an optional Vimeo video.', privacyUrl: 'https://vimeo.com/privacy', retention: 'Demo session; review production settings' }
+      },
       privacyPolicyUrl: '/privacy-policy',
       theme: {
         primary: '#2563eb',

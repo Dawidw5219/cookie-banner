@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const no: TranslationSchema = {
+	policy: {
+		name: "Navn",
+		provider: "Leverandør",
+		purpose: "Formål",
+		retention: "Lagringstid",
+		category: "Kategori",
+		functional: "Funksjonelle",
+		security: "Sikkerhet",
+		personalization: "Personalisering",
+		other: "Andre",
+		empty: "Ingen informasjonskapsler er oppdaget ennå.",
+		uncategorized: "Ingen kategoriserte informasjonskapsler funnet.",
+		functionalDescription: "Kontroller om hvert element er strengt nødvendig for den forespurte tjenesten.",
+		session: "Økt",
+	},
+	content: {
+		blocked: "Blokkert eksternt innhold",
+		external: "Eksternt innhold",
+		videoTitle: "Se denne YouTube-videoen",
+		videoDescription: "Avspilling kobler til YouTube og deler IP-adressen din og nettleserdata.",
+		description: "Visning deler IP-adressen din og nettleserdata med leverandøren.",
+		allowPlay: "Tillat og spill av",
+		allowShow: "Tillat og vis",
+		privacyDetails: "Personverninformasjon",
+		providerPrivacy: "Leverandørens personvern",
+	},
+	disclosure: {
+		unavailable: "Valgfritt innhold er deaktivert til personverninformasjonen er komplett. Du kan fortsette uten å godta.",
+		retention: "Lagring",
+		withdraw: "Trekk tilbake alle valgfrie samtykker",
+		saveError: "Valget kunne ikke lagres. Valgfri behandling forblir blokkert.",
+	},
 	overlay: {
 		title: "Vi respekterer personvernet ditt",
 		description:
@@ -31,7 +63,7 @@ export const no: TranslationSchema = {
 			analytics: {
 				label: "Analyse-informasjonskapsler",
 				description:
-					"Hjelper oss med å forstå hvordan besøkende navigerer på og bruker nettstedet vårt, ved å samle inn og rapportere anonyme bruksdata. Dette gjør det mulig å forbedre nettstedets ytelse og brukeropplevelse.",
+					"Hjelper oss med å forstå hvordan besøkende navigerer på og bruker nettstedet vårt, ved å samle inn og rapportere bruksdata. Dette gjør det mulig å forbedre nettstedets ytelse og brukeropplevelse.",
 			},
 			marketing: {
 				label: "Markedsføringskapsler",

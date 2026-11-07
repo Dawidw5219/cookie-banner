@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const fr: TranslationSchema = {
+	policy: {
+		name: "Nom",
+		provider: "Fournisseur",
+		purpose: "Finalité",
+		retention: "Conservation",
+		category: "Catégorie",
+		functional: "Fonctionnels",
+		security: "Sécurité",
+		personalization: "Personnalisation",
+		other: "Autres",
+		empty: "Aucun cookie n’a encore été détecté.",
+		uncategorized: "Aucun cookie classé trouvé.",
+		functionalDescription: "Vérifiez si chaque élément est strictement nécessaire au service demandé.",
+		session: "Session",
+	},
+	content: {
+		blocked: "Contenu externe bloqué",
+		external: "Contenu externe",
+		videoTitle: "Regarder cette vidéo YouTube",
+		videoDescription: "La lecture établit une connexion à YouTube et transmet votre adresse IP et les données du navigateur.",
+		description: "L’affichage transmet votre adresse IP et les données du navigateur au fournisseur.",
+		allowPlay: "Accepter et lire",
+		allowShow: "Accepter et afficher",
+		privacyDetails: "Informations de confidentialité",
+		providerPrivacy: "Confidentialité du fournisseur",
+	},
+	disclosure: {
+		unavailable: "Les contenus facultatifs restent désactivés tant que les informations de confidentialité sont incomplètes. Vous pouvez continuer sans accepter.",
+		retention: "Conservation",
+		withdraw: "Retirer tous les consentements facultatifs",
+		saveError: "Le choix n’a pas pu être enregistré. Le traitement facultatif reste bloqué.",
+	},
 	overlay: {
 		title: "Nous respectons votre vie privée",
 		description:
@@ -31,7 +63,7 @@ export const fr: TranslationSchema = {
 			analytics: {
 				label: "Cookies analytiques",
 				description:
-					"Nous aident à comprendre comment les visitateurs naviguent et interagissent avec notre site en collectant et en rapportant des données d'utilisation anonymes. Cela nous permet d'améliorer les performances du site et l'expérience utilisateur.",
+					"Nous aident à comprendre comment les visitateurs naviguent et interagissent avec notre site en collectant et en rapportant des données d'utilisation. Cela nous permet d'améliorer les performances du site et l'expérience utilisateur.",
 			},
 			marketing: {
 				label: "Cookies marketing",

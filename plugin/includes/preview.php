@@ -65,7 +65,7 @@ window.addEventListener('message', function(e) {
 		var host = document.getElementById('cookie-consent-host');
 		if (host) host.remove();
 		// Set new config.
-		window.__cookieConsent = Object.assign({}, e.data.config, {strictCsp:false, autoBlock:false, loadGtm:false, gtmId:undefined, scripts:undefined});
+		window.__cookieConsent = Object.assign({}, e.data.config, {preview:true, strictCsp:false, autoBlock:false, receiptEndpoint:undefined, loadGtm:false, gtmId:undefined, scripts:undefined});
 		// Re-load banner by inserting a fresh script tag.
 		var old = document.getElementById('cb-preview-script');
 		if (old) old.remove();

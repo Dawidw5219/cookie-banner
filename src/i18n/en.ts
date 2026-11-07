@@ -1,4 +1,36 @@
 export const en = {
+	policy: {
+		name: "Name",
+		provider: "Provider",
+		purpose: "Purpose",
+		retention: "Retention",
+		category: "Category",
+		functional: "Functional",
+		security: "Security",
+		personalization: "Personalization",
+		other: "Other",
+		empty: "No cookies have been detected yet.",
+		uncategorized: "No categorized cookies found.",
+		functionalDescription: "Review whether each item is strictly necessary for the requested service.",
+		session: "Session",
+	},
+	content: {
+		blocked: "Blocked external content",
+		external: "External content",
+		videoTitle: "Watch this YouTube video",
+		videoDescription: "Playing connects to YouTube and shares your IP address and browser data.",
+		description: "Showing this content shares your IP address and browser data with the provider.",
+		allowPlay: "Allow and play",
+		allowShow: "Allow and show",
+		privacyDetails: "Privacy details",
+		providerPrivacy: "Provider privacy",
+	},
+	disclosure: {
+		unavailable: "Optional content is unavailable until its privacy information is complete. You can continue without accepting.",
+		retention: "Retention",
+		withdraw: "Withdraw all optional consent",
+		saveError: "The choice could not be saved. Optional processing remains blocked.",
+	},
 	overlay: {
 		title: "We value your privacy",
 		description:
@@ -29,7 +61,7 @@ export const en = {
 			analytics: {
 				label: "Analytics Cookies",
 				description:
-					"Help us understand how visitors navigate and interact with our website by collecting and reporting anonymous usage data. This allows us to improve site performance and user experience.",
+					"Help us understand how visitors navigate and interact with our website by collecting and reporting usage data. This allows us to improve site performance and user experience.",
 			},
 			marketing: {
 				label: "Marketing Cookies",

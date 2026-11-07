@@ -20,6 +20,7 @@ function cookie4_diagnostics(): array {
         'php' => PHP_VERSION,
         'theme' => wp_get_theme()->get('Name'),
         'strictCsp' => cookie4_csp_enabled(),
+        'disclosureReady' => cookie4_disclosure_ready(cookie4_build_config()),
         'parser' => class_exists('WP_HTML_Tag_Processor'),
         'autoBlock' => cookie4_build_config()['autoBlock'] ?? false,
         'customServices' => count(get_option('cookie4_services', [])),
@@ -50,7 +51,7 @@ add_filter('site_status_tests', function ($tests) {
 
 function cookie4_site_health(): array {
     $data = cookie4_diagnostics();
-    $ready = $data['strictCsp'] && $data['parser'] && !$data['otherConsentPlugins'];
+    $ready = $data['disclosureReady'] && $data['strictCsp'] && $data['parser'] && !$data['otherConsentPlugins'];
     return [
         'label' => $ready ? __('Cookie Banner blocking is configured', 'cookie-banner-wp') : __('Review Cookie Banner blocking settings', 'cookie-banner-wp'),
         'status' => $ready ? 'good' : 'recommended',

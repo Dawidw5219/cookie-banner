@@ -28,9 +28,9 @@ export function SetupOverview({
 		section: AdminSection;
 	}[] = [
 		{
-			title: "Add your privacy policy",
-			description: "Give visitors a clear destination for privacy information.",
-			ready: !!settings.settings?.privacy_policy_url && !settings.dirty,
+			title: "Complete privacy information",
+			description: "Identify the controller, explain the purposes and link to the privacy policy.",
+			ready: !!settings.settings?.privacy_policy_url && !!settings.settings?.controller_name && !!settings.settings?.purposes && !settings.dirty,
 			section: "appearance",
 		},
 		{

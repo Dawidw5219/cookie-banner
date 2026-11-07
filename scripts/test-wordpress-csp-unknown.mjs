@@ -27,33 +27,19 @@ try {
 		page.getByRole("button", { name: "Odrzuć wszystkie", exact: true }).click(),
 	]);
 	await page.waitForLoadState("domcontentloaded");
-	const [response] = await Promise.all([
-		page.waitForResponse(
-			(r) =>
-				r.request().isNavigationRequest() &&
-				r
-					.headers()
-					["content-security-policy"]?.includes("https://unknown.vendor.test"),
-		),
-		page
-			.locator(
-				'iframe[title="unknown-vendor"] + .cb-content-placeholder button',
-			)
-			.click(),
-	]);
-	await page.waitForLoadState("domcontentloaded");
-	await page.waitForTimeout(300);
-	assert.deepEqual(network, ["https://unknown.vendor.test/embed"]);
-	const csp = response.headers()["content-security-policy"];
-	assert.ok(csp.includes("frame-src 'self' https://unknown.vendor.test"));
-	assert.ok(csp.includes("script-src 'self'"));
-	assert.ok(!csp.includes("never-allowed.test"));
+	await page.locator('iframe[title="unknown-vendor"] + .cb-content-placeholder button').click();
+	await page.getByRole('switch', {name: 'unknown.vendor.test', exact: true}).waitFor();
+	assert.equal(await page.getByRole('switch', {name:'unknown.vendor.test',exact:true}).isDisabled(),true);
+	assert.deepEqual(network, []);
+	const csp = (await context.request.get(base + '/elementor-consent-probe/?cb_unknown=1')).headers()['content-security-policy'];
+	assert.ok(!csp.includes('unknown.vendor.test'));
+	const version = await page.evaluate(() => window.__cookieConsent.noticeVersion);
 	// A forged service ID is not permission to create a destination absent from HTML.
 	await context.addCookies([
 		{
 			name: "cb_csp_consent",
 			value: encodeURIComponent(
-				JSON.stringify(["external-never-allowed.test"]),
+				JSON.stringify({version, services:["external-never-allowed.test"], expires:Date.now()+60000}),
 			),
 			url: base,
 		},
@@ -81,7 +67,7 @@ try {
 			"\n",
 	);
 	console.log(
-		"PASS unknown iframe: page-derived frame-only permission; unknown script and forged cookie remain denied",
+		"PASS unreviewed iframe is disabled; unknown script and forged versioned cookie remain denied",
 	);
 } finally {
 	await browser.close();

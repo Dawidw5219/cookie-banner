@@ -1,3 +1,4 @@
+import { ProviderDisclosures } from "./provider-disclosures";
 import { useState } from "preact/hooks";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { Card } from "@/shared/ui/card";
@@ -23,7 +24,7 @@ export function ServiceManager({
 	const [urls, setUrls] = useState("");
 	const [removing, setRemoving] = useState<string | null>(null);
 	const update = (
-		key: "id" | "name" | "description" | "privacyUrl",
+		key: "id" | "name" | "description" | "privacyUrl" | "retention",
 		value: string,
 	) => setDraft((current) => ({ ...current, [key]: value }));
 	async function add(event: Event) {
@@ -43,6 +44,7 @@ export function ServiceManager({
 	}
 	return (
 		<div class="cb-section-stack">
+			<ProviderDisclosures />
 			<Card
 				title="Custom services"
 				description="Register an integration once. The consent banner, HTML blocker and CSP use the same service registry."
@@ -211,17 +213,19 @@ export function ServiceManager({
 					</div>
 					<label class="cb-input-label">
 						<span class="text-sm font-medium">
-							Provider privacy policy (optional)
+							Provider privacy policy
 						</span>
 						<input
 							disabled={model.saving || model.loading || !model.ready}
 							type="url"
+							required
 							value={draft.privacyUrl}
 							class={inputClass}
 							placeholder="https://calendar.example.com/privacy"
 							onInput={(e) => update("privacyUrl", e.currentTarget.value)}
 						/>
 					</label>
+					<label class="cb-input-label"><span>Retention period or criteria</span><input required class={inputClass} value={draft.retention || ""} onInput={(e) => update("retention", e.currentTarget.value)} placeholder="State the actual configured retention or deletion criteria" /></label>
 					<Button type="submit" disabled={model.loading || model.saving || !model.ready}>
 						{model.saving ? "Saving…" : "Add service"}
 					</Button>

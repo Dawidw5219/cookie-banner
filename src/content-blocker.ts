@@ -1,7 +1,12 @@
 import { createContentPlaceholder } from "./content-placeholder";
 import { setServiceConsent } from "./service-consent";
-import { getConsentState } from "@/hooks/use-storage";
+import { getConsentState, isConsentStorageChange } from "@/hooks/use-storage";
 import { getServices, matchService } from "@/services";
+import {
+	hasRevocationPolicy,
+	restrictOptionalRequestsUntilReload,
+} from "./revocation-policy";
+import { CSP_COOKIE } from "./csp";
 import type { BannerConfig } from "@/types";
 
 // Only inert markup is guaranteed to make no request before consent. A DOM
@@ -14,12 +19,11 @@ export function startContentBlocker(config: BannerConfig): () => void {
 	let serviceSignature = "";
 	const sync = (event?: Event) => {
 		if (stopped) return;
-		if (
-			config.strictCsp &&
-			event?.type === "storage" &&
-			((event as StorageEvent).key === null ||
-				(event as StorageEvent).key?.startsWith("cb_"))
-		) {
+		if (event?.type === "storage") {
+			if (!isConsentStorageChange(event as StorageEvent)) return;
+			if ((event as StorageEvent).key === null)
+				document.cookie = `${CSP_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
+			restrictOptionalRequestsUntilReload();
 			window.location.reload();
 			return;
 		}
@@ -50,6 +54,7 @@ export function startContentBlocker(config: BannerConfig): () => void {
 			const id = element.dataset.cbService!;
 			const required: string[] = JSON.parse(element.dataset.cbRequired || "[]");
 			const granted =
+				!hasRevocationPolicy() &&
 				state.services?.[id] === true &&
 				required.every((service) => state.services?.[service] === true);
 			if (element instanceof HTMLScriptElement) {
@@ -114,7 +119,6 @@ export function startContentBlocker(config: BannerConfig): () => void {
 					// Removing a script cannot undo its side effects. Reload after withdrawal.
 					activeScripts.get(element)!.remove();
 					activeScripts.delete(element);
-					if (event?.type === "storage") window.location.reload();
 				}
 				continue;
 			}
@@ -152,9 +156,11 @@ export function startContentBlocker(config: BannerConfig): () => void {
 			element.hidden = true;
 			if (placeholders.has(element)) continue;
 			const service = getServices().find((service) => service.id === id);
-			const box = createContentPlaceholder(service, id, config.lang, () => {
-				setServiceConsent(id, true);
-			});
+			const box = createContentPlaceholder(
+				service, id, config.lang,
+				() => setServiceConsent(id, true),
+				element.parentElement,
+			);
 			placeholders.set(element, box);
 			element.after(box);
 		}

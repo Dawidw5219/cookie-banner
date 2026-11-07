@@ -7,6 +7,7 @@ export interface CustomService {
 	name: string;
 	description: string;
 	privacyUrl: string;
+	retention?: string;
 	urls: string[];
 }
 

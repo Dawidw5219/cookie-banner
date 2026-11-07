@@ -1,3 +1,5 @@
+import { applyConsent, consentStateToGtmPayload } from "../consent-actions";
+export { applyConsent } from "../consent-actions";
 import { allServiceGrants } from "@/services";
 import { createContext } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
@@ -6,45 +8,23 @@ import type {
 	BannerView,
 	ConsentCategory,
 	ConsentState,
-	GTMConsentPayload,
 } from "@/types";
-import {
-	CONSENT_CATEGORIES,
-	DEFAULT_CONSENT_STATE,
-	DEFAULT_GTM_CONSENT_DENIED,
-	GTM_CONSENT_MAP,
-} from "@/types";
+import { DEFAULT_CONSENT_STATE } from "@/types";
 import { injectGrantedScripts, isOnPolicyPage } from "@/utils";
-import {
-	loadGtm,
-	pushConsentDefault,
-	pushConsentEvent,
-	pushConsentToDataLayer,
-} from "./use-gtm";
+import { loadGtm, pushConsentDefault, pushConsentEvent } from "./use-gtm";
 import {
 	buildAcceptAllState,
 	buildRejectState,
 	getConsentState,
 	hasConsented,
-	saveConsentState,
 } from "./use-storage";
 
 export const ConfigContext = createContext<BannerConfig | null>(null);
 
-function consentStateToGtmPayload(state: ConsentState): GTMConsentPayload {
-	const payload: GTMConsentPayload = { ...DEFAULT_GTM_CONSENT_DENIED };
-	for (const cat of CONSENT_CATEGORIES) {
-		const value = state[cat] ? "granted" : "denied";
-		for (const param of GTM_CONSENT_MAP[cat]) {
-			payload[param] = value;
-		}
-	}
-	return payload;
-}
-
 let consentInitSent = false;
 
 export function runConsentInit(config: BannerConfig): void {
+	if (config.preview) return;
 	if (config.mode !== "gtm") {
 		injectGrantedScripts(getConsentState(), config.scripts);
 		return;
@@ -78,41 +58,6 @@ export function runConsentInit(config: BannerConfig): void {
 	// First-time visitor: GTM stays unloaded until applyConsent() runs on opt-in.
 }
 
-export function applyConsent(config: BannerConfig, state: ConsentState): void {
-	const previous = getConsentState();
-	saveConsentState(state);
-	if (config.strictCsp) {
-		window.location.reload();
-		return;
-	}
-	const revoked =
-		(previous.analytics && !state.analytics) ||
-		(previous.marketing && !state.marketing) ||
-		Object.entries(previous.services || {}).some(
-			([id, granted]) => granted && !state.services?.[id],
-		);
-	if (revoked) {
-		window.dispatchEvent(
-			new CustomEvent("cb:consent-update", { detail: state }),
-		);
-		window.location.reload();
-		return;
-	}
-	window.dispatchEvent(new CustomEvent("cb:consent-update", { detail: state }));
-	if (config.mode === "gtm") {
-		pushConsentToDataLayer(consentStateToGtmPayload(state));
-		if (
-			state.services?.gtm &&
-			(state.analytics || state.marketing) &&
-			config.loadGtm !== false &&
-			config.gtmId
-		)
-			loadGtm(config.gtmId);
-	} else {
-		injectGrantedScripts(state, config.scripts);
-	}
-}
-
 export function getAcceptAllState(): ConsentState {
 	return { ...buildAcceptAllState(), services: allServiceGrants() };
 }
@@ -144,40 +89,53 @@ export function useConsent() {
 	const [view, setView] = useState<BannerView>(() =>
 		suppressed ? "idle" : hasConsented() ? "idle" : "overlay",
 	);
+	const [error, setError] = useState("");
 	const [consentState, setConsentState] =
 		useState<ConsentState>(getConsentState);
 
 	const persistConsent = useCallback(
 		(state: ConsentState) => {
-			setConsentState(state);
 			applyConsent(config, state);
+			setConsentState(state);
+			setError("");
 		},
 		[config],
 	);
 
 	const toIdle = useCallback(() => setView("idle"), []);
 	const openPreferences = useCallback(() => setView("preferences"), []);
+	useEffect(() => {
+		window.addEventListener("cb:open-preferences", openPreferences);
+		return () =>
+			window.removeEventListener("cb:open-preferences", openPreferences);
+	}, [openPreferences]);
 
 	const acceptAll = useCallback(() => {
-		toIdle();
 		try {
 			persistConsent(getAcceptAllState());
-		} catch (_) {}
+			toIdle();
+		} catch {
+			setError("saveError");
+		}
 	}, [persistConsent, toIdle]);
 
 	const rejectAll = useCallback(() => {
-		toIdle();
 		try {
 			persistConsent(getRejectAllState());
-		} catch (_) {}
+			toIdle();
+		} catch {
+			setError("saveError");
+		}
 	}, [persistConsent, toIdle]);
 
 	const savePreferences = useCallback(
 		(state: ConsentState) => {
-			toIdle();
 			try {
 				persistConsent(state);
-			} catch (_) {}
+				toIdle();
+			} catch {
+				setError("saveError");
+			}
 		},
 		[persistConsent, toIdle],
 	);
@@ -214,6 +172,7 @@ export function useConsent() {
 
 	return {
 		config,
+		error,
 		view,
 		consentState,
 		suppressed,

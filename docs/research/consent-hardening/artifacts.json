@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "runtimeSHA256": "cba001b7199215486cefc200176e79a7a9f96d0c21dc333429ebfa0eb3dc965a",
+  "pluginZipSHA256": "dd23dbcd8b142a2ecba529a890a138f8ff5bf94cee1e554ce30f457d671922a3",
+  "pluginZipBytes": 661145,
+  "nativeCases": 19,
+  "wordpressCases": 8,
+  "unitTests": 90,
+  "adminUnitTests": 4,
+  "multilingualNativeCases": 10,
+  "wordpressLanguages": 3,
+  "pluginZipEntries": 35
+}

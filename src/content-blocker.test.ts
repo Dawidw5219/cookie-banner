@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { consentConfig } from "./test/consent-config";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { startContentBlocker } from "./content-blocker";
 import {
@@ -13,14 +14,18 @@ import {
 } from "./hooks/use-storage";
 
 let stop: (() => void) | undefined;
-const config = { mode: "standalone", lang: "pl" } as const;
+const config = consentConfig();
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 beforeEach(() => {
 	localStorage.clear();
+	document.head.replaceChildren();
+	document.documentElement.removeAttribute("data-cb-revoked");
+	window.__cookieConsent = config;
 	document.body.replaceChildren();
 });
 afterEach(() => {
 	stop?.();
+	delete window.__cookieConsent;
 	document.body.replaceChildren();
 });
 

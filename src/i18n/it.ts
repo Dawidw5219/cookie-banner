@@ -1,6 +1,38 @@
 import type { TranslationSchema } from "./index";
 
 export const it: TranslationSchema = {
+	policy: {
+		name: "Nome",
+		provider: "Fornitore",
+		purpose: "Finalità",
+		retention: "Conservazione",
+		category: "Categoria",
+		functional: "Funzionali",
+		security: "Sicurezza",
+		personalization: "Personalizzazione",
+		other: "Altri",
+		empty: "Non sono ancora stati rilevati cookie.",
+		uncategorized: "Nessun cookie classificato trovato.",
+		functionalDescription: "Verifica se ogni elemento è strettamente necessario per il servizio richiesto.",
+		session: "Sessione",
+	},
+	content: {
+		blocked: "Contenuto esterno bloccato",
+		external: "Contenuto esterno",
+		videoTitle: "Guarda questo video YouTube",
+		videoDescription: "La riproduzione si collega a YouTube e condivide il tuo indirizzo IP e i dati del browser.",
+		description: "La visualizzazione condivide il tuo indirizzo IP e i dati del browser con il fornitore.",
+		allowPlay: "Accetta e riproduci",
+		allowShow: "Accetta e mostra",
+		privacyDetails: "Informazioni sulla privacy",
+		providerPrivacy: "Privacy del fornitore",
+	},
+	disclosure: {
+		unavailable: "I contenuti facoltativi restano disattivati finché le informazioni sulla privacy non sono complete. Puoi continuare senza accettare.",
+		retention: "Conservazione",
+		withdraw: "Revoca tutti i consensi facoltativi",
+		saveError: "Impossibile salvare la scelta. Il trattamento facoltativo resta bloccato.",
+	},
 	overlay: {
 		title: "Rispettiamo la tua privacy",
 		description:
@@ -31,7 +63,7 @@ export const it: TranslationSchema = {
 			analytics: {
 				label: "Cookie analitici",
 				description:
-					"Ci aiutano a capire come i visitatori navigano e interagiscono con il nostro sito, raccogliendo e segnalando dati di utilizzo anonimi. Questo ci consente di migliorare le prestazioni del sito e l'esperienza utente.",
+					"Ci aiutano a capire come i visitatori navigano e interagiscono con il nostro sito, raccogliendo e segnalando dati di utilizzo. Questo ci consente di migliorare le prestazioni del sito e l'esperienza utente.",
 			},
 			marketing: {
 				label: "Cookie di marketing",

@@ -1,3 +1,6 @@
+import { hasCompleteDisclosure, isPolicyUrl } from "../disclosure";
+import { useContext } from "preact/hooks";
+import { ConfigContext } from "@/hooks/use-consent";
 import { t } from "@/i18n";
 
 const linkClass =
@@ -12,6 +15,10 @@ export function PolicyLinks({
 	privacyPolicyUrl,
 	cookiePolicyUrl,
 }: PolicyLinksProps) {
+	privacyPolicyUrl = isPolicyUrl(privacyPolicyUrl)
+		? privacyPolicyUrl
+		: undefined;
+	cookiePolicyUrl = isPolicyUrl(cookiePolicyUrl) ? cookiePolicyUrl : undefined;
 	if (!privacyPolicyUrl && !cookiePolicyUrl) return null;
 
 	return (
@@ -50,6 +57,10 @@ export function PreferencesPolicyLinks({
 	privacyPolicyUrl,
 	cookiePolicyUrl,
 }: PolicyLinksProps) {
+	privacyPolicyUrl = isPolicyUrl(privacyPolicyUrl)
+		? privacyPolicyUrl
+		: undefined;
+	cookiePolicyUrl = isPolicyUrl(cookiePolicyUrl) ? cookiePolicyUrl : undefined;
 	if (!privacyPolicyUrl && !cookiePolicyUrl) return null;
 
 	return (
@@ -78,6 +89,41 @@ export function PreferencesPolicyLinks({
 				</a>
 			)}
 			.
+		</>
+	);
+}
+
+/** The first layer stays concise; controller and purposes are in preferences. */
+export function BannerDescription() {
+	const config = useContext(ConfigContext);
+	return (
+		<>
+			{t.overlay.description}
+			{config && !hasCompleteDisclosure(config) && (
+				<span class="block mt-2" role="status">
+					{t.disclosure.unavailable}
+				</span>
+			)}
+		</>
+	);
+}
+
+export function ConsentNotice() {
+	const config = useContext(ConfigContext);
+	if (!config) return null;
+	return (
+		<>
+			{config.controller?.name && (
+				<span class="cb-controller">
+					{config.controller.name}
+				</span>
+			)}
+			{config.purposes && <span class="cb-purposes">{config.purposes}</span>}
+			{!hasCompleteDisclosure(config) && (
+				<span class="block" role="status">
+					{t.disclosure.unavailable}
+				</span>
+			)}
 		</>
 	);
 }

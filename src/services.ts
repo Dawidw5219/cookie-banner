@@ -1,5 +1,8 @@
+import { hasServiceDisclosure } from "./disclosure";
 import trackers from "../plugin/includes/tracker-database.json";
 import providers from "../plugin/includes/service-database.json";
+import { getService } from "./service-catalog";
+export { getService } from "./service-catalog";
 import { getConsentState } from "@/hooks/use-storage";
 
 export interface Service {
@@ -8,6 +11,7 @@ export interface Service {
 	description: string;
 	privacyUrl: string;
 	requiresConsent?: boolean;
+	retention?: string;
 }
 
 export function matchService(url: string): Service | undefined {
@@ -90,52 +94,12 @@ export function matchService(url: string): Service | undefined {
 		};
 }
 
-// The catalog describes recognized providers; consent UI contains observed services only.
-const known = new Map<string, Service>([
-	...Object.entries(trackers).map(
-		([name, tracker]) =>
-			[
-				tracker.id,
-				{
-					id: tracker.id,
-					name,
-					description: tracker.description,
-					privacyUrl: tracker.privacyLink,
-				},
-			] as [string, Service],
-	),
-	...providers.map(
-		(provider) =>
-			[
-				provider.id,
-				{
-					id: provider.id,
-					name: provider.name,
-					description: provider.category,
-					privacyUrl: "",
-				},
-			] as [string, Service],
-	),
-]);
-
 export function getServices(): Service[] {
 	const services = new Map<string, Service>();
-	const add = (id: string) =>
-		services.has(id) ||
-		services.set(
-			id,
-			known.get(id) || {
-				id,
-				name: id.replace(/^external-/, ""),
-				description: "",
-				privacyUrl: "",
-			},
-		);
-	for (const service of window.__cookieConsent?.services || [])
-		services.set(service.id, {
-			...service,
-			privacyUrl: service.privacyUrl || "",
-		});
+	const add = (id: string) => {
+		if (!services.has(id)) services.set(id, getService(id));
+	};
+	for (const service of window.__cookieConsent?.services || []) add(service.id);
 	for (const id of window.__cookieConsent?.detectedServices || []) add(id);
 	for (const id of Object.keys(getConsentState().services || {})) add(id);
 	if (window.__cookieConsent?.gtmId) add("gtm");
@@ -149,5 +113,7 @@ export function getServices(): Service[] {
 }
 
 export function allServiceGrants(): Record<string, boolean> {
-	return Object.fromEntries(getServices().map(({ id }) => [id, true]));
+	return Object.fromEntries(
+		getServices().map((service) => [service.id, hasServiceDisclosure(service)]),
+	);
 }

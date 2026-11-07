@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9402";
@@ -159,6 +160,11 @@ try {
 		),
 		JSON.stringify(report, null, 2) + "\n",
 	);
+	assert.deepEqual(blocked, [], "External request before consent");
+	assert.equal(playback.status, "playing", "Real video did not play");
+	assert.ok(playback.endTime > playback.startTime, "Video time did not advance");
+	assert.deepEqual(errors, [], "Page JavaScript errors");
+	assert.deepEqual(badScripts, [], "Optimized script returned non-JavaScript content");
 	console.log(JSON.stringify(report, null, 2));
 } finally {
 	await b.close();

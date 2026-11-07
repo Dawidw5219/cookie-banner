@@ -9,12 +9,18 @@ function cookie4_csp_enabled(): bool {
 function cookie4_csp_grants(): array {
     $raw = $_COOKIE['cb_csp_consent'] ?? '[]';
     if (!is_string($raw) || strlen($raw) > 4096) { return []; }
-    $ids = json_decode(wp_unslash($raw));
+    $record = json_decode(wp_unslash($raw), true);
+    $config = cookie4_build_config();
+    if (!cookie4_disclosure_ready($config)) { return []; }
+    $version = $config['noticeVersion'];
+    if (!is_array($record) || ($record['version'] ?? null) !== $version ||
+        !is_numeric($record['expires'] ?? null) || $record['expires'] <= microtime(true) * 1000) { return []; }
+    $ids = $record['services'] ?? null;
     if (!is_array($ids) || count($ids) > 100) { return []; }
     foreach ($ids as $id) {
         if (!is_string($id) || !preg_match('/^[a-z0-9_.-]{1,100}$/iD', $id)) { return []; }
     }
-    return array_values(array_unique($ids));
+    return array_values(array_filter(array_unique($ids), fn($id) => cookie4_service_disclosed($id, $config)));
 }
 
 function cookie4_csp_registry(): array {
@@ -73,8 +79,8 @@ function cookie4_csp_policy(array $embedded_services = []): string {
         'script-src' => ["'self'", "'unsafe-inline'"],
         'style-src' => ["'self'", "'unsafe-inline'"],
         'img-src' => ["'self'", 'data:'], 'font-src' => ["'self'", 'data:'],
-        'connect-src' => ["'self'"], 'frame-src' => ["'self'"],
-        'media-src' => ["'self'"], 'worker-src' => ["'self'"],
+        'connect-src' => ["'self'"], 'frame-src' => [],
+        'media-src' => ["'self'"], 'worker-src' => [],
     ];
     $rocket = get_option('wp_rocket_settings', []);
     $needs_eval = defined('WP_ROCKET_VERSION') && !empty($rocket['delay_js']);
@@ -98,7 +104,7 @@ function cookie4_csp_policy(array $embedded_services = []): string {
             }
         }
     }
-    return implode('; ', array_map(fn($key) => $key . ' ' . implode(' ', array_unique($directives[$key])), array_keys($directives)));
+    return implode('; ', array_map(fn($key) => $key . ' ' . ($directives[$key] ? implode(' ', array_unique($directives[$key])) : "'none'"), array_keys($directives)));
 }
 
 add_action('template_redirect', function () {

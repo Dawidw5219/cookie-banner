@@ -41,6 +41,7 @@ function cookie4_rest_get_settings(): WP_REST_Response {
 
 	// Add custom_texts (not a standard field).
 	$values['custom_texts'] = get_option( 'cookie4_custom_texts', '' );
+ $values['localizations'] = get_option('cookie4_localizations', '{}');
 
 	return new WP_REST_Response( [
 		'settings' => $values,
@@ -58,10 +59,16 @@ function cookie4_rest_get_settings(): WP_REST_Response {
 	] );
 }
 
-function cookie4_rest_put_settings( WP_REST_Request $request ): WP_REST_Response {
+function cookie4_rest_put_settings( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 	$fields  = cookie4_get_fields();
 	$payload = $request->get_json_params();
 	$updated = [];
+ $localizations = null;
+ if (array_key_exists('localizations', $payload)) {
+  $localizations = cookie4_validate_localizations($payload['localizations']);
+  if (is_wp_error($localizations)) { return $localizations; }
+ }
+
 
 	foreach ( $fields as $key => $field ) {
 		$short = preg_replace( '/^cookie4_/', '', $key );
@@ -109,6 +116,7 @@ function cookie4_rest_put_settings( WP_REST_Request $request ): WP_REST_Response
 		}
 	}
 
+ if ($localizations !== null) { update_option('cookie4_localizations', $localizations); $updated['localizations'] = $localizations; }
 	if ($updated) { cookie4_csp_refresh_cache(); }
 	return new WP_REST_Response( [ 'updated' => $updated ] );
 }

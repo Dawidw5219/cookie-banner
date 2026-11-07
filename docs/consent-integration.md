@@ -2,6 +2,8 @@
 
 Pakiet i wtyczka korzystają z jednego modelu zgód oraz rejestru rozpoznawania usług. Wyniki skanowania pozostają w istniejącym module `plugin/src/features/scanner` i dotychczasowych opcjach WordPressa. Nie ma drugiej tabeli cookies.
 
+**Wersja 2.0:** [obowiązkowa migracja informacji i dowodów zgody](consent-compliance.md). Stare wybory są unieważniane.
+
 ## Npm: kod własnej strony / Next.js
 
 Nowy punkt wejścia: `cookie-banner/native`. Sam import i funkcje generujące atrybuty są bezpieczne w SSR. Klient pobiera kod bannera dopiero podczas inicjalizacji. Dotychczasowy bundle IIFE pozostaje w `cookie-banner` i `cookie-banner/auto`.
@@ -39,12 +41,16 @@ export function ConsentProvider() {
       mode: "standalone",
       lang: "pl",
       variant: "bar",
+      noticeVersion: "2026-11-06.1",
+      controller: {name: "RZECZYWISTA NAZWA ADMINISTRATORA"},
+      purposes: "Odtwarzanie opcjonalnych filmów przez zewnętrznego dostawcę.",
       privacyPolicyUrl: "/polityka-prywatnosci",
       services: [{
         id: "youtube",
         name: "YouTube",
         description: "Odtwarzanie osadzonych filmów. Po zgodzie Google otrzyma adres IP i dane przeglądarki.",
         privacyUrl: "https://policies.google.com/privacy",
+        retention: "Wpisz zweryfikowany okres lub kryteria usunięcia danych dla tego wdrożenia.",
       }],
     }).then(cleanup => {
       if (cancelled) cleanup();
@@ -81,7 +87,7 @@ Warstwy działania:
 1. `script_loader_tag`, `wp_inline_script_attributes`, `render_block`, `embed_oembed_html` przekształcają rozpoznane zasoby i kod powiązany z enqueue.
 2. Bufor całej odpowiedzi PHP obejmuje również surowe `echo`, iframe i rozpoznane inline loadery. Parser WP neutralizuje `src`, alternatywne adresy lazy load, srcset i odpowiednie wskazówki połączeń. Skrypty są `text/plain`.
 3. Synchronous bootstrap jest przenoszony na początek gotowego head, przed kod wydrukowany przed `wp_head`. Ma atrybuty wyłączenia optymalizacji dla popularnych loaderów.
-4. Guard przechwytuje natywne właściwości URL, `setAttribute`, wstawianie węzłów i typowe operacje HTML przed wywołaniem implementacji przeglądarki. Dodatkowo zatrzymuje rozpoznane opcjonalne żądania `fetch`, XHR i `sendBeacon`. Nieznane iframe są grupowane osobno według dostawcy/domeny; celu nieznanych skryptów nie zgadujemy.
+4. Guard przechwytuje natywne właściwości URL, `setAttribute`, wstawianie węzłów i typowe operacje HTML przed wywołaniem implementacji przeglądarki. Dodatkowo zatrzymuje rozpoznane opcjonalne żądania `fetch`, XHR i `sendBeacon`. Nieznane iframe są grupowane osobno według dostawcy/domeny i pozostają nieaktywne do uzupełnienia informacji; celu nieznanych skryptów nie zgadujemy.
 5. Runtime pokazuje lokalny boks bez zewnętrznej miniatury, aktywuje wyłącznie wybraną usługę i zachowuje kolejność odblokowywanych skryptów. Piksele śledzące i wskazówki połączeń nie dostają dużych widocznych boksów.
 6. Istniejący skaner rozróżnia zablokowany element od requestu zaobserwowanego w Performance API. Audyt administratora wymusza odmowę bez nadpisywania jego zapamiętanych wyborów.
 
@@ -148,6 +154,7 @@ installed by a client effect. Apply it to the initial HTML response:
 import { consentCspHeaders } from 'cookie-banner/native';
 
 const csp = {
+  noticeVersion: "2026-11-06.1", // Same value in the client config.
   services: {
     youtube: {
       'script-src': ['https://www.youtube.com', 'https://s.ytimg.com'],
@@ -260,3 +267,24 @@ Reference source versions and the resulting design decisions are documented in
 `docs/research/wordpress-product-comparison.md`. Competitor packages are kept only
 in ignored `reference-plugins/` and can be restored with
 `python3 scripts/fetch-cookie-references.py`.
+
+### Te same funkcje poza WordPressem
+
+Rdzeń npm i wtyczka używają tych samych komponentów i mechanizmów zgody.
+`buttonStyle: 'equal'` jest domyślnym trybem ścisłym; `'standard'` wybiera wypełnioną
+akceptację i obrysowaną odmowę. To wybór wyglądu, nie wyłącznik ochrony danych.
+
+W konfiguracji npm dostępne są również `localizations`, `customTexts`,
+`serviceDisclosures`, `categoryCleanup`, `autoBlock: true`, `strictCsp: true`,
+`receiptEndpoint` i `receiptNonce`. CSP wymaga nagłówka z serwera aplikacji;
+przykład Next.js/SSR znajduje się w `docs/multilingual.md`.
+
+Z `cookie-banner/native` można odczytać `getDetectedServices()` (zaobserwowane
+usługi z tego samego rejestru), `getConsentReceipt()` i korzystać z
+`hasServiceConsent`, `setServiceConsent`, `onServiceConsent` oraz nieaktywnych
+atrybutów `blockedContentProps` / `blockedScriptProps`.
+
+Panel, zapis w tabeli bazy danych WordPressa, WPML/Polylang i czyszczenie cache
+wtyczek są adapterami WordPressa. W innej aplikacji jej backend odbiera dowody przez
+`receiptEndpoint`, a ustawienia przekazuje się jako konfigurację npm. Sam pakiet
+przeglądarkowy nie tworzy bazy danych ani panelu administracyjnego hosta.

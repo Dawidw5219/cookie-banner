@@ -1,0 +1,17 @@
+{
+  "testedAt": "2026-11-06T22:42:44.932Z",
+  "rows": [
+    {
+      "status": 200,
+      "cache": "miss",
+      "server": "LiteSpeed",
+      "body": "cache-capability-probe:1794004964.8864"
+    },
+    {
+      "status": 200,
+      "cache": "hit",
+      "server": "LiteSpeed",
+      "body": "cache-capability-probe:1794004964.8864"
+    }
+  ]
+}

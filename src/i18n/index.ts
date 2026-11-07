@@ -1,3 +1,4 @@
+import { normalizeLocale, mergeTexts } from "../locale";
 import { da } from "./da";
 import { de } from "./de";
 import { en } from "./en";
@@ -24,25 +25,19 @@ const translations: Record<string, TranslationSchema> = {
 	sv,
 };
 
+export const SUPPORTED_LANGUAGES = Object.keys(translations);
+
 export let t: TranslationSchema = en;
 
-export function setLang(lang: string): void {
-	t = translations[lang] ?? en;
+export function resolveTranslation(lang: string, overrides?: Record<string, unknown>): TranslationSchema {
+	const base = translations[normalizeLocale(lang).split("-")[0]] ?? en;
+	return overrides ? mergeTexts(base, overrides) as TranslationSchema : base;
 }
 
-function deepMerge<T extends Record<string, unknown>>(base: T, overrides: Record<string, unknown>): T {
-	const result = { ...base } as Record<string, unknown>;
-	for (const key of Object.keys(overrides)) {
-		const val = overrides[key];
-		if (val && typeof val === "object" && !Array.isArray(val) && typeof result[key] === "object") {
-			result[key] = deepMerge(result[key] as Record<string, unknown>, val as Record<string, unknown>);
-		} else if (typeof val === "string" && val !== "") {
-			result[key] = val;
-		}
-	}
-	return result as T;
+export function setLang(lang: string): void {
+	t = translations[normalizeLocale(lang).split("-")[0]] ?? en;
 }
 
 export function applyCustomTexts(overrides: Record<string, unknown>): void {
-	t = deepMerge(t, overrides);
+	t = mergeTexts(t, overrides) as TranslationSchema;
 }

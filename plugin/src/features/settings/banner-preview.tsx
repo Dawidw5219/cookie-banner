@@ -1,5 +1,5 @@
 import { wp } from "@/shared/types/wp";
-import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
+import { useLayoutEffect, useRef, useState } from "preact/hooks";
 import { Button } from "@/shared/ui/button";
 
 interface BannerPreviewProps {
@@ -26,7 +26,7 @@ export function BannerPreview({ config, previewVariant }: BannerPreviewProps) {
 		}
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const timeout = window.setTimeout(() => setState((current) => current === "loading" ? "error" : current), 15000);
 		function onMessage(event: MessageEvent) {
 			// Only the opaque sandbox for this preview may change its loading state.

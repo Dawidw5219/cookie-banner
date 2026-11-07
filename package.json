@@ -1,12 +1,15 @@
 {
   "name": "cookie-banner",
-  "version": "1.4.1",
+  "version": "2.0.0",
   "description": "Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.",
   "type": "module",
   "main": "dist/cookie-banner.js",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "docs/consent-compliance.md",
+    "docs/consent-integration.md",
+    "docs/multilingual.md"
   ],
   "repository": {
     "type": "git",
@@ -24,7 +27,9 @@
     "typecheck": "tsc --noEmit",
     "build:all": "bun run build",
     "update:databases": "bun run scripts/update-service-databases.ts",
-    "test:browser": "node scripts/test-browser.mjs"
+    "test:browser": "node scripts/test-browser.mjs",
+    "test:package": "node scripts/test-npm-package.mjs",
+    "test:privacy": "node scripts/test-consent-hardening.mjs"
   },
   "dependencies": {
     "preact": "^10"

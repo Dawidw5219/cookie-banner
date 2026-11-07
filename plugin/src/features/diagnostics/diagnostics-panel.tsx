@@ -17,6 +17,7 @@ export function DiagnosticsPanel({
 }: {
 	model: ReturnType<typeof useDiagnostics>;
 }) {
+	const [exporting, setExporting] = useState(false);
 	const [checking, setChecking] = useState(false);
 	const [purging, setPurging] = useState(false);
 	const [check, setCheck] = useState<FrontendCheck | null>(null);
@@ -68,6 +69,34 @@ export function DiagnosticsPanel({
 			setPurging(false);
 		}
 	}
+	async function exportReceipts() {
+		setExporting(true);
+		setError("");
+		try {
+			const records = await api<{
+				receipts: unknown[];
+				nextOffset: number | null;
+			}>("/consent-receipts");
+			const url = URL.createObjectURL(
+				new Blob([JSON.stringify(records, null, 2)], {
+					type: "application/json",
+				}),
+			);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `consent-receipts-${new Date().toISOString().slice(0, 10)}.json`;
+			link.click();
+			window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+		} catch (cause) {
+			setError(
+				cause instanceof Error
+					? cause.message
+					: "Could not export consent records",
+			);
+		} finally {
+			setExporting(false);
+		}
+	}
 	const data = model.data;
 	return (
 		<div class="cb-section-stack">
@@ -110,17 +139,12 @@ export function DiagnosticsPanel({
 							].map(([label, value]) => (
 								<div key={label} class="cb-diagnostic-item">
 									<dt class="cb-help">{label}</dt>
-									<dd class="cb-diagnostic-value">
-										{value}
-									</dd>
+									<dd class="cb-diagnostic-value">{value}</dd>
 								</div>
 							))}
 						</dl>
 						{data.otherConsentPlugins.length > 0 && (
-							<div
-								role="alert"
-								class="cb-alert cb-alert--warning mt-5"
-							>
+							<div role="alert" class="cb-alert cb-alert--warning mt-5">
 								Other consent plugins are active:{" "}
 								{data.otherConsentPlugins.join(", ")}. Running multiple banners
 								may produce conflicting consent states. Review them before
@@ -183,6 +207,20 @@ export function DiagnosticsPanel({
 						{message}
 					</p>
 				)}
+			</Card>
+			<Card
+				title="Consent evidence"
+				description="WordPress retains minimal records of decisions, their time and privacy notice version. No visitor IP or user agent is included in the evidence. Default retention is 180 days; the site's retention policy must cover this recordkeeping."
+			>
+				<p class="cb-help">
+					Download the latest 100 records. The protected REST endpoint also
+					supports pagination for larger exports.
+				</p>
+				<Button onClick={exportReceipts} disabled={exporting}>
+					{exporting
+						? "Preparing export…"
+						: "Export latest 100 consent records"}
+				</Button>
 			</Card>
 		</div>
 	);

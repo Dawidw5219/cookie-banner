@@ -2,9 +2,9 @@
 Contributors: app4you
 Tags: cookie, gdpr, consent, google tag manager, consent mode
 Requires at least: 6.5
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.4.1
+Stable tag: 2.0.0
 License: GPL-2.0-or-later
 
 Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
@@ -42,10 +42,23 @@ Features:
 
 == Upgrade Notice ==
 
+= 2.0.0 =
+Review the controller, processing purposes, privacy policy and provider disclosures before upgrading. Incomplete optional services remain blocked and prior consent records are invalidated. Strict button appearance is the default; choose Standard for outlined refusal. Both styles retain consent blocking. Multilingual content and migration instructions are in the repository documentation.
+
 = 1.3.0 =
 Strict consent CSP is enabled by default. Optional external services require explicit consent and page reload. HTML page caching is bypassed; purge any additional CDN/proxy cache before enabling public traffic. Review external essential origins and custom integrations before upgrading.
 
 == Changelog ==
+
+= 2.0.0 =
+* Require reviewed controller/purpose/policy and provider information before optional consent.
+* Add versioned consent evidence, WordPress server records, export and retention.
+* Add direct withdrawal, declared identifier cleanup and immediate network restriction before reload.
+* Refine the popup and theme-aware video/iframe placeholders.
+* Add Strict (default) and Standard button styles shared with the npm package.
+* Complete ten-language UI/blocker/shortcode dictionaries and per-language custom content.
+* Add Polylang/WPML language, string translation and policy-page adapters.
+* Preserve consent/CSP separation by language and verify optimizer/cache behavior.
 
 = 1.4.1 =
 * Refine all administrator sections with consistent cards, typography, controls and accessible contrast.
@@ -96,3 +109,8 @@ Strict consent CSP is enabled by default. Optional external services require exp
 
 = 1.0.0 =
 * Initial release.
+
+== Upgrade notice ==
+
+= 2.0.0 =
+Optional processing stays blocked until controller, purposes, privacy policy and reviewed provider disclosures are complete. Previous consent is invalidated. Consent evidence is retained locally in WordPress for 180 days by default.

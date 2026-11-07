@@ -63,7 +63,10 @@ function cookie4_classify_wp_cookie( string $name ): string {
  */
 function cookie4_match_own_cookie( string $name ): ?array {
 	$own = [
-		'cb_has_consented'      => 'Stores whether the visitor has interacted with the cookie consent banner.',
+		'cb_consent_commit'     => 'Synchronizes the completed consent change across browser tabs.',
+        'cb_consent_record'     => 'Stores the current consent receipt and the version of the privacy information shown.',
+        'cb_csp_consent'        => 'Stores versioned service choices for server-enforced network blocking.',
+        'cb_has_consented'      => 'Stores whether the visitor has interacted with the cookie consent banner.',
 		'cb_consent_essential'  => 'Stores consent status for essential/functional cookies (always granted).',
 		'cb_consent_analytics'  => 'Stores consent status for analytics cookies.',
 		'cb_consent_marketing'  => 'Stores consent status for marketing cookies.',
@@ -77,7 +80,7 @@ function cookie4_match_own_cookie( string $name ): ?array {
 		'category'        => 'Functional',
 		'platform'        => 'Cookie Banner App4You',
 		'description'     => $own[ $name ],
-		'retentionPeriod' => 'Persistent (localStorage)',
+		'retentionPeriod' => '180 days',
 		'privacyLink'     => '',
 	];
 }
