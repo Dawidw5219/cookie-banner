@@ -26,6 +26,10 @@ bun run test
 bun run typecheck
 ```
 
+Build bannera oraz build panelu WordPressa zaczynają się od sprawdzenia typów.
+Wszystkie słowniki muszą odpowiadać schematowi `src/i18n/en.ts`; brak klucza,
+nieprawidłowy typ tłumaczenia lub błędny klucz edytora przerywa build.
+
 ## Struktura projektu
 
 - `src/core/` — logika zgód, zapis, usługi, CSP i blokowanie zasobów.
@@ -74,10 +78,16 @@ Punkt wejścia `@app4you/cookie-banner/native` udostępnia bezpieczne w SSR
 zgody na konkretną usługę. W WordPressie działa oddzielna warstwa blokowania
 HTML i dynamicznych loaderów, korzystająca z istniejącego skanera.
 
+[Integracja npm / Next.js i WordPress](docs/consent-integration.md).
+
 Tryb rygorystyczny używa CSP w odpowiedzi HTTP i przeładowania po zmianie zgody.
 Npm udostępnia `consentCspHeaders`; WordPress włącza ten tryb domyślnie.
 HTML zależny od zgód omija współdzielony cache, a optymalizacje JS/CSS pozostają aktywne.
+[Konfiguracja wdrożeń](docs/deployment-security.md).
 
-## Migracja do 2.0
+## Konfiguracja zgód
 
-Wersja 2.0 celowo blokuje opcjonalne usługi przy niepełnych informacjach i wymaga nowego wyboru dla starych zgód.
+Opcjonalne usługi pozostają zablokowane przy niepełnych informacjach o administratorze, celu i dostawcy. Zmiana wersji informacji wymaga ponownego wyboru.
+
+[Wymagane informacje i konfiguracja zgód](docs/consent-compliance.md).
+[Konfiguracja języków, WPML i Polylang](docs/multilingual.md).

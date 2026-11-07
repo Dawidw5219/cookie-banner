@@ -267,12 +267,12 @@ $source_labels = [
 				];
 
 				$audit_status_classes = [
-					'ok'        => 'bg-emerald-100 text-emerald-800 border-emerald-200',
+					'not_observed' => 'bg-gray-100 text-gray-800 border-gray-200',
 					'violation' => 'bg-red-100 text-red-800 border-red-200',
 				];
 				$audit_status_labels = [
-					'ok'        => __( 'Respects consent', 'cookie-banner-wp' ),
-					'violation' => __( 'Loads without consent', 'cookie-banner-wp' ),
+					'not_observed' => __( 'No request observed in audit', 'cookie-banner-wp' ),
+					'violation' => __( 'Request observed during deny-all', 'cookie-banner-wp' ),
 				];
 				?>
 
@@ -292,6 +292,7 @@ $source_labels = [
 								$icon_svg   = $tracker_icons[ $icon_key ] ?? '<div class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-xs font-bold">' . strtoupper( mb_substr( $tracker['name'] ?? '?', 0, 2 ) ) . '</div>';
 								$cat_class  = $category_colors[ $tracker['category'] ] ?? 'bg-gray-100 text-gray-700';
 								$audit_st   = $tracker['audit_status'] ?? '';
+								if ( $audit_st === 'ok' ) $audit_st = 'not_observed';
 								$page_count = count( $tracker['pages'] ?? [] );
 							?>
 							<div class="rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors">
@@ -307,8 +308,8 @@ $source_labels = [
 											</span>
 											<?php if ( $audit_st && isset( $audit_status_classes[ $audit_st ] ) ) : ?>
 												<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border <?php echo esc_attr( $audit_status_classes[ $audit_st ] ); ?>">
-													<?php if ( $audit_st === 'ok' ) : ?>
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+													<?php if ( $audit_st === 'not_observed' ) : ?>
+														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>
 													<?php else : ?>
 														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/></svg>
 													<?php endif; ?>

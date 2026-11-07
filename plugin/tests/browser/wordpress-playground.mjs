@@ -1,5 +1,7 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9400";
 const b = await chromium.launch({
 	executablePath:
@@ -69,7 +71,7 @@ try {
 	};
 	await fs.writeFile(
 		new URL(
-			"../../../docs/research/wordpress-playground-results.json",
+			browserTestOutputDirectory + "/wordpress-playground-results.json",
 			import.meta.url,
 		),
 		JSON.stringify(report, null, 2) + "\n",

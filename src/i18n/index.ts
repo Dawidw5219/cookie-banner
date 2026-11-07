@@ -12,6 +12,12 @@ import { sv } from "./sv";
 
 export type TranslationSchema = typeof en;
 
+type StringPaths<T> = {
+	[K in keyof T & string]: T[K] extends string ? K : `${K}.${StringPaths<T[K]>}`;
+}[keyof T & string];
+
+export type TranslationKey = StringPaths<TranslationSchema>;
+
 const translations: Record<string, TranslationSchema> = {
 	en,
 	pl,

@@ -1,5 +1,7 @@
+import { browserTestOutputDirectory } from "../browser-output.mjs";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
+
 const browser = await chromium.launch({
 	executablePath:
 		process.env.CHROME_PATH ||
@@ -69,7 +71,7 @@ try {
 		results,
 	};
 	await fs.writeFile(
-		new URL("../../docs/research/hostile-loaders-results.json", import.meta.url),
+		new URL(browserTestOutputDirectory + "/hostile-loaders-results.json", import.meta.url),
 		JSON.stringify(report, null, 2) + "\n",
 	);
 	console.log(JSON.stringify(report, null, 2));

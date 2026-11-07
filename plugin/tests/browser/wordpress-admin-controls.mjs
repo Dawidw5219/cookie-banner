@@ -1,10 +1,12 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+
 const base = process.env.WORDPRESS_TEST_URL || 'http://127.0.0.1:9403';
 const session = JSON.parse(await fs.readFile(process.env.WORDPRESS_ADMIN_SESSION || '/tmp/cb-admin-test-session.json', 'utf8'));
 const browser = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
-const dir = 'docs/screenshots/admin-controls';
+const dir = browserTestOutputDirectory + "/screenshots/admin-controls";
 try {
  const context = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
  await context.addCookies(session.cookies);

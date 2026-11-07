@@ -1,7 +1,9 @@
+import { browserTestOutputDirectory } from "../browser-output.mjs";
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
+
 const languages={en:'Allow and play',pl:'Zgadzam się — odtwórz',de:'Zustimmen und abspielen',fr:'Accepter et lire',es:'Aceptar y reproducir',it:'Accetta e riproduci',nl:'Toestaan en afspelen',da:'Tillad og afspil',no:'Tillat og spill av',sv:'Tillåt och spela'};
 const config={mode:'standalone',lang:'auto',controller:{name:'Controller'},purposes:'Base purpose',noticeVersion:'multi-1',privacyPolicyUrl:'/privacy',serviceDisclosures:{youtube:{description:'Video',privacyUrl:'https://policies.google.com/privacy',retention:'Session'}},localizations:{}};
 for(const lang of Object.keys(languages)) config.localizations[lang]={purposes:`Purpose ${lang}`,privacyPolicyUrl:`/${lang}/privacy`,serviceDisclosures:{youtube:{description:`Video ${lang}`,retention:`Retention ${lang}`}},customTexts:{'overlay.title':`Banner ${lang}`}};
@@ -44,7 +46,7 @@ try{
   results.push(`${lang}: popup, provider description/retention, policy URL and blocker match page language; zero external requests`);
   await context.close();
  }
- await mkdir(new URL('../../docs/research/multilingual/',import.meta.url),{recursive:true});
- await writeFile(new URL('../../docs/research/multilingual/native-results.json',import.meta.url),JSON.stringify({testedAt:new Date().toISOString(),results},null,2)+'\n');
+ await mkdir(new URL(browserTestOutputDirectory + "/multilingual/",import.meta.url),{recursive:true});
+ await writeFile(new URL(browserTestOutputDirectory + "/multilingual/native-results.json",import.meta.url),JSON.stringify({testedAt:new Date().toISOString(),results},null,2)+'\n');
  console.log(results.join('\n'));
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

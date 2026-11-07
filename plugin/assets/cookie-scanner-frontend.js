@@ -500,8 +500,7 @@
 			const idx = pair.indexOf('=');
 			if (idx < 1) return;
 			const name = pair.substring(0, idx).trim();
-			const value = pair.substring(idx + 1).trim();
-			items.push({ name, value: value.substring(0, 50), domain: window.location.hostname, source: 'cookie', page: pageUrl });
+			items.push({ name, domain: window.location.hostname, source: 'cookie', page: pageUrl });
 		});
 		return items;
 	}
@@ -513,8 +512,7 @@
 			for (let i = 0; i < storage.length; i++) {
 				const name = storage.key(i);
 				if (!name) continue;
-				const value = (storage.getItem(name) || '').substring(0, 50);
-				items.push({ name, value, domain: window.location.hostname, source, page: pageUrl });
+				items.push({ name, domain: window.location.hostname, source, page: pageUrl });
 			}
 		} catch (e) { /* Storage may be blocked */ }
 		return items;

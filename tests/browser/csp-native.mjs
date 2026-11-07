@@ -1,8 +1,10 @@
+import { browserTestOutputDirectory } from "../browser-output.mjs";
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { consentCspHeaders } from "../../dist/native.js";
+
 const options = {
 	noticeVersion: "test-notice-1",
 	services: {
@@ -129,7 +131,7 @@ try {
 		],
 	};
 	await writeFile(
-		new URL("../../docs/research/native-csp-results.json", import.meta.url),
+		new URL(browserTestOutputDirectory + "/native-csp-results.json", import.meta.url),
 		JSON.stringify(report, null, 2) + "\n",
 	);
 	console.log(JSON.stringify(report, null, 2));

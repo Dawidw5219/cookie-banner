@@ -1,5 +1,7 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
+
 const url = process.env.WORDPRESS_TEST_URL;
 if (!url) throw Error("Set WORDPRESS_TEST_URL to the confirmed target URL.");
 const bundle = await fs.readFile(
@@ -90,7 +92,7 @@ try {
 		results,
 	};
 	await fs.writeFile(
-		new URL("../../../docs/research/wordpress-live-results.json", import.meta.url),
+		new URL(browserTestOutputDirectory + "/wordpress-live-results.json", import.meta.url),
 		JSON.stringify(report, null, 2) + "\n",
 	);
 	console.log(JSON.stringify(report, null, 2));

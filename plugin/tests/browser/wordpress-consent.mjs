@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9400";
 const b = await chromium.launch({
 	executablePath:
@@ -72,7 +74,7 @@ try {
 	outcomes.push("cache does not share a previous visitor grant");
 	await fresh.c.close();
 	await fs.writeFile(
-		new URL("../../../docs/research/wordpress-consent-results.json", import.meta.url),
+		new URL(browserTestOutputDirectory + "/wordpress-consent-results.json", import.meta.url),
 		JSON.stringify({ base, outcomes }, null, 2) + "\n",
 	);
 	console.log(outcomes);

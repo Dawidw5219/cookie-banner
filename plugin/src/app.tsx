@@ -1,4 +1,4 @@
-import { COOKIE_SHAPE, COOKIE_CHIPS } from "../../src/ui/cookie-icon";
+import { COOKIE_SHAPE, COOKIE_CHIPS } from "../../src/core/cookie-artwork";
 import { useEffect, useState } from "preact/hooks";
 import { useSettings } from "@/features/settings/use-settings";
 import { useServices } from "@/features/services/use-services";

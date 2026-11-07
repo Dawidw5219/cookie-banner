@@ -2,10 +2,10 @@ import {
 	hasCompleteDisclosure,
 	hasServiceDisclosure,
 	isPolicyUrl,
-} from "../core/disclosure";
+} from "./disclosure";
 import { resolveTranslation } from "../i18n/index";
-import { applyTheme } from "../core/theme";
-import type { Service } from "../core/services";
+import { applyTheme } from "./theme";
+import type { Service } from "./services";
 
 /** Local artwork only: even a preview thumbnail must not contact the provider. */
 export function createContentPlaceholder(

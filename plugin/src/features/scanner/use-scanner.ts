@@ -30,7 +30,7 @@ export interface Tracker {
 	pages: string[];
 	first_seen: string;
 	last_seen: string;
-	audit_status: "" | "ok" | "violation";
+	audit_status: "" | "not_observed" | "violation";
 }
 
 interface CookiesResponse {

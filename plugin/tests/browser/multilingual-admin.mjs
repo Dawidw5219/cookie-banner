@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {chromium} from 'playwright';
+
 const base='http://127.0.0.1:9403';
 const session=JSON.parse(await readFile('/tmp/cb-admin-test-session.json','utf8'));
 const fixture=JSON.parse(await readFile('/tmp/cb-multilingual-options.json','utf8'));
@@ -28,8 +30,8 @@ try{
  assert.equal(cfg.purposes,'Videos nur nach Ihrer Einwilligung.');
  assert.equal(await visitor.locator('.cb-content-placeholder button').first().textContent(),'Video erlauben');
  await visitor.close();
- await mkdir(new URL('../../../docs/research/multilingual/',import.meta.url),{recursive:true});
- await writeFile(new URL('../../../docs/research/multilingual/admin-results.json',import.meta.url),JSON.stringify({testedAt:new Date().toISOString(),results:['Real admin locale editor saved a German purpose, title and blocker button; isolated preview and public German page display those exact values; original locale settings restored']},null,2)+'\n');
+ await mkdir(new URL(browserTestOutputDirectory + "/multilingual/",import.meta.url),{recursive:true});
+ await writeFile(new URL(browserTestOutputDirectory + "/multilingual/admin-results.json",import.meta.url),JSON.stringify({testedAt:new Date().toISOString(),results:['Real admin locale editor saved a German purpose, title and blocker button; isolated preview and public German page display those exact values; original locale settings restored']},null,2)+'\n');
  console.log('PASS actual locale editor, REST save, translated preview and public page');
 }finally{
  if(original!==undefined)await page.evaluate(async original=>{const r=await fetch(window.cookie4Admin.restUrl+'/settings',{method:'PUT',headers:{'Content-Type':'application/json','X-WP-Nonce':window.cookie4Admin.nonce},body:JSON.stringify({localizations:original})});if(!r.ok)throw new Error('Failed to restore locale settings');},original);

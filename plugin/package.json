@@ -9,7 +9,7 @@
     "prep": "mkdir -p assets && cp ../dist/cookie-banner.js assets/cookie-banner.js",
     "dev": "bun run prep && concurrently \"vite build --watch\" \"grunt dev\"",
     "dev:vite": "vite build --watch",
-    "build": "bun run prep && vite build && grunt build",
+    "build": "bun run typecheck && bun run prep && vite build && grunt build",
     "typecheck": "tsc --noEmit",
     "zip": "grunt compress",
     "lint": "grunt lint",

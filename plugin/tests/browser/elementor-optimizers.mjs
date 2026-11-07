@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
 import assert from "node:assert/strict";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9401";
 const b = await chromium.launch({
 	executablePath:
@@ -126,7 +128,7 @@ try {
 			});
 			await fs.writeFile(
 				new URL(
-					"../../../docs/research/elementor-" +
+					browserTestOutputDirectory + "/elementor-" +
 						(process.env.OPTIMIZER_NAME || "litespeed") +
 						"-results.json",
 					import.meta.url,
@@ -221,7 +223,7 @@ try {
 		await ctx.close();
 		await fs.writeFile(
 			new URL(
-				"../../../docs/research/elementor-" +
+				browserTestOutputDirectory + "/elementor-" +
 					(process.env.OPTIMIZER_NAME || "litespeed") +
 					"-results.json",
 				import.meta.url,
@@ -231,7 +233,7 @@ try {
 	}
 	await fs.writeFile(
 		new URL(
-			"../../../docs/research/elementor-" +
+			browserTestOutputDirectory + "/elementor-" +
 				(process.env.OPTIMIZER_NAME || "litespeed") +
 				"-results.json",
 			import.meta.url,

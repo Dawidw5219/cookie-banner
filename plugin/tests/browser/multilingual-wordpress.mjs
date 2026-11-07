@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import assert from 'node:assert/strict';
 import { readFile,writeFile,mkdir } from 'node:fs/promises';
 import {chromium} from 'playwright';
+
 const fixture=JSON.parse(await readFile('/tmp/cb-multilingual-options.json','utf8'));
 const base='http://127.0.0.1:9403';
 const labels={en:['Reject All','Allow and play'],pl:['Odrzuć wszystkie','Zgadzam się — odtwórz'],de:['Alle ablehnen','Zustimmen und abspielen']};
@@ -42,7 +44,7 @@ try{
   results.push(`${lang}: actual Polylang 3.9.1 page language, translated policy page and custom disclosures; no pre-consent/refusal requests; consent starts interactive iframe; language-bound receipts accepted`);
   await context.close();
  }
- await mkdir(new URL('../../../docs/research/multilingual/',import.meta.url),{recursive:true});
- await writeFile(new URL('../../../docs/research/multilingual/wordpress-results.json',import.meta.url),JSON.stringify({testedAt:new Date().toISOString(),results},null,2)+'\n');
+ await mkdir(new URL(browserTestOutputDirectory + "/multilingual/",import.meta.url),{recursive:true});
+ await writeFile(new URL(browserTestOutputDirectory + "/multilingual/wordpress-results.json",import.meta.url),JSON.stringify({testedAt:new Date().toISOString(),results},null,2)+'\n');
  console.log(results.join('\n'));
 }finally{await browser.close();}

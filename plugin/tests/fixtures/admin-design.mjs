@@ -8,7 +8,7 @@ export const cookies = [
  { ...cookie, name: 'preferred_theme', source: 'localStorage', category: 'Personalization', description: 'Stores the visitor’s chosen website theme.', retention: 'Until removed' },
 ];
 export const trackers = [
- { tracker_id: 'ga4', name: 'Google Analytics', category: 'Analytics', description: 'Website visit statistics and conversion measurement.', privacy_link: 'https://policies.google.com/privacy', detected_via: 'script', detected_urls: [], pages: ['/', '/contact'], first_seen: '', last_seen: '', audit_status: 'ok' },
+ { tracker_id: 'ga4', name: 'Google Analytics', category: 'Analytics', description: 'Website visit statistics and conversion measurement.', privacy_link: 'https://policies.google.com/privacy', detected_via: 'script', detected_urls: [], pages: ['/', '/contact'], first_seen: '', last_seen: '', audit_status: 'not_observed' },
  { tracker_id: 'meta', name: 'Meta Pixel', category: 'Marketing', description: 'Advertising attribution and audience measurement.', privacy_link: 'https://www.facebook.com/privacy/policy/', detected_via: 'script', detected_urls: [], pages: ['/'], first_seen: '', last_seen: '', audit_status: 'violation' },
  { tracker_id: 'calendar', name: 'Appointment calendar with an intentionally longer provider name', category: 'Functional', description: 'An embedded calendar used to book an appointment.', privacy_link: '', detected_via: 'iframe', detected_urls: [], pages: ['/contact'], first_seen: '', last_seen: '', audit_status: '' },
 ];

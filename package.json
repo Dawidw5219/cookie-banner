@@ -6,7 +6,11 @@
   "main": "dist/cookie-banner.js",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "docs/consent-integration.md",
+    "docs/consent-compliance.md",
+    "docs/multilingual.md",
+    "docs/deployment-security.md"
   ],
   "repository": {
     "type": "git",
@@ -18,7 +22,7 @@
   "scripts": {
     "dev": "vite",
     "build": "bun run build:banner && bun run --cwd plugin build",
-    "build:banner": "vite build && vite build --config vite.native.config.ts && tsc -p tsconfig.package.json && bun run scripts/package-metadata.ts",
+    "build:banner": "bun run typecheck && vite build && vite build --config vite.native.config.ts && tsc -p tsconfig.package.json && bun run scripts/package-metadata.ts",
     "deploy": "bun run build && ghdeploy --release 'plugin/builds/cookie-banner-wp-{version}.zip'",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

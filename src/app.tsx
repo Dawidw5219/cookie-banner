@@ -8,12 +8,24 @@ import { observeBannerHostRemoval, releaseBannerScrollLock, setBannerHostBlockin
 import { App } from "./components/banner";
 import { createBannerHost } from "./core/banner-host";
 import cssText from "./style.css?inline";
+import type { BannerConfig } from "./types";
 
-if (window.__cookieConsent?.autoBlock)
-	installAutoBlocker(window.__cookieConsent);
+let stopAutoBlocker: (() => void) | undefined;
+let autoBlockerConfig: BannerConfig | undefined;
+
+function syncAutoBlocker(config: BannerConfig): void {
+	if (autoBlockerConfig === config) return;
+	stopAutoBlocker?.();
+	stopAutoBlocker = undefined;
+	autoBlockerConfig = undefined;
+	if (!config.autoBlock || config.preview) return;
+	stopAutoBlocker = installAutoBlocker(config);
+	autoBlockerConfig = config;
+}
 
 // Set consent default IMMEDIATELY (before GTM or any other script runs)
 if (window.__cookieConsent) {
+	syncAutoBlocker(window.__cookieConsent);
 	runConsentInit(window.__cookieConsent);
 }
 
@@ -28,6 +40,9 @@ let mountedBanner:
 	| undefined;
 
 export function teardown(): void {
+	stopAutoBlocker?.();
+	stopAutoBlocker = undefined;
+	autoBlockerConfig = undefined;
 	stopContentBlocker?.();
 	stopContentBlocker = undefined;
 	if (!mountedBanner) {
@@ -50,6 +65,8 @@ export function init(): void {
 	if (!window.__cookieConsent) return;
 	const config = resolveLocalizedConfig(window.__cookieConsent);
 	window.__cookieConsent = config;
+	syncAutoBlocker(config);
+	runConsentInit(config);
 	if (!config.preview) stopContentBlocker ||= startContentBlocker(config);
 	if (config.auditMode) return;
 	setLang(config.lang ?? "en");

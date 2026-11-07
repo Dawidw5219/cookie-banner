@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9402";
 const b = await chromium.launch({
 	executablePath:
@@ -151,7 +153,7 @@ try {
 	};
 	await fs.writeFile(
 		new URL(
-			"../../../docs/research/elementor-" +
+			browserTestOutputDirectory + "/elementor-" +
 				(process.env.PLAYER_TEST_NAME
 					? process.env.PLAYER_TEST_NAME + "-"
 					: "") +

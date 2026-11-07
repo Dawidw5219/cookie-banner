@@ -1,4 +1,5 @@
 import { resolveTranslation } from "../../../../src/i18n";
+import type { TranslationKey } from "../../../../src/i18n";
 /**
  * Default translation strings for each language.
  * Mirrors packages/cookie-banner/src/i18n/ files.
@@ -6,7 +7,7 @@ import { resolveTranslation } from "../../../../src/i18n";
  */
 
 export interface TextEntry {
-	key: string;
+	key: TranslationKey;
 	label: string;
 	group: string;
 	multiline?: boolean;
@@ -67,7 +68,7 @@ function addRuntimeFields(value: Record<string, unknown>, prefix = "") {
  for (const [key, item] of Object.entries(value)) {
   const path = prefix ? `${prefix}.${key}` : key;
   if (typeof item === "string" && !TEXT_SCHEMA.some(entry => entry.key === path)) {
-   TEXT_SCHEMA.push({ key: path, label: path, group: path.split(".")[0], multiline: /description|unavailable/.test(path) });
+   TEXT_SCHEMA.push({ key: path as TranslationKey, label: path, group: path.split(".")[0], multiline: /description|unavailable/.test(path) });
   } else if (item && typeof item === "object") addRuntimeFields(item as Record<string, unknown>, path);
  }
 }

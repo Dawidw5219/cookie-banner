@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9403";
 const browser = await chromium.launch({
 	executablePath:
@@ -60,7 +62,7 @@ try {
 	assert.ok(policies.some((h) => h.value === "img-src 'self' data:"));
 	await writeFile(
 		new URL(
-			"../../../docs/research/wordpress-csp-unknown-results.json",
+			browserTestOutputDirectory + "/wordpress-csp-unknown-results.json",
 			import.meta.url,
 		),
 		JSON.stringify({ base, csp, network, forgedCookieBlocked: true }, null, 2) +

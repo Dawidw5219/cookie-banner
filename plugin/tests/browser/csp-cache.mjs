@@ -1,5 +1,7 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9403";
 const rows = [];
 const initialHtml = await (await fetch(base + "/elementor-consent-probe/")).text();
@@ -38,7 +40,7 @@ for (let i = 0; i < 12; i++) {
 const report = JSON.stringify({ base, rows }, null, 2) + "\n";
 await writeFile(
 	new URL(
-		"../../../docs/research/" +
+		browserTestOutputDirectory + "/" +
 			(process.env.OPTIMIZER_NAME || "wordpress") +
 			"-csp-cache-results.json",
 		import.meta.url,

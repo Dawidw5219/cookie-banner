@@ -94,6 +94,20 @@ export function matchService(url: string): Service | undefined {
 		};
 }
 
+/** Invalid dependency metadata must never unlock a partially granted resource. */
+export function getRequiredServices(element: HTMLElement): string[] | null {
+	try {
+		const ids: unknown = JSON.parse(element.dataset.cbRequired || "[]");
+		if (
+			!Array.isArray(ids) || ids.length > 100 ||
+			!ids.every((id) => typeof id === "string" && /^[a-z0-9_.-]{1,100}$/i.test(id))
+		) return null;
+		return [...new Set(ids)];
+	} catch {
+		return null;
+	}
+}
+
 export function getServices(): Service[] {
 	const services = new Map<string, Service>();
 	const add = (id: string) => {
@@ -107,7 +121,7 @@ export function getServices(): Service[] {
 		"[data-cb-service]",
 	)) {
 		add(element.dataset.cbService!);
-		for (const id of JSON.parse(element.dataset.cbRequired || "[]")) add(id);
+		for (const id of getRequiredServices(element) || []) add(id);
 	}
 	return [...services.values()];
 }

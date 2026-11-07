@@ -5,7 +5,11 @@ plugin/builds/
 .env
 .env.local
 .DS_Store
-docs/
+/docs/*
+!/docs/consent-integration.md
+!/docs/consent-compliance.md
+!/docs/multilingual.md
+!/docs/deployment-security.md
 
 # Local Sophia data must never be committed.
 **/.sophia/

@@ -1,10 +1,12 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9403";
 const reportDir = new URL(
-	"../../../docs/research/consent-hardening/",
+	browserTestOutputDirectory + "/consent-hardening/",
 	import.meta.url,
 );
 await mkdir(reportDir, { recursive: true });

@@ -1,3 +1,4 @@
+import { browserTestOutputDirectory } from "../browser-output.mjs";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { createServer } from "node:http";
@@ -5,10 +6,11 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import { consentCspHeaders } from "../../dist/native.js";
 
+
 const root = new URL("../../dist/", import.meta.url);
 const results = [];
 const evidence = new URL(
-	"../../docs/research/consent-hardening/",
+	browserTestOutputDirectory + "/consent-hardening/",
 	import.meta.url,
 );
 await mkdir(evidence, { recursive: true });

@@ -16,6 +16,34 @@ import {
 let stop: (() => void) | undefined;
 const config = consentConfig();
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+it("keeps malformed dependencies blocked and recovers after the metadata is corrected", async () => {
+	const iframe = document.createElement("iframe");
+	iframe.dataset.cbService = "youtube";
+	iframe.dataset.cbSrc = "https://www.youtube.com/embed/test";
+	iframe.dataset.cbRequired = "not-json";
+	document.body.append(iframe);
+	saveConsentState({ ...getRejectAllState(), services: { youtube: true } });
+	stop = startContentBlocker(config);
+	expect(iframe.hasAttribute("src")).toBe(false);
+	iframe.dataset.cbRequired = "[]";
+	await settle();
+	expect(iframe.src).toBe("https://www.youtube.com/embed/test");
+});
+
+it("rechecks service dependencies before executing a queued script", async () => {
+	const script = document.createElement("script");
+	script.type = "text/plain";
+	script.dataset.cbService = "youtube";
+	script.textContent = "window.providerWasLoaded = true";
+	document.body.append(script);
+	saveConsentState({ ...getRejectAllState(), services: { youtube: true } });
+	stop = startContentBlocker(config);
+	script.dataset.cbRequired = "not-json";
+	await settle();
+	expect(script.dataset.cbExecuted).not.toBe("true");
+	expect(document.querySelectorAll("script")).toHaveLength(1);
+});
 beforeEach(() => {
 	localStorage.clear();
 	document.head.replaceChildren();

@@ -35,6 +35,21 @@ function cookie4_scanner_enqueue_assets( string $current_hook ): void {
 
 add_action( 'admin_enqueue_scripts', 'cookie4_scanner_enqueue_assets' );
 
+/** Remove previously collected values before records are displayed, exported or updated. */
+function cookie4_scanner_cookie_records(): array {
+    $cookies = get_option( 'cookie4_scanned_cookies', [] );
+    $changed = false;
+    foreach ( $cookies as &$cookie ) {
+        if ( array_key_exists( 'value_preview', $cookie ) || array_key_exists( 'value', $cookie ) ) {
+            unset( $cookie['value_preview'], $cookie['value'] );
+            $changed = true;
+        }
+    }
+    unset( $cookie );
+    if ( $changed ) update_option( 'cookie4_scanned_cookies', $cookies, false );
+    return $cookies;
+}
+
 /**
  * Classify a cookie as 'admin', 'logged_in', or '' (public).
  */
@@ -92,7 +107,7 @@ function cookie4_scanner_render_section(): void {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$cookies        = get_option( 'cookie4_scanned_cookies', [] );
+	$cookies        = cookie4_scanner_cookie_records();
 	$last_scan      = get_option( 'cookie4_last_scan', '' );
 	$scan_active    = get_option( 'cookie4_scan_active', '' );
 	$cookie_db      = cookie4_get_cookie_database();
@@ -235,7 +250,7 @@ function cookie4_scanner_register_routes(): void {
 
 function cookie4_scanner_receive( WP_REST_Request $request ): WP_REST_Response {
 	$items   = $request->get_json_params();
-	$cookies = get_option( 'cookie4_scanned_cookies', [] );
+	$cookies = cookie4_scanner_cookie_records();
 	$db      = cookie4_get_cookie_database();
 
 	if ( ! is_array( $items ) ) {
@@ -245,7 +260,6 @@ function cookie4_scanner_receive( WP_REST_Request $request ): WP_REST_Response {
 	foreach ( $items as $item ) {
 		$name   = sanitize_text_field( $item['name'] ?? '' );
 		$domain = sanitize_text_field( $item['domain'] ?? '' );
-		$value_preview = mb_substr( sanitize_text_field( $item['value'] ?? '' ), 0, 50 );
 		$source = sanitize_text_field( $item['source'] ?? 'cookie' ); // cookie | localStorage | sessionStorage
 		$page   = esc_url_raw( $item['page'] ?? '' );
 
@@ -283,7 +297,6 @@ function cookie4_scanner_receive( WP_REST_Request $request ): WP_REST_Response {
 				'first_seen'   => current_time( 'mysql' ),
 				'last_seen'    => current_time( 'mysql' ),
 				'pages'        => $page ? [ $page ] : [],
-				'value_preview' => $value_preview,
 			];
 		}
 	}
@@ -299,7 +312,7 @@ function cookie4_scanner_receive( WP_REST_Request $request ): WP_REST_Response {
 
 function cookie4_scanner_get_cookies(): WP_REST_Response {
 	return new WP_REST_Response( [
-		'cookies'      => array_values( get_option( 'cookie4_scanned_cookies', [] ) ),
+		'cookies'      => array_values( cookie4_scanner_cookie_records() ),
 		'last_scan'    => get_option( 'cookie4_last_scan', '' ),
 		'scan_active'  => get_option( 'cookie4_scan_active', '' ) === '1',
 		'audit_active' => get_option( 'cookie4_audit_mode', '' ) === '1',
@@ -321,7 +334,7 @@ function cookie4_scanner_toggle_mode( WP_REST_Request $request ): WP_REST_Respon
 function cookie4_scanner_update_category( WP_REST_Request $request ): WP_REST_Response {
 	$cookie_name = urldecode( $request->get_param( 'name' ) );
 	$category    = sanitize_text_field( $request->get_param( 'category' ) ?? '' );
-	$cookies     = get_option( 'cookie4_scanned_cookies', [] );
+	$cookies     = cookie4_scanner_cookie_records();
 
 	$found = false;
 	foreach ( $cookies as $key => &$cookie ) {
@@ -352,7 +365,7 @@ function cookie4_scanner_add_manual( WP_REST_Request $request ): WP_REST_Respons
 		return new WP_REST_Response( [ 'error' => 'Name is required' ], 400 );
 	}
 
-	$cookies = get_option( 'cookie4_scanned_cookies', [] );
+	$cookies = cookie4_scanner_cookie_records();
 	$key     = $name . '||manual';
 
 	$cookies[ $key ] = [
@@ -369,7 +382,6 @@ function cookie4_scanner_add_manual( WP_REST_Request $request ): WP_REST_Respons
 		'first_seen'   => current_time( 'mysql' ),
 		'last_seen'    => current_time( 'mysql' ),
 		'pages'        => [],
-		'value_preview' => '',
 	];
 
 	update_option( 'cookie4_scanned_cookies', $cookies, false );
@@ -377,7 +389,7 @@ function cookie4_scanner_add_manual( WP_REST_Request $request ): WP_REST_Respons
 }
 
 function cookie4_scanner_export_cookies(): WP_REST_Response {
-	$cookies = array_values( get_option( 'cookie4_scanned_cookies', [] ) );
+	$cookies = array_values( cookie4_scanner_cookie_records() );
 
 	return new WP_REST_Response( [
 		'version'     => 1,
@@ -397,7 +409,7 @@ function cookie4_scanner_import_cookies( WP_REST_Request $request ): WP_REST_Res
 		return new WP_REST_Response( [ 'error' => 'Invalid payload: expected { cookies: [...] }' ], 400 );
 	}
 
-	$cookies = get_option( 'cookie4_scanned_cookies', [] );
+	$cookies = cookie4_scanner_cookie_records();
 	$added   = 0;
 	$updated = 0;
 	$skipped = 0;
@@ -430,7 +442,6 @@ function cookie4_scanner_import_cookies( WP_REST_Request $request ): WP_REST_Res
 			'first_seen'    => sanitize_text_field( $item['first_seen'] ?? current_time( 'mysql' ) ),
 			'last_seen'     => sanitize_text_field( $item['last_seen'] ?? current_time( 'mysql' ) ),
 			'pages'         => $pages,
-			'value_preview' => mb_substr( sanitize_text_field( $item['value_preview'] ?? '' ), 0, 50 ),
 		];
 
 		if ( isset( $cookies[ $key ] ) ) {
@@ -502,7 +513,7 @@ function cookie4_scanner_receive_trackers( WP_REST_Request $request ): WP_REST_R
 				'pages'         => $page ? [ $page ] : [],
 				'first_seen'    => current_time( 'mysql' ),
 				'last_seen'     => current_time( 'mysql' ),
-				'audit_status'  => '',  // '', 'ok', 'violation'
+				'audit_status'  => '',  // '', 'not_observed', 'violation'
 			];
 		}
 	}
@@ -512,8 +523,13 @@ function cookie4_scanner_receive_trackers( WP_REST_Request $request ): WP_REST_R
 }
 
 function cookie4_scanner_get_trackers(): WP_REST_Response {
+	$trackers = get_option( 'cookie4_detected_trackers', [] );
+	foreach ( $trackers as &$tracker ) {
+		if ( ( $tracker['audit_status'] ?? '' ) === 'ok' ) $tracker['audit_status'] = 'not_observed';
+	}
+	unset( $tracker );
 	return new WP_REST_Response( [
-		'trackers' => array_values( get_option( 'cookie4_detected_trackers', [] ) ),
+		'trackers' => array_values( $trackers ),
 	] );
 }
 
@@ -531,6 +547,7 @@ function cookie4_scanner_toggle_audit( WP_REST_Request $request ): WP_REST_Respo
 
 	if ( $active ) {
 		// Clear previous audit results — fresh audit run.
+		delete_option( 'cookie4_audit_detections' );
 		$trackers = get_option( 'cookie4_detected_trackers', [] );
 		foreach ( $trackers as &$t ) {
 			$t['audit_status'] = '';
@@ -538,20 +555,18 @@ function cookie4_scanner_toggle_audit( WP_REST_Request $request ): WP_REST_Respo
 		unset( $t );
 		update_option( 'cookie4_detected_trackers', $trackers, false );
 
-		// Store which trackers were known BEFORE audit.
-		update_option( 'cookie4_audit_baseline', array_keys( $trackers ), false );
+		delete_option( 'cookie4_audit_baseline' );
 	} else {
 		// Audit stopped — mark trackers detected during audit as violations.
-		$baseline         = get_option( 'cookie4_audit_baseline', [] );
 		$trackers         = get_option( 'cookie4_detected_trackers', [] );
 		$audit_detections = get_option( 'cookie4_audit_detections', [] );
 
 		foreach ( $trackers as $id => &$t ) {
 			if ( in_array( $id, $audit_detections, true ) ) {
 				$t['audit_status'] = 'violation';
-			} elseif ( in_array( $id, $baseline, true ) ) {
-				// Was known before audit but NOT detected during deny-all → respects consent.
-				$t['audit_status'] = 'ok';
+			} else {
+				// Absence of an observed request is not proof that consent was respected.
+				$t['audit_status'] = 'not_observed';
 			}
 		}
 		unset( $t );

@@ -4,7 +4,7 @@ import { resolveLocalizedConfig, normalizeLocale, mergeTexts } from "../../src/i
 import { resolveTranslation } from "../../src/i18n";
 import { getService } from "../../src/core/service-catalog";
 import { hasServiceDisclosure } from "../../src/core/disclosure";
-import { createContentPlaceholder } from "../../src/components/content-placeholder";
+import { createContentPlaceholder } from "../../src/core/content-placeholder";
 import type { BannerConfig } from "../../src/types";
 const base: BannerConfig = { mode:"standalone", lang:"auto", controller:{name:"Controller"}, purposes:"Base purpose", noticeVersion:"1", privacyPolicyUrl:"/privacy", serviceDisclosures:{youtube:{description:"Base video",privacyUrl:"https://google.com/privacy",retention:"Session",cleanup:{cookies:["tracker"]}}} };
 afterEach(() => {document.documentElement.lang=""; delete window.__cookieConsent;});

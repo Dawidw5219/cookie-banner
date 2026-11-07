@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium, request } from "playwright";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9403";
 const session = JSON.parse(
 	await fs.readFile(
@@ -55,7 +57,7 @@ try {
 		.waitFor();
 	const nonce = await page.evaluate(() => window.cookie4Admin.nonce);
 	const headers = { "X-WP-Nonce": nonce };
-	await fs.mkdir("docs/screenshots/admin", { recursive: true });
+	await fs.mkdir(browserTestOutputDirectory + "/screenshots/admin", { recursive: true });
 	await page.waitForFunction(
 		() =>
 			![...document.querySelectorAll("#cookie-banner-admin p")].some(
@@ -64,7 +66,7 @@ try {
 	);
 	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
-		path: "docs/screenshots/admin/overview.png",
+		path: browserTestOutputDirectory + "/screenshots/admin/overview.png",
 		fullPage: true,
 	});
 	checks.push("Real WordPress overview and setup checklist render");
@@ -160,7 +162,7 @@ try {
 	await page.locator("h3").filter({ hasText: "QA booking calendar" }).waitFor();
 	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
-		path: "docs/screenshots/admin/services.png",
+		path: browserTestOutputDirectory + "/screenshots/admin/services.png",
 		fullPage: true,
 	});
 	let response = await context.request.get(
@@ -268,7 +270,7 @@ try {
 	await page.getByText("✓ HTML no-store", { exact: true }).waitFor();
 	await page.evaluate(() => window.scrollTo(0, 0));
 	await page.screenshot({
-		path: "docs/screenshots/admin/diagnostics.png",
+		path: browserTestOutputDirectory + "/screenshots/admin/diagnostics.png",
 		fullPage: true,
 	});
 	checks.push("Diagnostics reads actual frontend CSP and cache headers");
@@ -285,7 +287,7 @@ try {
 	assert.deepEqual(errors, []);
 	checks.push("Admin shell fits mobile viewport; no JavaScript errors");
 	await fs.writeFile(
-		"docs/research/wordpress-admin-results.json",
+		browserTestOutputDirectory + "/wordpress-admin-results.json",
 		JSON.stringify({ base, checks }, null, 2) + "\n",
 	);
 	console.log(checks.map((item) => "PASS " + item).join("\n"));

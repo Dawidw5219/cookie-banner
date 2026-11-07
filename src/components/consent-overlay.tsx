@@ -2,7 +2,7 @@ import { hasCompleteDisclosure } from "../core/disclosure";
 import { useContext } from "preact/hooks";
 import { ConfigContext } from "../hooks/use-consent";
 import { ConsentDecisionButton, ConsentSettingsButton } from "../ui/consent-button";
-import { COOKIE_SHAPE, COOKIE_CHIPS } from "../ui/cookie-icon";
+import { CookieIcon } from "../ui/cookie-icon";
 import { t } from "../i18n";
 import { PolicyLinks, BannerDescription } from "./policy-links";
 
@@ -27,12 +27,7 @@ export function ConsentOverlay({
 	return (
 		<>
 			<div class="cb-intro-icon" aria-hidden="true">
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-					<path d={COOKIE_SHAPE} fill="currentColor" />
-					{COOKIE_CHIPS.map((chip) => (
-						<circle key={`${chip.cx}-${chip.cy}`} {...chip} fill="var(--cb-bg)" />
-					))}
-				</svg>
+				<CookieIcon />
 			</div>
 			<h2 class="mb-3 text-xl sm:text-2xl font-semibold text-cb-text">
 				{t.overlay.title}

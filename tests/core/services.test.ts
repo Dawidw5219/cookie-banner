@@ -1,11 +1,23 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it } from "vitest";
-import { getServices, matchService } from "../../src/core/services";
+import { getRequiredServices, getServices, matchService } from "../../src/core/services";
 afterEach(() => {
 	delete window.__cookieConsent;
 	localStorage.clear();
 	document.body.replaceChildren();
 });
+
+it.each(["not-json", "null", '"ga4"', '["ga4", 1]', '["bad service"]'])(
+	"ignores malformed service dependencies without crashing the registry: %s",
+	(value) => {
+		const frame = document.createElement("iframe");
+		frame.dataset.cbService = "youtube";
+		frame.dataset.cbRequired = value;
+		document.body.append(frame);
+		expect(getRequiredServices(frame)).toBeNull();
+		expect(getServices().map((service) => service.id)).toEqual(["youtube"]);
+	},
+);
 
 it("uses one provider identity for script loading and subsequent collection requests", () => {
 	expect(

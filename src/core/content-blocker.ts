@@ -1,13 +1,20 @@
-import { createContentPlaceholder } from "../components/content-placeholder";
+import { createContentPlaceholder } from "./content-placeholder";
 import { setServiceConsent } from "./service-consent";
 import { getConsentState, isConsentStorageChange } from "./consent-storage";
-import { getServices, matchService } from "./services";
+import { getRequiredServices, getServices, matchService } from "./services";
 import {
 	hasRevocationPolicy,
 	restrictOptionalRequestsUntilReload,
 } from "./revocation-policy";
 import { CSP_COOKIE } from "./csp";
-import type { BannerConfig } from "../types";
+import type { BannerConfig, ConsentState } from "../types";
+
+function canActivateResource(element: HTMLElement, state: ConsentState): boolean {
+	const required = getRequiredServices(element);
+	return !hasRevocationPolicy() &&
+		state.services?.[element.dataset.cbService!] === true &&
+		required !== null && required.every((id) => state.services?.[id] === true);
+}
 
 // Only inert markup is guaranteed to make no request before consent. A DOM
 // observer cannot undo requests made by live src attributes or executed scripts.
@@ -52,11 +59,7 @@ export function startContentBlocker(config: BannerConfig): () => void {
 			"[data-cb-service]",
 		)) {
 			const id = element.dataset.cbService!;
-			const required: string[] = JSON.parse(element.dataset.cbRequired || "[]");
-			const granted =
-				!hasRevocationPolicy() &&
-				state.services?.[id] === true &&
-				required.every((service) => state.services?.[service] === true);
+			const granted = canActivateResource(element, state);
 			if (element instanceof HTMLScriptElement) {
 				if (
 					granted &&
@@ -96,7 +99,7 @@ export function startContentBlocker(config: BannerConfig): () => void {
 								if (
 									stopped ||
 									!element.isConnected ||
-									getConsentState().services?.[id] !== true
+									!canActivateResource(element, getConsentState())
 								) {
 									activeScripts.delete(element);
 									resolve();
@@ -176,7 +179,7 @@ export function startContentBlocker(config: BannerConfig): () => void {
 		childList: true,
 		subtree: true,
 		attributes: true,
-		attributeFilter: ["data-cb-src", "data-cb-service"],
+		attributeFilter: ["data-cb-src", "data-cb-service", "data-cb-required"],
 	});
 	const restorePolicy = (event: PageTransitionEvent) => {
 		if (config.strictCsp && event.persisted) window.location.reload();

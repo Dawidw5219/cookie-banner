@@ -1,12 +1,14 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { checkAdminContrast } from '../fixtures/check-admin-contrast.mjs';
 import { cookies, trackers, services } from '../fixtures/admin-design.mjs';
 
+
 const base = process.env.WORDPRESS_TEST_URL || 'http://127.0.0.1:9403';
 const session = JSON.parse(await fs.readFile(process.env.WORDPRESS_ADMIN_SESSION || '/tmp/cb-admin-test-session.json', 'utf8'));
-const dir = 'docs/screenshots/admin-reviewed';
+const dir = browserTestOutputDirectory + "/screenshots/admin-reviewed";
 const sections = [['overview','Overview'], ['appearance','Banner & texts'], ['services','Services'], ['cookies','Cookies & scan'], ['integration','WordPress integration'], ['diagnostics','Diagnostics']];
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
 const checks = [];
@@ -200,6 +202,6 @@ try {
  assert.equal(await page.getByRole('button',{name:'Add service',exact:true}).isDisabled(),false);
  checks.push('Empty scanner, empty services and service load error reviewed');
  assert.deepEqual(errors,[]);
- await fs.writeFile('docs/research/admin-design-results.json',JSON.stringify({environment:base,fixture:'plugin/tests/fixtures/admin-design.mjs',note:'Real WordPress styles and compiled plugin assets; browser-only data fixtures. No database writes.',checks,jsErrors:errors},null,2)+'\n');
+ await fs.writeFile(browserTestOutputDirectory + "/admin-design-results.json",JSON.stringify({environment:base,fixture:'plugin/tests/fixtures/admin-design.mjs',note:'Real WordPress styles and compiled plugin assets; browser-only data fixtures. No database writes.',checks,jsErrors:errors},null,2)+'\n');
  console.log(checks.join('\n'));
 } finally {await browser.close();}

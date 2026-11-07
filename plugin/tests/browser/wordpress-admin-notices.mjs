@@ -1,6 +1,8 @@
+import { browserTestOutputDirectory } from "../../../tests/browser-output.mjs";
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
 import assert from "node:assert/strict";
+
 const base = process.env.WORDPRESS_TEST_URL || "http://127.0.0.1:9403";
 const session = JSON.parse(
 	await fs.readFile(
@@ -42,7 +44,7 @@ try {
 			html.includes('id="cb-test-foreign-global-notice"'),
 	);
 	await fs.writeFile(
-		"docs/research/wordpress-admin-notices-results.json",
+		browserTestOutputDirectory + "/wordpress-admin-notices-results.json",
 		JSON.stringify(
 			{
 				base,

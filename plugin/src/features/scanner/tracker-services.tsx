@@ -16,7 +16,7 @@ function TrackerIcon({ name }: { name: string }) {
 }
 
 const AUDIT_BADGE: Record<string, { label: string; icon: string }> = {
-	ok: { label: "No request observed in audit", icon: "M5 13l4 4L19 7" },
+	not_observed: { label: "No request observed in audit", icon: "M12 8v4m0 4h.01" },
 	violation: { label: "Request observed during deny-all", icon: "M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" },
 };
 
@@ -49,7 +49,7 @@ export function TrackerServices({ trackers, auditActive, onStartAudit, onStopAud
 										<div class="flex flex-wrap items-center gap-1.5 mb-2">
 											<CategoryBadge category={t.category} />
 											{t.audit_status && AUDIT_BADGE[t.audit_status] && (
-												<span class={`cb-badge cb-badge--${t.audit_status === "ok" ? "success" : "danger"}`}>
+												<span class={`cb-badge cb-badge--${t.audit_status === "not_observed" ? "neutral" : "danger"}`}>
 													<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={AUDIT_BADGE[t.audit_status].icon} />
 													</svg>
@@ -87,7 +87,7 @@ export function TrackerServices({ trackers, auditActive, onStartAudit, onStopAud
 						<p class="cb-help">
 							Click "Audit Consent" to force deny-all mode and check which trackers still load without user consent.
 							Browse your site during audit, then stop to see results.
-							Trackers that load despite denied consent are marked as violations.
+							Observed requests during deny-all are marked as violations. A missing request does not prove consent compliance.
 						</p>
 					</div>
 				</>

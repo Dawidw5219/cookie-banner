@@ -1,10 +1,12 @@
+import { browserTestOutputDirectory } from "../browser-output.mjs";
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
-const output = new URL('../../docs/screenshots/consent-redesign/', import.meta.url);
+
+const output = new URL(browserTestOutputDirectory + "/screenshots/consent-redesign/", import.meta.url);
 await mkdir(output, { recursive: true });
 const config = {
  lang: 'pl', variant: 'modal', noticeVersion: 'design-demo-1',
