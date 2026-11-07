@@ -7,6 +7,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src/native.ts", "src/vite-env.d.ts"],
+  "include": ["src/api/native.ts", "src/vite-env.d.ts"],
   "exclude": ["**/*.test.*"]
 }

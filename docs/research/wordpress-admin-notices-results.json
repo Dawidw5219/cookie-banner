@@ -1,9 +1,0 @@
-{
-  "base": "http://127.0.0.1:9403",
-  "checks": [
-    "Shared cookie icon renders",
-    "Foreign admin_notices and all_admin_notices removed on our screen",
-    "Our updater notice remains visible",
-    "Foreign notices remain on the Plugins screen"
-  ]
-}

@@ -1,7 +1,7 @@
-import { hasCompleteDisclosure, isPolicyUrl } from "../disclosure";
+import { hasCompleteDisclosure, isPolicyUrl } from "../core/disclosure";
 import { useContext } from "preact/hooks";
-import { ConfigContext } from "@/hooks/use-consent";
-import { t } from "@/i18n";
+import { ConfigContext } from "../hooks/use-consent";
+import { t } from "../i18n";
 
 const linkClass =
 	"cursor-pointer underline underline-offset-2 text-cb-primary hover:text-cb-primary-hover transition-colors";

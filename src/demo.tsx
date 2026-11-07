@@ -1,5 +1,5 @@
 import { render } from "preact";
-import { blockedContentProps, initializeConsent } from "./native";
+import { blockedContentProps, initializeConsent } from "./api/native";
 
 const host = document.getElementById("consent-demo");
 if (host)

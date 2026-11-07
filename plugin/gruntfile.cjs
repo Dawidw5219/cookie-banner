@@ -165,12 +165,12 @@ module.exports = (grunt) => {
 							// Root-mode extras: when the plugin lives alongside build tooling.
 							if (srcDir === ".") {
 								const rootExcludedDirs = new Set([
-									"src", "cli", "scripts", "tools", "widgets", "builds",
+									"src", "cli", "scripts", "tools", "widgets", "builds", "tests",
 								]);
 								if (segments.length > 0 && rootExcludedDirs.has(segments[0])) return false;
 
 								const rootExcludedFiles = new Set([
-									"package.json", "package-lock.json", "bun.lock",
+									"package.json", "package-lock.json", "bun.lock", "bunfig.toml",
 									"yarn.lock", "tsconfig.json", "vite.config.ts",
 									"gruntfile.cjs", "gruntfile.js", "Gruntfile.cjs", "Gruntfile.js",
 									"phpcs.xml", "phpcs.xml.dist", "README.md", "todo.md",
@@ -207,10 +207,12 @@ module.exports = (grunt) => {
 							"!src/**",
 							"!cli/**",
 							"!scripts/**",
+							"!tests/**",
 							"!widgets/**",
 							"!package.json",
 							"!package-lock.json",
 							"!bun.lock",
+							"!bunfig.toml",
 							"!yarn.lock",
 							"!tsconfig.json",
 							"!tsconfig.*.json",

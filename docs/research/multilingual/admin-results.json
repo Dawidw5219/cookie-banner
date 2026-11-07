@@ -1,6 +1,0 @@
-{
-  "testedAt": "2026-11-07T00:24:00.959Z",
-  "results": [
-    "Real admin locale editor saved a German purpose, title and blocker button; isolated preview and public German page display those exact values; original locale settings restored"
-  ]
-}

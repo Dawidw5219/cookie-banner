@@ -1,5 +1,0 @@
-{
-  "first": "HTTP/1.1 200 OK\ncontent-type: text/plain;charset=UTF-8\nx-litespeed-cache-control: public,max-age=120\ncache-control: public,max-age=120\nx-litespeed-tag: cookie-banner-test-probe\nx-litespeed-cache: miss\ncontent-length: 38\ndate: Fri, 06 Nov 2026 17:33:07 GMT\nserver: LiteSpeed\nconnection: Keep-Alive\n\n",
-  "second": "HTTP/1.1 200 OK\ncontent-type: text/plain;charset=UTF-8\ncache-control: public,max-age=120\nx-litespeed-cache: hit\ncontent-length: 38\ndate: Fri, 06 Nov 2026 17:33:07 GMT\nserver: LiteSpeed\nconnection: Keep-Alive\n\n",
-  "bodyIdentical": true
-}

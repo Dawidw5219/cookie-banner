@@ -1,21 +1,21 @@
-import { getServices } from "@/services";
-import { ConsentDecisionButton } from "@/ui/consent-button";
+import { getServices } from "../core/services";
+import { ConsentDecisionButton } from "../ui/consent-button";
 import {
 	hasCompleteDisclosure,
 	hasServiceDisclosure,
 	isPolicyUrl,
-} from "../disclosure";
+} from "../core/disclosure";
 import { ConfigContext } from "../hooks/use-consent";
 import { useContext } from "preact/hooks";
 import { useEffect, useState } from "preact/hooks";
-import { t } from "@/i18n";
+import { t } from "../i18n";
 import {
 	PreferencesPolicyLinks,
 	ConsentNotice,
-} from "@/components/policy-links";
-import type { ConsentCategory, ConsentState } from "@/types";
-import { CONSENT_CATEGORIES } from "@/types";
-import { Toggle } from "@/ui/toggle";
+} from "./policy-links";
+import type { ConsentCategory, ConsentState } from "../types";
+import { CONSENT_CATEGORIES } from "../types";
+import { Toggle } from "../ui/toggle";
 
 interface PreferencesModalProps {
 	privacyPolicyUrl?: string;

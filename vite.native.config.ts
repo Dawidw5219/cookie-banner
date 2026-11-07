@@ -8,7 +8,7 @@ export default defineConfig({
 		...config.build,
 		emptyOutDir: false,
 		lib: {
-			entry: resolve(import.meta.dirname, "src/native.ts"),
+			entry: resolve(import.meta.dirname, "src/api/native.ts"),
 			formats: ["es"],
 			fileName: () => "native.js",
 		},

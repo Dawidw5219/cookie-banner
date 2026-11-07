@@ -3,6 +3,10 @@
 Lekki baner zgód cookies dla aplikacji webowych, ze wsparciem Google Consent
 Mode v2.
 
+Publiczne API jest niezależne od frameworka. Wbudowany interfejs używa Preact,
+ale aplikacja nie musi korzystać z React ani Preact. W Vue inicjalizuj baner
+w `onMounted()`, a w React/Next.js po stronie klienta, po hydratacji.
+
 Obsługiwane języki bannera: angielski, polski, francuski, niemiecki,
 hiszpański, włoski, niderlandzki, duński, norweski i szwedzki. Plugin
 WordPress może wykrywać język automatycznie na podstawie locale strony.
@@ -10,7 +14,7 @@ WordPress może wykrywać język automatycznie na podstawie locale strony.
 ## Pakiet npm
 
 ```bash
-npm install cookie-banner
+npm install @app4you/cookie-banner
 ```
 
 Pakiet publikuje gotowy bundle z katalogu `dist/`. Katalog `plugin/` jest
@@ -21,6 +25,37 @@ bun run build
 bun run test
 bun run typecheck
 ```
+
+## Struktura projektu
+
+- `src/core/` — logika zgód, zapis, usługi, CSP i blokowanie zasobów.
+- `src/ui/` — atomowe elementy: przyciski, przełącznik i ikonki.
+- `src/components/` — złożone komponenty: baner, pasek, modal i sekcje.
+- `src/hooks/` — hooki Preact.
+- `src/style.css` — style bannera; obsługa hosta, motywu i przewijania jest w `src/core/`.
+- `src/i18n/` — słowniki tłumaczeń i wybór języka.
+- `src/api/` — publiczne API npm.
+- `src/app.tsx` — uruchamianie i zamykanie bannera; `src/types.ts` — wspólne typy i stałe.
+- `src/demo.tsx` — demo uruchamiane przez `bun run dev`.
+- `tests/` — testy bannera w układzie odpowiadającym źródłom; `tests/fixtures/` — dane testowe.
+- `plugin/src/` — panel WordPressa; `plugin/tests/` — testy pluginu.
+- `scripts/` — generowanie metadanych paczki, aktualizacja baz usług i uruchamianie WordPress Playground.
+
+`bun run test` uruchamia testy Vitest z `tests/` i `plugin/tests/`.
+
+Testy przeglądarkowe bannera są w `tests/browser/`, a test paczki npm w
+`tests/package/`. Komendy `test:browser`, `test:package`, `test:privacy`
+i `test:accessibility` wskazują te katalogi. Test paczki i testy korzystające
+z `dist/` wymagają wcześniejszego `bun run build:banner`; `test:browser`
+korzysta z serwera demo uruchomionego przez `bun run dev`.
+
+Testy WordPressa są w `plugin/tests/browser/` i `plugin/tests/php/`.
+Uruchamia się je ręcznie, np. `node plugin/tests/browser/wordpress-consent.mjs`
+lub `php plugin/tests/php/wordpress-locales.php`. Testy integracyjne wymagają
+lokalnego WordPressa, a testy panelu również sesji administratora
+(`WORDPRESS_ADMIN_SESSION`). Nie należą do domyślnego zestawu Vitest.
+Test narzędzi wdrożeniowych można uruchomić bez serwera:
+`node plugin/tests/deployment.cjs`.
 
 ## Plugin WordPress
 
@@ -34,22 +69,15 @@ bun run --cwd plugin zip
 
 ## Natywne zgody i blokowanie treści
 
-Punkt wejścia `cookie-banner/native` udostępnia bezpieczne w SSR
+Punkt wejścia `@app4you/cookie-banner/native` udostępnia bezpieczne w SSR
 `blockedContentProps` i `blockedScriptProps`, inicjalizację bannera oraz API
 zgody na konkretną usługę. W WordPressie działa oddzielna warstwa blokowania
 HTML i dynamicznych loaderów, korzystająca z istniejącego skanera.
 
-[Integracja Next.js / npm i WordPress, ograniczenia oraz testy](docs/consent-integration.md).
-[Porównanie mechanizmów 17 publicznych wtyczek WordPress](docs/research/wordpress-blockers.md).
-
 Tryb rygorystyczny używa CSP w odpowiedzi HTTP i przeładowania po zmianie zgody.
 Npm udostępnia `consentCspHeaders`; WordPress włącza ten tryb domyślnie.
 HTML zależny od zgód omija współdzielony cache, a optymalizacje JS/CSS pozostają aktywne.
-[Wyniki testów CSP z Elementorem, WP Rocket i rzeczywistym OpenLiteSpeed](docs/research/strict-csp-verification.md).
 
 ## Migracja do 2.0
 
-[Wymagane informacje, zapis zgód, wycofanie i ograniczenia](docs/consent-compliance.md).
 Wersja 2.0 celowo blokuje opcjonalne usługi przy niepełnych informacjach i wymaga nowego wyboru dla starych zgód.
-
-Multilingual setup (npm, WPML, Polylang): [docs/multilingual.md](docs/multilingual.md).

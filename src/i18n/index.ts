@@ -1,4 +1,4 @@
-import { normalizeLocale, mergeTexts } from "../locale";
+import { normalizeLocale, mergeTexts } from "./locale";
 import { da } from "./da";
 import { de } from "./de";
 import { en } from "./en";

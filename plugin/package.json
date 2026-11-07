@@ -19,7 +19,7 @@
     "deploy": "bun run --cwd .. deploy"
   },
   "dependencies": {
-    "cookie-banner": "workspace:*"
+    "@app4you/cookie-banner": "workspace:*"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.5",

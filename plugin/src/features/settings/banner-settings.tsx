@@ -1,4 +1,4 @@
-import { mergeTexts } from "../../../../src/locale";
+import { mergeTexts } from "../../../../src/i18n/locale";
 import { LocaleEditor } from "./locale-editor";
 import type { CustomService } from "@/features/services/use-services";
 import { useState, useMemo } from "preact/hooks";

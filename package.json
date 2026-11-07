@@ -1,19 +1,16 @@
 {
-  "name": "cookie-banner",
-  "version": "2.0.1",
-  "description": "Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.",
+  "name": "@app4you/cookie-banner",
+  "version": "2.0.2",
+  "description": "Framework-independent cookie consent banner with Google Consent Mode v2 support.",
   "type": "module",
   "main": "dist/cookie-banner.js",
   "files": [
     "dist",
-    "README.md",
-    "docs/consent-compliance.md",
-    "docs/consent-integration.md",
-    "docs/multilingual.md"
+    "README.md"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dawidw5219/cookie-banner.git"
+    "url": "git+https://github.com/Dawidw5219/cookie-banner.git"
   },
   "publishConfig": {
     "access": "public"
@@ -27,10 +24,10 @@
     "typecheck": "tsc --noEmit",
     "build:all": "bun run build",
     "update:databases": "bun run scripts/update-service-databases.ts",
-    "test:browser": "node scripts/test-browser.mjs",
-    "test:package": "node scripts/test-npm-package.mjs",
-    "test:privacy": "node scripts/test-consent-hardening.mjs",
-    "test:accessibility": "node scripts/test-accessibility.mjs"
+    "test:browser": "node tests/browser/browser.mjs",
+    "test:package": "node tests/package/npm-package.mjs",
+    "test:privacy": "node tests/browser/consent-hardening.mjs",
+    "test:accessibility": "node tests/browser/accessibility.mjs"
   },
   "dependencies": {
     "preact": "^10"

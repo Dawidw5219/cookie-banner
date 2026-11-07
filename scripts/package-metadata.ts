@@ -1,16 +1,30 @@
 import { resolveTranslation, SUPPORTED_LANGUAGES } from "../src/i18n";
 import { mkdir, copyFile, rm, readFile, writeFile } from "node:fs/promises";
+import { dirname, posix } from "node:path";
 
 // Publish only the public declaration graph, alongside all data attribution.
-for (const name of ["native", "types", "service-consent", "csp", "locale"]) {
+const declarations = {
+	"api/native": "native",
+	types: "types",
+	"core/service-consent": "core/service-consent",
+	"core/csp": "core/csp",
+	"i18n/locale": "i18n/locale",
+};
+for (const [name, publishedName] of Object.entries(declarations)) {
 	const declaration = await readFile(`dist/types/src/${name}.d.ts`, "utf8");
 	// Published ESM declarations must resolve with both NodeNext and bundlers.
+	await mkdir(dirname(`dist/${publishedName}.d.ts`), { recursive: true });
 	await writeFile(
-		`dist/${name}.d.ts`,
+		`dist/${publishedName}.d.ts`,
 		declaration.replace(
-			/(from ["'])(\.\/[^"']+)(["'])/g,
-			(_, before, path, after) =>
-				`${before}${path.endsWith(".js") ? path : path + ".js"}${after}`,
+			/(from ["'])(\.\.?\/[^"']+)(["'])/g,
+			(_, before, path, after) => {
+				const source = posix.join(posix.dirname(name), path);
+				const target = declarations[source as keyof typeof declarations] ?? source;
+				const relative = posix.relative(posix.dirname(publishedName), target);
+				const specifier = relative.startsWith(".") ? relative : `./${relative}`;
+				return `${before}${specifier.endsWith(".js") ? specifier : specifier + ".js"}${after}`;
+			},
 		),
 	);
 }

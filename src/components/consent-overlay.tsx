@@ -1,10 +1,10 @@
-import { hasCompleteDisclosure } from "../disclosure";
+import { hasCompleteDisclosure } from "../core/disclosure";
 import { useContext } from "preact/hooks";
 import { ConfigContext } from "../hooks/use-consent";
-import { ConsentDecisionButton, ConsentSettingsButton } from "@/ui/consent-button";
+import { ConsentDecisionButton, ConsentSettingsButton } from "../ui/consent-button";
 import { COOKIE_SHAPE, COOKIE_CHIPS } from "../ui/cookie-icon";
-import { t } from "@/i18n";
-import { PolicyLinks, BannerDescription } from "@/components/policy-links";
+import { t } from "../i18n";
+import { PolicyLinks, BannerDescription } from "./policy-links";
 
 interface ConsentOverlayProps {
 	privacyPolicyUrl?: string;
