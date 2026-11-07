@@ -144,7 +144,7 @@ try {
  for (const variant of ["modal", "bar"]) for (const width of [320, 390, 768, 1440]) {
   const v = await visitor(width);
   await v.page.goto(`${base}/?variant=${variant}`);
-  const accept = v.page.getByRole("button", { name: "Zaakceptuj wszystkie", exact: true });
+  const accept = v.page.getByRole("button", { name: /^Zaakceptuj wszystkie(?: i kontynuuj)?$/, exact: true });
   await accept.waitFor();
   assert.equal(await v.page.getByRole("button", { name: "Odrzuć wszystkie", exact: true }).count(), 0);
   const geometry = await accept.evaluate(el => ({ height: el.getBoundingClientRect().height, overflow: el.scrollWidth > el.clientWidth + 1 }));
@@ -180,7 +180,7 @@ try {
 		const themed = await visitor();
 		await themed.page.goto(`${base}/?theme=${theme}`);
 		const button = themed.page.getByRole("button", {
-			name: "Zaakceptuj wszystkie",
+			name: /^Zaakceptuj wszystkie(?: i kontynuuj)?$/,
 			exact: true,
 		});
 		await button.waitFor();
@@ -374,7 +374,7 @@ try {
 		}),
 	]);
 	await page
-		.getByRole("button", { name: "Zaakceptuj wszystkie", exact: true })
+		.getByRole("button", { name: /^Zaakceptuj wszystkie(?: i kontynuuj)?$/, exact: true })
 		.waitFor();
 	await page.waitForTimeout(100);
 	assert.ok(
@@ -415,11 +415,11 @@ try {
 	const missing = await visitor();
 	await missing.page.goto(base + "/missing");
 	await missing.page
-		.getByRole("button", { name: "Zaakceptuj wszystkie", exact: true })
+		.getByRole("button", { name: /^Zaakceptuj wszystkie(?: i kontynuuj)?$/, exact: true })
 		.waitFor();
 	assert.equal(
 		await missing.page
-			.getByRole("button", { name: "Zaakceptuj wszystkie", exact: true })
+			.getByRole("button", { name: /^Zaakceptuj wszystkie(?: i kontynuuj)?$/, exact: true })
 			.isDisabled(),
 		true,
 	);

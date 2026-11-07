@@ -93,7 +93,7 @@ export function PreferencesPolicyLinks({
 	);
 }
 
-/** The first layer stays concise; controller and purposes are in preferences. */
+/** The first layer stays concise; the configured policy links provide further details. */
 export function BannerDescription() {
 	const config = useContext(ConfigContext);
 	return (

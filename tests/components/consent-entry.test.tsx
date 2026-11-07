@@ -46,6 +46,17 @@ for (const Component of [ConsentOverlay, ConsentBar]) {
 				(button) => button.textContent === "Reject All",
 			);
 			expect(!!refusal).toBe(buttonStyle === "equal");
+			expect(buttons.map((button) => button.textContent)).toEqual(
+				buttonStyle === "equal"
+					? Component === ConsentOverlay
+						? ["Reject All", "Accept All", "Advanced Settings"]
+						: ["Advanced Settings", "Reject All", "Accept All"]
+					: ["Advanced Settings", "Accept All & Continue"],
+			);
+			if (Component === ConsentOverlay)
+				expect(!!root.querySelector(".cb-intro-icon")).toBe(
+					buttonStyle === "equal",
+				);
 			buttons
 				.find((button) => button.textContent === "Advanced Settings")!
 				.click();

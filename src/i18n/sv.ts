@@ -40,6 +40,7 @@ export const sv: TranslationSchema = {
 			"Valfria cookies och externa tjänster laddas bara med ditt samtycke. Du kan avvisa eller ändra ditt val när som helst.",
 		descriptionPolicyLink: "Mer information finns i vår",
 		acceptAll: "Godkänn alla",
+		acceptAllAndContinue: "Godkänn alla och fortsätt",
 		advancedSettings: "Avancerade inställningar",
 		privacyPolicy: "integritetspolicy",
 		cookiePolicy: "cookiepolicy",

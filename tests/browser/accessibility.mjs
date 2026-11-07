@@ -338,7 +338,7 @@ try {
       await page.getByRole("dialog").waitFor();
       assert.equal(
         await page
-          .getByRole("button", { name: "Zaakceptuj wszystkie", exact: true })
+          .getByRole("button", { name: /^Zaakceptuj wszystkie(?: i kontynuuj)?$/, exact: true })
           .isDisabled(),
         true,
       );

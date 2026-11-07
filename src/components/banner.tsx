@@ -64,6 +64,7 @@ function AppContent() {
 			{view === "overlay" && !isBar && (
 				<ConsentPanel
 					label={t.overlay.title}
+                    showClose={config.buttonStyle === "equal"}
 					onDismiss={dismiss}
 					class="p-6 sm:p-8"
 				>

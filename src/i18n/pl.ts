@@ -40,6 +40,7 @@ export const pl: TranslationSchema = {
 			"Opcjonalne cookies i usługi zewnętrzne uruchamiamy dopiero po Twojej zgodzie. Możesz odmówić lub zmienić wybór w dowolnym momencie.",
 		descriptionPolicyLink: "Zobacz naszą",
 		acceptAll: "Zaakceptuj wszystkie",
+		acceptAllAndContinue: "Zaakceptuj wszystkie i kontynuuj",
 		advancedSettings: "Ustawienia zaawansowane",
 		privacyPolicy: "politykę prywatności",
 		cookiePolicy: "politykę cookies",

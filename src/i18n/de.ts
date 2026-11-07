@@ -40,6 +40,7 @@ export const de: TranslationSchema = {
 			"Optionale Cookies und externe Dienste werden erst nach Ihrer Einwilligung geladen. Sie können ablehnen oder Ihre Auswahl jederzeit ändern.",
 		descriptionPolicyLink: "Weitere Informationen finden Sie in unserer",
 		acceptAll: "Alle akzeptieren",
+		acceptAllAndContinue: "Alle akzeptieren und fortfahren",
 		advancedSettings: "Erweiterte Einstellungen",
 		privacyPolicy: "Datenschutzerklärung",
 		cookiePolicy: "Cookie-Richtlinie",

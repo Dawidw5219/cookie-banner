@@ -82,10 +82,12 @@ export function ConsentBar({
 						/>
 					</p>
 					<div class="cb-bar-actions shrink-0 w-full lg:w-auto lg:min-w-max">
-						<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
-							{t.overlay.advancedSettings}
-						</ConsentSettingsButton>
-						<div class={`cb-decisions ${equal ? "" : "cb-decisions-single"}`}>
+						{equal && (
+							<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
+								{t.overlay.advancedSettings}
+							</ConsentSettingsButton>
+						)}
+						<div class={`cb-decisions ${equal ? "" : "cb-standard-actions"}`}>
 							{equal && (
 								<ConsentDecisionButton
 									variant="outline"
@@ -95,12 +97,21 @@ export function ConsentBar({
 									{t.preferences.rejectAll}
 								</ConsentDecisionButton>
 							)}
+							{!equal && (
+								<ConsentSettingsButton
+									appearance="outline"
+									type="button"
+									onClick={onOpenPreferences}
+								>
+									{t.overlay.advancedSettings}
+								</ConsentSettingsButton>
+							)}
 							<ConsentDecisionButton
 								type="button"
 								onClick={onAcceptAll}
 								disabled={!hasCompleteDisclosure(window.__cookieConsent)}
 							>
-								{t.overlay.acceptAll}
+								{equal ? t.overlay.acceptAll : t.overlay.acceptAllAndContinue}
 							</ConsentDecisionButton>
 						</div>
 					</div>

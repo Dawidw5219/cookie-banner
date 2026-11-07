@@ -164,7 +164,9 @@ export function PreferencesModal({
 					onClick={onAcceptAll}
 					disabled={!disclosed}
 				>
-					{t.preferences.acceptAllAndContinue}
+					{standard
+						? t.overlay.acceptAllAndContinue
+						: t.preferences.acceptAllAndContinue}
 				</ConsentDecisionButton>
 			</div>
 		</>

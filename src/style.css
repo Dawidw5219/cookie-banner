@@ -112,4 +112,12 @@
  text-decoration: underline; text-underline-offset: 3px;
 }
 
-.cb-decisions-single { grid-template-columns: minmax(0, 1fr); }
+/* Standard keeps the original two actions in one row; equal is unchanged. */
+.cb-standard-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cb-standard-actions .cb-decision, .cb-settings-inline { border-radius: 6px; font-size: 14px; }
+.cb-settings-inline {
+ margin: 0; padding: 10px 12px; min-height: 44px; border: 1px solid var(--cb-primary);
+ background: var(--cb-bg); color: var(--cb-primary); font-weight: 600; line-height: 1.4;
+ text-decoration: none;
+}
+.cb-settings-inline:hover { background: color-mix(in srgb,var(--cb-primary) 6%,var(--cb-bg)); }

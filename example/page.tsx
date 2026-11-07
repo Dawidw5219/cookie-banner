@@ -47,8 +47,18 @@ function changeSetting(name: string, value: string) {
 
 function DemoSettings() {
   return (
-    <details className="demo-options">
-      <summary>Demo settings</summary>
+    <aside className="demo-options" aria-label="Demo settings">
+      <div className="settings-heading">
+        <h2>Demo settings</h2>
+        <button
+          onClick={() => {
+            resetConsent();
+            location.reload();
+          }}
+        >
+          Reset consent
+        </button>
+      </div>
       <div className="settings-panel">
         <label>
           Layout
@@ -86,17 +96,8 @@ function DemoSettings() {
             ))}
           </select>
         </label>
-        <button
-          onClick={() => {
-            resetConsent();
-            location.reload();
-          }}
-        >
-          Reset demo consent
-        </button>
-        <small>Changing a setting restarts the consent demo.</small>
       </div>
-    </details>
+    </aside>
   );
 }
 
@@ -162,8 +163,6 @@ function Article() {
           >
             Cookie preferences
           </button>
-          <a href={policyUrl}>About this demo & privacy</a>
-          <a href="https://github.com/Dawidw5219/cookie-banner">Source code</a>
         </footer>
       </main>
     </>

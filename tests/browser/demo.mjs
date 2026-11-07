@@ -77,6 +77,22 @@ try {
     await page.getByRole("button", { name: "Reject All", exact: true }).count(),
     0,
   );
+  const actionRow = page.locator(".cb-standard-actions");
+  const actions = actionRow.locator("button");
+  assert.deepEqual(await actions.allTextContents(), [
+    "Advanced Settings",
+    "Accept All & Continue",
+  ]);
+  const settingsBox = await actions.nth(0).boundingBox(),
+    acceptBox = await actions.nth(1).boundingBox();
+  assert(Math.abs(settingsBox.y - acceptBox.y) < 1);
+  assert(Math.abs(settingsBox.width - acceptBox.width) < 1);
+  assert(settingsBox.x < acceptBox.x);
+  assert.equal(await page.locator(".cb-intro-icon").count(), 0);
+  assert.equal(
+    await dialog.getByRole("button", { name: "Close", exact: true }).count(),
+    0,
+  );
   assert.deepEqual(external, [], "No provider requests before consent");
   await page
     .getByRole("button", { name: "Advanced Settings", exact: true })
@@ -143,7 +159,6 @@ try {
     "Only the explicitly allowed video should load",
   );
   await page.keyboard.press("Escape");
-  await page.locator(".demo-options > summary").click();
   await Promise.all([
     page.waitForURL((url) => url.searchParams.get("variant") === "bar"),
     page.getByLabel("Layout", { exact: true }).selectOption("bar"),
@@ -168,7 +183,6 @@ try {
     .getByRole("button", { name: "Advanced Settings", exact: true })
     .click();
   await page.getByRole("button", { name: "Reject All", exact: true }).click();
-  await page.locator(".demo-options > summary").click();
   await Promise.all([
     page.waitForURL((url) => url.searchParams.get("buttons") === "equal"),
     page.getByLabel("Decision buttons").selectOption("equal"),
@@ -178,6 +192,8 @@ try {
     await page.evaluate(() => window.__cookieConsent.buttonStyle),
     "equal",
   );
+  assert.equal(await page.locator(".article-footer a").count(), 0);
+  assert.equal(await page.locator(".article-footer button").count(), 1);
   assert.deepEqual(errors, []);
   console.log(
     "PASS simplified demo: standard dialog, refusal in preferences, gated YouTube near the top, no scanner/withdraw button, fixed settings, equal-style switch.",

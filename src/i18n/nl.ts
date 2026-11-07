@@ -40,6 +40,7 @@ export const nl: TranslationSchema = {
 			"Optionele cookies en externe diensten worden alleen met uw toestemming geladen. U kunt weigeren of uw keuze op elk moment wijzigen.",
 		descriptionPolicyLink: "Meer informatie vindt u in ons",
 		acceptAll: "Alles accepteren",
+		acceptAllAndContinue: "Alles accepteren en doorgaan",
 		advancedSettings: "Geavanceerde instellingen",
 		privacyPolicy: "privacybeleid",
 		cookiePolicy: "cookiebeleid",

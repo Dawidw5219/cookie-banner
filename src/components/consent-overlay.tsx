@@ -29,20 +29,34 @@ export function ConsentOverlay({
 	const equal = config?.buttonStyle === "equal";
 	return (
 		<>
-			<div class="cb-intro-icon" aria-hidden="true">
-				<CookieIcon />
-			</div>
-			<h2 class="mb-3 text-xl sm:text-2xl font-semibold text-cb-text">
+			{equal && (
+				<div class="cb-intro-icon" aria-hidden="true">
+					<CookieIcon />
+				</div>
+			)}
+			<h2
+				class={
+					equal
+						? "mb-3 text-xl sm:text-2xl font-semibold text-cb-text"
+						: "mb-5 text-xl sm:text-2xl font-bold text-cb-text"
+				}
+			>
 				{t.overlay.title}
 			</h2>
-			<p class="mb-6 text-sm leading-relaxed text-cb-text">
+			<p
+				class={
+					equal
+						? "mb-6 text-sm leading-relaxed text-cb-text"
+						: "mb-8 text-sm leading-relaxed text-cb-text"
+				}
+			>
 				<BannerDescription />
 				<PolicyLinks
 					privacyPolicyUrl={privacyPolicyUrl}
 					cookiePolicyUrl={cookiePolicyUrl}
 				/>
 			</p>
-			<div class={`cb-decisions ${equal ? "" : "cb-decisions-single"}`}>
+			<div class={`cb-decisions ${equal ? "" : "cb-standard-actions"}`}>
 				{equal && (
 					<ConsentDecisionButton
 						variant="outline"
@@ -52,17 +66,28 @@ export function ConsentOverlay({
 						{t.preferences.rejectAll}
 					</ConsentDecisionButton>
 				)}
+				{!equal && (
+					<ConsentSettingsButton
+						appearance="outline"
+						type="button"
+						onClick={onOpenPreferences}
+					>
+						{t.overlay.advancedSettings}
+					</ConsentSettingsButton>
+				)}
 				<ConsentDecisionButton
 					type="button"
 					onClick={onAcceptAll}
 					disabled={!disclosed}
 				>
-					{t.overlay.acceptAll}
+					{equal ? t.overlay.acceptAll : t.overlay.acceptAllAndContinue}
 				</ConsentDecisionButton>
 			</div>
-			<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
-				{t.overlay.advancedSettings}
-			</ConsentSettingsButton>
+			{equal && (
+				<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
+					{t.overlay.advancedSettings}
+				</ConsentSettingsButton>
+			)}
 		</>
 	);
 }

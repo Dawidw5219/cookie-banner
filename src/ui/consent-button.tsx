@@ -33,17 +33,35 @@ export function ConsentButton({ onClick, ...props }: ConsentButtonProps) {
 
 /** Shared geometry with explicit visual roles for consent actions. */
 export function ConsentDecisionButton({
- variant = "primary", ...props
+	variant = "primary",
+	...props
 }: Omit<ConsentButtonProps, "class" | "style"> & {
- variant?: "primary" | "outline" | "subtle";
+	variant?: "primary" | "outline" | "subtle";
 }) {
- const config = useContext(ConfigContext);
- const appearance = (config?.buttonStyle ?? "standard") !== "standard" && variant === "outline" ? "primary" : variant;
- return <ConsentButton {...props} class={`cb-decision cb-decision-${appearance}`} />;
+	const config = useContext(ConfigContext);
+	const appearance =
+		(config?.buttonStyle ?? "standard") !== "standard" && variant === "outline"
+			? "primary"
+			: variant;
+	return (
+		<ConsentButton {...props} class={`cb-decision cb-decision-${appearance}`} />
+	);
 }
 
-export function ConsentSettingsButton(
-	props: Omit<ConsentButtonProps, "class" | "style">,
-) {
-	return <ConsentButton {...props} class="cb-settings" />;
+export function ConsentSettingsButton({
+	appearance = "link",
+	...props
+}: Omit<ConsentButtonProps, "class" | "style"> & {
+	appearance?: "link" | "outline";
+}) {
+	return (
+		<ConsentButton
+			{...props}
+			class={
+				appearance === "outline"
+					? "cb-settings cb-settings-inline"
+					: "cb-settings"
+			}
+		/>
+	);
 }
