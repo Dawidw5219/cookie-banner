@@ -1,7 +1,10 @@
 import { hasCompleteDisclosure } from "../core/disclosure";
 import { useContext } from "preact/hooks";
 import { ConfigContext } from "../hooks/use-consent";
-import { ConsentDecisionButton, ConsentSettingsButton } from "../ui/consent-button";
+import {
+	ConsentDecisionButton,
+	ConsentSettingsButton,
+} from "../ui/consent-button";
 import { CookieIcon } from "../ui/cookie-icon";
 import { t } from "../i18n";
 import { PolicyLinks, BannerDescription } from "./policy-links";
@@ -21,9 +24,9 @@ export function ConsentOverlay({
 	onRejectAll,
 	onOpenPreferences,
 }: ConsentOverlayProps) {
-	const disclosed = hasCompleteDisclosure(
-		useContext(ConfigContext) || undefined,
-	);
+	const config = useContext(ConfigContext);
+	const disclosed = hasCompleteDisclosure(config || undefined);
+	const equal = config?.buttonStyle === "equal";
 	return (
 		<>
 			<div class="cb-intro-icon" aria-hidden="true">
@@ -39,10 +42,16 @@ export function ConsentOverlay({
 					cookiePolicyUrl={cookiePolicyUrl}
 				/>
 			</p>
-			<div class="cb-decisions">
-				<ConsentDecisionButton variant="outline" type="button" onClick={onRejectAll}>
-					{t.preferences.rejectAll}
-				</ConsentDecisionButton>
+			<div class={`cb-decisions ${equal ? "" : "cb-decisions-single"}`}>
+				{equal && (
+					<ConsentDecisionButton
+						variant="outline"
+						type="button"
+						onClick={onRejectAll}
+					>
+						{t.preferences.rejectAll}
+					</ConsentDecisionButton>
+				)}
 				<ConsentDecisionButton
 					type="button"
 					onClick={onAcceptAll}

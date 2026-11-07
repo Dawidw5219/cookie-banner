@@ -49,9 +49,8 @@ try {
   assert.equal(await page.getByText(config.purposes, { exact: true }).count(), 0);
   await page.screenshot({ path: fileURLToPath(new URL(`popup-${width}.png`, output)), fullPage: true });
   await page.getByRole('button', { name: 'Ustawienia zaawansowane', exact: true }).click();
-  await page.locator(".cb-notice-details > summary").click();
-  await page.getByText(config.controller.name, { exact: true }).waitFor();
-  await page.getByText(config.purposes, { exact: true }).waitFor();
+  assert.equal(await page.getByText(config.controller.name, { exact: true }).count(), 0);
+  assert.equal(await page.getByText(config.purposes, { exact: true }).count(), 0);
   await page.screenshot({ path: fileURLToPath(new URL(`preferences-${width}.png`, output)), fullPage: true });
   await page.getByRole('button', { name: 'Odrzuć wszystkie', exact: true }).click();
   await page.locator('.cb-content-placeholder').first().waitFor();

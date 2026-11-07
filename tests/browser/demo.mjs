@@ -71,62 +71,41 @@ try {
   );
   assert.equal(
     await page.locator(".demo-options select").nth(1).inputValue(),
-    "equal",
+    "standard",
   );
-  const appearance = (button) =>
-    button.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return [
-        style.backgroundColor,
-        style.color,
-        style.borderColor,
-        style.fontWeight,
-      ];
-    });
-  assert.deepEqual(
-    await appearance(
-      page.getByRole("button", { name: "Reject All", exact: true }),
-    ),
-    await appearance(
-      page.getByRole("button", { name: "Accept All", exact: true }),
-    ),
+  assert.equal(
+    await page.getByRole("button", { name: "Reject All", exact: true }).count(),
+    0,
   );
   assert.deepEqual(external, [], "No provider requests before consent");
+  await page
+    .getByRole("button", { name: "Advanced Settings", exact: true })
+    .click();
+  assert.equal(await page.locator(".cb-notice-details").count(), 0);
   await page.getByRole("button", { name: "Reject All", exact: true }).click();
   assert.equal(await page.locator("iframe[src]").count(), 0);
   assert.deepEqual(external, [], "No provider requests after refusal");
-  await page.locator(".scanner-disclosure > summary").click();
-  await page
-    .getByRole("button", { name: "Start local scanner", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Add test data", exact: true })
-    .click();
-  const report = '[aria-label="Cookie scan report"]';
-  await page.waitForFunction(
-    (selector) =>
-      document.querySelector(selector)?.textContent.includes("cb_demo_cookie"),
-    report,
-  );
-  const scan = JSON.parse(await page.locator(report).innerText());
-  assert(scan.sessionStorage.includes("cb_demo_storage"));
-  assert(
-    !JSON.stringify(scan).includes('"example"'),
-    "Stored values must not appear in reports",
-  );
-  await page
-    .getByRole("button", { name: "Remove test data", exact: true })
-    .click();
-  await page.waitForFunction(
-    (selector) =>
-      !document.querySelector(selector)?.textContent.includes("cb_demo_cookie"),
-    report,
+  assert.equal(await page.locator(".scanner-disclosure").count(), 0);
+  assert.equal(
+    await page
+      .getByRole("button", {
+        name: "Withdraw all optional consent",
+        exact: true,
+      })
+      .count(),
+    0,
   );
   assert.equal(
-    await page.evaluate(() => sessionStorage.getItem("cb_demo_storage")),
-    null,
+    await page
+      .locator(".demo-options")
+      .evaluate((el) => getComputedStyle(el).position),
+    "fixed",
   );
-  await page.getByRole("button", { name: "Stop scanner", exact: true }).click();
+  assert(
+    await page
+      .locator(".article-film")
+      .evaluate((el) => el.getBoundingClientRect().top < 400),
+  );
   await page
     .locator(".cb-content-placeholder")
     .first()
@@ -169,7 +148,13 @@ try {
     page.waitForURL((url) => url.searchParams.get("variant") === "bar"),
     page.getByLabel("Layout", { exact: true }).selectOption("bar"),
   ]);
-  await page.getByRole("button", { name: "Reject All", exact: true }).waitFor();
+  await page
+    .getByRole("button", { name: "Advanced Settings", exact: true })
+    .waitFor();
+  assert.equal(
+    await page.getByRole("button", { name: "Reject All", exact: true }).count(),
+    0,
+  );
   assert.equal(
     await page.evaluate(() => window.__cookieConsent.variant),
     "bar",
@@ -179,20 +164,23 @@ try {
     1,
     "Changing settings resets consent without reloading the provider",
   );
+  await page
+    .getByRole("button", { name: "Advanced Settings", exact: true })
+    .click();
   await page.getByRole("button", { name: "Reject All", exact: true }).click();
   await page.locator(".demo-options > summary").click();
   await Promise.all([
-    page.waitForURL((url) => url.searchParams.get("buttons") === "standard"),
-    page.getByLabel("Decision buttons").selectOption("standard"),
+    page.waitForURL((url) => url.searchParams.get("buttons") === "equal"),
+    page.getByLabel("Decision buttons").selectOption("equal"),
   ]);
   await page.getByRole("button", { name: "Reject All", exact: true }).waitFor();
   assert.equal(
     await page.evaluate(() => window.__cookieConsent.buttonStyle),
-    "standard",
+    "equal",
   );
   assert.deepEqual(errors, []);
   console.log(
-    "PASS article demo: modal + equal defaults, no YouTube before consent/refusal, chosen video activation, local scanner, responsive layout and settings switches.",
+    "PASS simplified demo: standard dialog, refusal in preferences, gated YouTube near the top, no scanner/withdraw button, fixed settings, equal-style switch.",
   );
 } finally {
   await browser?.close();

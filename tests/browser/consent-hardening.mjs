@@ -129,78 +129,41 @@ async function visitor(width = 390) {
 	});
 	return { context, page, requests };
 }
+async function rejectViaPreferences(target) {
+ const reject = target.getByRole("button", { name: "Odrzuć wszystkie", exact: true });
+ if (!await reject.isVisible()) {
+  const advanced = target.locator(".cb-settings");
+  if (await advanced.isVisible()) await advanced.click();
+  else await target.getByRole("button", { name: "Preferencje plików cookie", exact: true }).click();
+ }
+ await reject.click();
+}
+
 try {
-	for (const variant of ["modal", "bar"])
-		for (const width of [320, 390, 768, 1440]) {
-			const v = await visitor(width);
-			await v.page.goto(`${base}/?variant=${variant}`);
-			await v.page
-				.getByRole("button", { name: "Zaakceptuj wszystkie", exact: true })
-				.waitFor();
-			const accept = v.page.getByRole("button", {
-				name: "Zaakceptuj wszystkie",
-				exact: true,
-			});
-			const reject = v.page.getByRole("button", {
-				name: "Odrzuć wszystkie",
-				exact: true,
-			});
-			const style = (locator) =>
-				locator.evaluate((el) => {
-					const s = getComputedStyle(el);
-					const r = el.getBoundingClientRect();
-					return {
-						width: r.width,
-						height: r.height,
-						font: s.fontSize,
-						weight: s.fontWeight,
-						color: s.color,
-						background: s.backgroundColor,
-						border: s.border,
-						widthOverflow: el.scrollWidth > el.clientWidth + 1,
-					};
-				});
-			const a = await style(accept),
-				r = await style(reject);
-			assert.ok(
-				Math.abs(a.width - r.width) < 1,
-				"Equal button width within browser subpixel rounding",
-			);
-			delete a.width;
-			delete r.width;
-			assert.notEqual(a.background, r.background, "Acceptance is filled and refusal is outlined");
-   assert.ok(a.border.includes("1px") && r.border.includes("1px"));
-   delete a.color; delete r.color; delete a.background; delete r.background;
-   assert.deepEqual(a, r, `Consistent decision sizing ${variant} ${width}`);
-			assert.ok(
-				!a.border.startsWith("0px"),
-				"Decision controls have a visible border",
-			);
-			assert.equal((await style(accept)).widthOverflow, false);
-			assert.deepEqual(v.requests, []);
-			if (variant === "modal") {
-				await v.page.keyboard.press("Tab");
-				assert.equal(
-					await v.page.evaluate(
-						() =>
-							document
-								.getElementById("cookie-consent-host")
-								.shadowRoot.activeElement.closest("[role=dialog]") !== null,
-					),
-					true,
-				);
-			}
-			await v.page.screenshot({
-				path: fileURLToPath(
-					new URL(`native-${variant}-${width}.png`, evidence),
-				),
-				fullPage: true,
-			});
-			results.push(
-				`Filled acceptance, outlined refusal and zero pre-consent requests: ${variant} ${width}px`,
-			);
-			await v.context.close();
-		}
+
+ for (const variant of ["modal", "bar"]) for (const width of [320, 390, 768, 1440]) {
+  const v = await visitor(width);
+  await v.page.goto(`${base}/?variant=${variant}`);
+  const accept = v.page.getByRole("button", { name: "Zaakceptuj wszystkie", exact: true });
+  await accept.waitFor();
+  assert.equal(await v.page.getByRole("button", { name: "Odrzuć wszystkie", exact: true }).count(), 0);
+  const geometry = await accept.evaluate(el => ({ height: el.getBoundingClientRect().height, overflow: el.scrollWidth > el.clientWidth + 1 }));
+  assert(geometry.height >= 44); assert.equal(geometry.overflow, false);
+  assert.deepEqual(v.requests, []);
+  await v.page.screenshot({path: fileURLToPath(new URL(`native-${variant}-${width}.png`, evidence)), fullPage: true});
+  await v.page.locator(".cb-settings").click();
+  await v.page.getByRole("button", { name: "Odrzuć wszystkie", exact: true }).waitFor();
+  const save = v.page.getByRole("button", { name: "Zapisz ustawienia", exact: true });
+  assert(await save.isVisible());
+  assert.equal(await v.page.locator('.cb-preferences-footer button').count(), 2);
+  assert.equal(await v.page.locator('.cb-preferences-header button').count(), 1);
+  assert.equal(await v.page.locator('.cb-notice-details').count(), 0);
+  await v.page.keyboard.press("Tab");
+  assert(await v.page.evaluate(() => document.getElementById("cookie-consent-host").shadowRoot.activeElement.closest("[role=dialog]") !== null));
+  assert.deepEqual(v.requests, []);
+  results.push(`Standard: accept/settings first, refusal in preferences, zero requests at ${variant} ${width}px`);
+  await v.context.close();
+ }
 	for (const variant of ["modal", "bar"]) {
   const v = await visitor();
   await v.page.goto(`${base}/?variant=${variant}&buttons=equal`);
@@ -249,6 +212,7 @@ try {
 	const v = await visitor();
 	const { page, context, requests } = v;
 	await page.goto(base);
+    await page.locator(".cb-settings").click();
 	await page
 		.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
 		.waitFor();
@@ -355,17 +319,12 @@ try {
 	const beforeDirect = requests.length;
 	await Promise.all([
 		page.waitForNavigation(),
-		page
-			.getByRole("button", {
-				name: "Wycofaj wszystkie opcjonalne zgody",
-				exact: true,
-			})
-			.click(),
+		rejectViaPreferences(page),
 	]);
 	await page.locator(".cb-content-placeholder").first().waitFor();
 	assert.equal(requests.length, beforeDirect);
 	results.push(
-		"Persistent one-click withdrawal works directly without opening preferences",
+		"Withdrawal through persistent preferences removes optional consent without provider requests",
 	);
 	await page.evaluate(() => window.qa.setServiceConsent("probe", true));
 	await page.waitForFunction(() => window.vendorStarted === true);
@@ -373,7 +332,7 @@ try {
 	await other.goto(base);
 	await other
 		.getByRole("button", {
-			name: "Wycofaj wszystkie opcjonalne zgody",
+			name: "Preferencje plików cookie",
 			exact: true,
 		})
 		.waitFor();
@@ -382,12 +341,7 @@ try {
 	const [crossTabResponse] = await Promise.all([
 		page.waitForNavigation(),
 		other.waitForNavigation(),
-		other
-			.getByRole("button", {
-				name: "Wycofaj wszystkie opcjonalne zgody",
-				exact: true,
-			})
-			.click(),
+		rejectViaPreferences(other),
 	]);
 	await page.locator(".cb-content-placeholder").first().waitFor();
 	await page.waitForTimeout(150);
@@ -444,12 +398,7 @@ try {
 	const beforeSdkWithdrawal = sdk.requests.length;
 	await Promise.all([
 		sdk.page.waitForNavigation(),
-		sdk.page
-			.getByRole("button", {
-				name: "Wycofaj wszystkie opcjonalne zgody",
-				exact: true,
-			})
-			.click(),
+		rejectViaPreferences(sdk.page),
 	]);
 	await sdk.page.locator(".cb-content-placeholder").first().waitFor();
 	await sdk.page.waitForTimeout(150);
@@ -476,9 +425,7 @@ try {
 	);
 	await Promise.all([
 		missing.page.waitForNavigation(),
-		missing.page
-			.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
-			.click(),
+		rejectViaPreferences(missing.page),
 	]);
 	await missing.page
 		.getByRole("button", { name: "Preferencje plików cookie", exact: true })
@@ -486,7 +433,7 @@ try {
 	assert.deepEqual(missing.requests, []);
 	await missing.context.close();
 	results.push(
-		"Incomplete controller disclosure disables opt-in while one-click refusal remains usable",
+		"Incomplete controller disclosure disables opt-in while refusal in preferences remains usable",
 	);
 	console.log(JSON.stringify(results, null, 2));
 	await writeFile(

@@ -107,23 +107,3 @@ export function BannerDescription() {
 		</>
 	);
 }
-
-export function ConsentNotice() {
-	const config = useContext(ConfigContext);
-	if (!config) return null;
-	return (
-		<>
-			{config.controller?.name && (
-				<span class="cb-controller">
-					{config.controller.name}
-				</span>
-			)}
-			{config.purposes && <span class="cb-purposes">{config.purposes}</span>}
-			{!hasCompleteDisclosure(config) && (
-				<span class="block" role="status">
-					{t.disclosure.unavailable}
-				</span>
-			)}
-		</>
-	);
-}

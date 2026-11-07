@@ -62,12 +62,8 @@ it.each([undefined, "standard", "equal"] as const)(
 		expect(header.querySelector(".cb-header-reject") !== null).toBe(
 			buttonStyle !== "equal",
 		);
-		expect(root.querySelector(".cb-notice-details")?.textContent).toContain(
-			"QA company",
-		);
-		expect(root.querySelector(".cb-notice-details")?.hasAttribute("open")).toBe(
-			false,
-		);
+        expect(root.querySelector(".cb-notice-details")).toBeNull();
+        expect(header.querySelector('a[href="/privacy"]')).not.toBeNull();
 		const cards = [...root.querySelectorAll(".cb-preference-option")];
 		expect(cards).toHaveLength(4);
 		expect(new Set(cards.map((card) => card.className)).size).toBe(1);

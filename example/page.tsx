@@ -1,6 +1,5 @@
 import { render } from "preact";
 import { blockedContentProps, initializeConsent } from "../src/api/native";
-import { Scanner } from "./scanner";
 import { resetConsent } from "../src/core/consent-storage";
 import { SUPPORTED_LANGUAGES } from "../src/i18n";
 import "./style.css";
@@ -12,7 +11,7 @@ const lang = SUPPORTED_LANGUAGES.includes(
   ? params.get("lang")!
   : "en";
 const variant = params.get("variant") === "bar" ? "bar" : "modal";
-const buttonStyle = params.get("buttons") === "standard" ? "standard" : "equal";
+const buttonStyle = params.get("buttons") === "equal" ? "equal" : "standard";
 const policyUrl = `${import.meta.env.BASE_URL}privacy.html`;
 
 window.__cookieConsent = {
@@ -108,36 +107,11 @@ function Article() {
       <main className="article-page">
         <article>
           <header className="article-header">
-            <p className="article-topic">Film & animation</p>
-            <h1>
-              A small film.
-              <br />A whole world inside.
-            </h1>
+            <h1>Big Buck Bunny</h1>
             <p className="article-lead">
-              A rabbit, a quiet forest, and a little unexpected trouble.
-              Sometimes a short film is all you need to step out of the
-              everyday.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             </p>
-            <p className="article-byline">An example article by App4You</p>
           </header>
-          <p>
-            There is something lovely about a story that asks for only a few
-            minutes of your time. No long introduction, no series to catch up
-            on. Just a place, a handful of characters, and the chance to see
-            where they take you.
-          </p>
-          <p>
-            <em>Big Buck Bunny</em>, the animated short from the Blender
-            Foundation, is one of those films. Its woodland setting begins
-            gently enough, before a few mischievous neighbours make life rather
-            less peaceful for its oversized rabbit.
-          </p>
-          <h2>Make a little time for a short story.</h2>
-          <p>
-            You can watch the film below. The player is provided by YouTube, so
-            we leave it disconnected until you choose to load it. If you would
-            rather skip it, the rest of the article is still here to read.
-          </p>
           <figure className="article-film">
             <iframe
               {...blockedContentProps(
@@ -162,25 +136,24 @@ function Article() {
               </a>
             </figcaption>
           </figure>
-          <h2>A choice should leave room for no.</h2>
           <p>
-            A film can add something to a page without being a condition for
-            reading it. Saying no to an embedded player should leave the words,
-            the links and the rest of the site available.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+            vitae justo eget magna fermentum iaculis. Aenean euismod elementum
+            nisi, quis eleifend quam adipiscing vitae.
+          </p>
+          <h2>Lorem ipsum dolor sit amet</h2>
+          <p>
+            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat.
           </p>
           <p>
-            That is what this page demonstrates. You can refuse optional
-            services, allow YouTube when you reach the film, or change your mind
-            afterwards. The cookie preferences remain available at the bottom of
-            the page.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
           </p>
         </article>
-        <details className="scanner-disclosure">
-          <summary>
-            Cookie scanner <span>Inspect this page locally</span>
-          </summary>
-          <Scanner />
-        </details>
         <footer className="article-footer">
           <button
             onClick={() =>

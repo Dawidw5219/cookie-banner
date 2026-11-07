@@ -141,6 +141,8 @@ theme: {
 },
 ```
 
+`standard` shows acceptance and advanced settings first, with refusal in preferences. `equal` shows refusal alongside acceptance on the first layer.
+
 Use `customTexts` for copy changes and `localizations` for route-specific languages, purposes and provider disclosures. [Language configuration →](docs/multilingual.md)
 
 </details>
@@ -240,7 +242,7 @@ bun run deploy             # Build → tests → GitHub Release + ZIP → npm
 
 Deployment requires authenticated `gh` and `npm`, plus `ghdeploy`. Set the same version in `package.json`, the plugin header, `COOKIE4_VERSION` and the plugin readme's `Stable tag`. Use a new version if the previous one is already published or staged in npm. npm may require 2FA or staged approval.
 
-The article in `example/` uses a real YouTube embed, blocked until the visitor allows YouTube. It opens with a dialog and equal decision buttons. A small settings menu switches the presentation; the opt-in scanner supports synthetic test data. Tests mock the video provider and verify that refusal sends no provider requests.
+The article in `example/` uses a real YouTube embed, blocked until the visitor allows YouTube. It opens with the standard dialog: acceptance and advanced settings, with refusal inside preferences. A fixed menu switches the presentation. The development scanner remains available through `/dev` and is not shown on the demo page. Tests mock the video provider and verify that refusal sends no provider requests.
 
 The `Live demo` GitHub Actions workflow builds the demo on pushes to `main` and deploys `example/dist` to GitHub Pages. Select **GitHub Actions** as the Pages publishing source in the repository settings.
 

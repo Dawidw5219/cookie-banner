@@ -23,8 +23,8 @@ witryny ani oceną prawdziwości danych wpisanych przez jej administratora.
    własną integrację z jej URL-ami i pełnymi informacjami, zamiast zgadywać cel
    nieznanej domeny. Zmiana integracji wymaga nowego identyfikatora usługi.
 4. Link `.open-consent-settings` i shortcode `[cookie_preferences_link]`
-   nadal działają. Kontrolka ustawień pozostaje widoczna; przy aktywnych zgodach
-   jest też bezpośredni przycisk wycofania wszystkich opcjonalnych zgód.
+   nadal działają. Kontrolka ustawień pozostaje widoczna w prawym dolnym rogu.
+   Wycofanie wszystkich opcjonalnych zgód jest dostępne w preferencjach przez „Odrzuć wszystkie”.
 5. Zachowaj blokowanie CSP, wyczyść stare cache HTML i sprawdź CDN/reverse proxy.
    HTML zależny od zgód nie może być współdzielony między odwiedzającymi.
 

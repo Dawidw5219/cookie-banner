@@ -38,15 +38,19 @@ async function createPage(fixture) {
 	return { page, requests, close: () => context.close() };
 }
 
+async function rejectAll(page) {
+ const reject = page.getByRole("button", { name: "Odrzuć wszystkie", exact: true });
+ if (!await reject.isVisible()) await page.locator(".cb-settings").click();
+ await reject.click();
+}
+
 try {
 	const ui = await createPage();
 	await ui.page.goto(`${base}/?lang=pl`);
 	await ui.page.waitForSelector(".cb-content-placeholder");
 	await ui.page.waitForTimeout(250);
 	assert.deepEqual(ui.requests, [], "No external request before consent");
-	await ui.page
-		.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
-		.click();
+	await rejectAll(ui.page);
 	assert.equal(await ui.page.locator("iframe[src]").count(), 0);
 	const firstEmbed = ui.page.waitForResponse((response) =>
 		response.url().includes("youtube-nocookie.com"),
@@ -80,9 +84,7 @@ try {
 		"Only categories and the observed YouTube provider",
 	);
 	const reloaded = ui.page.waitForNavigation();
-	await ui.page
-		.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
-		.click();
+	await rejectAll(ui.page);
 	await reloaded;
 	await ui.page.waitForSelector(".cb-content-placeholder");
 	await ui.page.waitForTimeout(250);
@@ -108,9 +110,7 @@ try {
 	const guard = await createPage();
 	await guard.page.goto(`${base}/?lang=pl`);
 	await guard.page.waitForSelector(".cb-content-placeholder");
-	await guard.page
-		.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
-		.click();
+	await rejectAll(guard.page);
 	await guard.page.evaluate(async (source) => {
 		const { installAutoBlocker } = await import(source);
 		installAutoBlocker(window.__cookieConsent);
@@ -188,9 +188,7 @@ try {
 				.count(),
 			1,
 		);
-		await wp.page
-			.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
-			.click();
+		await rejectAll(wp.page);
 		await wp.page
 			.locator(".cb-content-placeholder")
 			.first()

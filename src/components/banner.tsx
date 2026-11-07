@@ -3,7 +3,6 @@ import type { BannerConfig } from "../types";
 import { t } from "../i18n";
 import { ConfigContext, useConsent } from "../hooks/use-consent";
 import { releaseBannerScrollLock, setBannerHostBlocking, syncBannerScrollLock } from "../core/scroll-lock";
-import { ConsentDecisionButton } from "../ui/consent-button";
 import { FloatingIcon } from "../ui/floating-icon";
 import { ConsentPanel } from "./consent-panel";
 import { ConsentBar } from "./consent-bar";
@@ -21,7 +20,6 @@ export function App({ config }: { config: BannerConfig }) {
 function AppContent() {
 	const {
 		view,
-		consentState,
 		error,
 		suppressed,
 		hasConsented,
@@ -34,10 +32,6 @@ function AppContent() {
 		dismiss,
 	} = useConsent();
 
-	const hasOptionalConsent =
-		consentState.analytics ||
-		consentState.marketing ||
-		Object.values(consentState.services || {}).some(Boolean);
 	const isBar = config.variant === "bar";
 	const isVisible = !suppressed || hasConsented;
 	const blocksPage =
@@ -107,17 +101,6 @@ function AppContent() {
 						onRejectAll={rejectAll}
 					/>
 				</ConsentPanel>
-			)}
-			{view === "idle" && hasOptionalConsent && (
-				<div class="fixed bottom-4 left-20 right-4 sm:right-auto z-2147483646 max-w-xs">
-					<ConsentDecisionButton
-						variant="outline"
-						type="button"
-						onClick={rejectAll}
-					>
-						{t.disclosure.withdraw}
-					</ConsentDecisionButton>
-				</div>
 			)}
 			{view === "idle" && (
 				<FloatingIcon label={t.floatingIcon.label} onClick={openPreferences} />

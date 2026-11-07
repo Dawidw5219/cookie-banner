@@ -1,7 +1,11 @@
-import { useLayoutEffect, useRef } from "preact/hooks";
+import { ConfigContext } from "../hooks/use-consent";
+import { useContext, useLayoutEffect, useRef } from "preact/hooks";
 import { t } from "../i18n";
 import { hasCompleteDisclosure } from "../core/disclosure";
-import { ConsentDecisionButton, ConsentSettingsButton } from "../ui/consent-button";
+import {
+	ConsentDecisionButton,
+	ConsentSettingsButton,
+} from "../ui/consent-button";
 import { BannerDescription, PolicyLinks } from "./policy-links";
 
 export function ConsentBar({
@@ -18,6 +22,8 @@ export function ConsentBar({
 	onRejectAll: () => void;
 }) {
 	const bar = useRef<HTMLDivElement>(null);
+	const config = useContext(ConfigContext);
+	const equal = config?.buttonStyle === "equal";
 	useLayoutEffect(() => {
 		const element = bar.current;
 		if (!element) return;
@@ -79,14 +85,16 @@ export function ConsentBar({
 						<ConsentSettingsButton type="button" onClick={onOpenPreferences}>
 							{t.overlay.advancedSettings}
 						</ConsentSettingsButton>
-						<div class="cb-decisions">
-							<ConsentDecisionButton
-								variant="outline"
-								type="button"
-								onClick={onRejectAll}
-							>
-								{t.preferences.rejectAll}
-							</ConsentDecisionButton>
+						<div class={`cb-decisions ${equal ? "" : "cb-decisions-single"}`}>
+							{equal && (
+								<ConsentDecisionButton
+									variant="outline"
+									type="button"
+									onClick={onRejectAll}
+								>
+									{t.preferences.rejectAll}
+								</ConsentDecisionButton>
+							)}
 							<ConsentDecisionButton
 								type="button"
 								onClick={onAcceptAll}

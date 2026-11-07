@@ -120,7 +120,7 @@ export interface BannerConfig {
 	privacyPolicyUrl?: string;
 	cookiePolicyUrl?: string;
 	theme?: ThemeConfig;
-	/** @deprecated Custom links always work; the floating withdrawal controls remain visible. */
+	/** @deprecated Custom links always work; the floating preferences control remains visible. */
 	useCustomSettingsLink?: boolean;
 	customTexts?: Record<string, unknown>;
 	detectedServices?: string[];

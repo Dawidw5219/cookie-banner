@@ -8,7 +8,7 @@ import {
 import { ConsentButton, ConsentDecisionButton } from "../ui/consent-button";
 import { ConfigContext } from "../hooks/use-consent";
 import { t } from "../i18n";
-import { PreferencesPolicyLinks, ConsentNotice } from "./policy-links";
+import { PreferencesPolicyLinks } from "./policy-links";
 import { ConsentOption } from "./consent-option";
 import type { ConsentCategory, ConsentState } from "../types";
 import { CONSENT_CATEGORIES } from "../types";
@@ -45,7 +45,7 @@ export function PreferencesModal({
 
 	return (
 		<>
-			<div class="cb-preferences-header shrink-0 border-b border-cb-border p-5 sm:p-6">
+			<div class="cb-preferences-header shrink-0 border-b border-cb-border px-5 pt-5 pb-3 sm:px-6 sm:pt-6 sm:pb-3">
 				<div
 					class={`flex items-center justify-between gap-4 ${standard ? "" : "pr-10"}`}
 				>
@@ -75,14 +75,8 @@ export function PreferencesModal({
 					</p>
 				)}
 			</div>
-			<div class="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6">
+			<div class="flex-1 min-h-0 overflow-y-auto px-5 pb-5 pt-3 sm:px-6 sm:pb-6">
 				<div class="flex flex-col gap-3 sm:gap-4">
-					<details class="cb-notice-details">
-						<summary>{t.content.privacyDetails}</summary>
-						<div class="mt-3 text-xs leading-relaxed">
-							<ConsentNotice />
-						</div>
-					</details>
 					{CONSENT_CATEGORIES.map((category) => {
 						const essential = category === "essential";
 						const copy = t.preferences.categories[category];
