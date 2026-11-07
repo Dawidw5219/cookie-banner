@@ -74,7 +74,7 @@ export interface LocalizedContent {
 }
 
 export interface BannerConfig {
- /** Defaults to equal (strict appearance). Never changes blocking or consent requirements. */
+ /** Defaults to standard in npm. WordPress defaults to equal. Never changes blocking or consent requirements. */
  buttonStyle?: "standard" | "equal";
  /** Per-page locale content: base language, then exact regional override. */
  localizations?: Record<string, LocalizedContent>;

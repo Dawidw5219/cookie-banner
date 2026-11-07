@@ -29,7 +29,8 @@ try {
 const config: BannerConfig = {mode:'standalone',lang:'pl',noticeVersion:'qa-1',controller:{name:'QA controller'},purposes:'QA video',privacyPolicyUrl:'/privacy'};
 const receipt: ConsentReceipt|null=getConsentReceipt();
 if(resolveLocalizedConfig({...config,lang:'de-DE',localizations:{de:{purposes:'Zweck'}}}).purposes!=='Zweck')throw new Error('SSR locale resolution failed');
-if(resolveLocalizedConfig(config).buttonStyle!=='equal')throw new Error('Strict style must be default');
+if(resolveLocalizedConfig(config).buttonStyle!=='standard')throw new Error('Standard style must be default');
+if(resolveLocalizedConfig({...config,buttonStyle:'equal'}).buttonStyle!=='equal')throw new Error('Equal style override failed');
 if(resolveLocalizedConfig({...config,buttonStyle:'standard'}).buttonStyle!=='standard')throw new Error('Standard style override failed');
 if(getDetectedServices().length!==0)throw new Error('SSR invented detected services');
 if(receipt!==null)throw new Error('SSR invented browser consent');

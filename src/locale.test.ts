@@ -35,8 +35,9 @@ describe("page language and localized content", () => {
   window.__cookieConsent=resolveLocalizedConfig({...base,serviceDisclosures:{},lang:"de",localizations:{de:{serviceDisclosures:{youtube:{retention:"Eine Sitzung"}}}}});
   expect(hasServiceDisclosure(getService("youtube"))).toBe(false);
  });
- it("defaults to strict buttons in the shared npm configuration", () => {
-  expect(resolveLocalizedConfig(base).buttonStyle).toBe("equal");
+ it("defaults to standard buttons in npm and preserves explicit styles", () => {
+  expect(resolveLocalizedConfig(base).buttonStyle).toBe("standard");
+  expect(resolveLocalizedConfig({...base,buttonStyle:"equal"}).buttonStyle).toBe("equal");
   expect(resolveLocalizedConfig({...base,buttonStyle:"standard"}).buttonStyle).toBe("standard");
  });
  it.each(["en","pl","de","fr","es","it","nl","da","no","sv"])("renders video, iframe and custom blocker text in %s",lang=>{

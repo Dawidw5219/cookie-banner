@@ -38,7 +38,7 @@ export function ConsentDecisionButton({
  variant?: "primary" | "outline" | "subtle";
 }) {
  const config = useContext(ConfigContext);
- const appearance = config?.buttonStyle !== "standard" && variant === "outline" ? "primary" : variant;
+ const appearance = (config?.buttonStyle ?? "standard") !== "standard" && variant === "outline" ? "primary" : variant;
  return <ConsentButton {...props} class={`cb-decision cb-decision-${appearance}`} />;
 }
 

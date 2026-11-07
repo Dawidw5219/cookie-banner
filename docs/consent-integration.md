@@ -271,8 +271,9 @@ in ignored `reference-plugins/` and can be restored with
 ### Te same funkcje poza WordPressem
 
 Rdzeń npm i wtyczka używają tych samych komponentów i mechanizmów zgody.
-`buttonStyle: 'equal'` jest domyślnym trybem ścisłym; `'standard'` wybiera wypełnioną
-akceptację i obrysowaną odmowę. To wybór wyglądu, nie wyłącznik ochrony danych.
+W npm domyślny `buttonStyle: 'standard'` daje wypełnioną akceptację i obrysowaną
+odmowę. WordPress domyślnie wybiera `'equal'`, czyli jednakowy wygląd obu
+przycisków. Ustawienie dotyczy wyglądu przycisków.
 
 W konfiguracji npm dostępne są również `localizations`, `customTexts`,
 `serviceDisclosures`, `categoryCleanup`, `autoBlock: true`, `strictCsp: true`,

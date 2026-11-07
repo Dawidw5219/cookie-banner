@@ -50,7 +50,7 @@ export function resolveLocalizedConfig(config: BannerConfig): BannerConfig {
 	const { customTexts, serviceDisclosures, ...fields } = content;
 	return {
 		...config, ...fields, lang,
-  buttonStyle: config.buttonStyle || "equal",
+  buttonStyle: config.buttonStyle || "standard",
 		controller: fields.controller ? { ...config.controller, ...fields.controller } : config.controller,
 		customTexts: mergeTexts(config.customTexts || {}, customTexts || {}),
 		serviceDisclosures: mergeTexts(config.serviceDisclosures || {}, serviceDisclosures || {}) as BannerConfig["serviceDisclosures"],

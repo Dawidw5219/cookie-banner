@@ -138,4 +138,5 @@ WordPress: **Banner & texts → Consent button style**. Standardowy oznacza
 wypełnioną akceptację i obrysowaną odmowę; ścisły oznacza identyczne przyciski
 decyzji. Zapis preferencji ma neutralny styl. Ustawienie zmienia tylko wygląd,
 nie blokowanie, CSP ani wymagania zgody. Nazwy trybów nie stanowią oceny prawnej.
-W npm odpowiada temu `buttonStyle: "standard" | "equal"`; domyślnie `equal`.
+W npm domyślną wartością `buttonStyle` jest `standard`. W WordPressie domyślną
+wartością jest `equal`.
