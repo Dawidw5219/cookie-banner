@@ -33,6 +33,7 @@ export const de: TranslationSchema = {
 		withdraw: "Alle optionalen Einwilligungen widerrufen",
 		saveError: "Die Auswahl konnte nicht gespeichert werden. Optionale Verarbeitung bleibt gesperrt.",
 	},
+	close: "Schließen",
 	overlay: {
 		title: "Wir respektieren Ihre Privatsphäre",
 		description:

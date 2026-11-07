@@ -33,6 +33,7 @@ export const fr: TranslationSchema = {
 		withdraw: "Retirer tous les consentements facultatifs",
 		saveError: "Le choix n’a pas pu être enregistré. Le traitement facultatif reste bloqué.",
 	},
+	close: "Fermer",
 	overlay: {
 		title: "Nous respectons votre vie privée",
 		description:

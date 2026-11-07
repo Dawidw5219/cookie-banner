@@ -142,7 +142,9 @@ export function startContentBlocker(config: BannerConfig): () => void {
 				continue;
 			}
 			if (granted) {
-				placeholders.get(element)?.remove();
+				const box = placeholders.get(element);
+				const restoreFocus = !!box?.contains(document.activeElement);
+				box?.remove();
 				placeholders.delete(element);
 				element.hidden = false;
 				if (
@@ -150,6 +152,10 @@ export function startContentBlocker(config: BannerConfig): () => void {
 					element.getAttribute("src") !== element.dataset.cbSrc
 				)
 					element.setAttribute("src", element.dataset.cbSrc);
+				if (restoreFocus) {
+					if (!element.hasAttribute("tabindex")) element.tabIndex = 0;
+					element.focus();
+				}
 				continue;
 			}
 			if (element.hasAttribute("src")) element.removeAttribute("src");

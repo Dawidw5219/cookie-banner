@@ -33,6 +33,7 @@ export const es: TranslationSchema = {
 		withdraw: "Retirar todos los consentimientos opcionales",
 		saveError: "No se pudo guardar la elección. El tratamiento opcional sigue bloqueado.",
 	},
+	close: "Cerrar",
 	overlay: {
 		title: "Valoramos su privacidad",
 		description:

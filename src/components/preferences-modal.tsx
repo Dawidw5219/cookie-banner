@@ -56,10 +56,10 @@ export function PreferencesModal({
 
 	return (
 		<>
-			<div class="border-b border-cb-border p-5 sm:p-6">
+			<div class="shrink-0 border-b border-cb-border p-5 sm:p-6">
 				<div class="flex items-center justify-between">
 					<h2 class="text-lg sm:text-xl font-bold text-cb-text">
-						{t.preferences.title}!
+						{t.preferences.title}
 					</h2>
 				</div>
 				<p class="mt-2 text-sm leading-relaxed text-cb-text">

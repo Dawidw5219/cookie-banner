@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, google tag manager, consent mode
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPL-2.0-or-later
 
 Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.
@@ -42,6 +42,9 @@ Features:
 
 == Upgrade Notice ==
 
+= 2.0.1 =
+Security and accessibility fixes. Consent evidence now uses strict category validation, atomic request quotas and a transactional storage budget (10,000 records by default). Existing MySQL evidence tables require InnoDB and are migrated automatically. Review docs/deployment-security.md for limits and the SSH-only developer deployment configuration. Automated accessibility checks do not constitute a full WCAG conformance declaration.
+
 = 2.0.0 =
 Review the controller, processing purposes, privacy policy and provider disclosures before upgrading. Incomplete optional services remain blocked and prior consent records are invalidated. Strict button appearance is the default; choose Standard for outlined refusal. Both styles retain consent blocking. Multilingual content and migration instructions are in the repository documentation.
 
@@ -49,6 +52,15 @@ Review the controller, processing purposes, privacy policy and provider disclosu
 Strict consent CSP is enabled by default. Optional external services require explicit consent and page reload. HTML page caching is bypassed; purge any additional CDN/proxy cache before enabling public traffic. Review external essential origins and custom integrations before upgrading.
 
 == Changelog ==
+
+= 2.0.1 =
+* Bound public consent evidence size and storage with atomic quotas and transactional inserts/retention.
+* Replace plaintext developer FTP deployment with verified SSH; pass SVN passwords through stdin.
+* Improve modal names, keyboard traversal, closing and focus restoration across browsers.
+* Fix dark preference surfaces and prevent the bottom banner from obscuring keyboard focus.
+* Improve video/iframe blocker focus, error announcements and target sizes.
+* Make administrator notifications persistent and available to assistive technology.
+* Add accessibility regression coverage across Chromium, Firefox and WebKit, including blocked/loaded/withdrawn embeds.
 
 = 2.0.0 =
 * Require reviewed controller/purpose/policy and provider information before optional consent.

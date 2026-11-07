@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 interface Toast {
 	id: number;
@@ -18,7 +18,6 @@ export function ToastContainer() {
 	addToast = (message, type) => {
 		const id = Date.now();
 		setToasts((prev) => [...prev, { id, message, type }]);
-		setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3000);
 	};
 
 	return (
@@ -26,6 +25,7 @@ export function ToastContainer() {
 			{toasts.map((t) => (
 				<div
 					key={t.id}
+					role={t.type === "error" ? "alert" : "status"}
 					class={`px-4 py-2.5 rounded-lg text-sm font-medium shadow-lg animate-[slideUp_0.2s_ease-out] ${
 						t.type === "success"
 							? "bg-gray-900 text-white"
@@ -33,6 +33,16 @@ export function ToastContainer() {
 					}`}
 				>
 					{t.message}
+					<button
+						type="button"
+						aria-label="Dismiss notification"
+						class="ml-3 min-h-6 min-w-6 border border-current rounded"
+						onClick={() =>
+							setToasts((prev) => prev.filter((item) => item.id !== t.id))
+						}
+					>
+						×
+					</button>
 				</div>
 			))}
 		</div>

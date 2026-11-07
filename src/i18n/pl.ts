@@ -33,6 +33,7 @@ export const pl: TranslationSchema = {
 		withdraw: "Wycofaj wszystkie opcjonalne zgody",
 		saveError: "Nie udało się zapisać wyboru. Opcjonalne przetwarzanie pozostaje zablokowane.",
 	},
+	close: "Zamknij",
 	overlay: {
 		title: "Szanujemy Twoją prywatność",
 		description:

@@ -31,6 +31,7 @@ export const en = {
 		withdraw: "Withdraw all optional consent",
 		saveError: "The choice could not be saved. Optional processing remains blocked.",
 	},
+	close: "Close",
 	overlay: {
 		title: "We value your privacy",
 		description:

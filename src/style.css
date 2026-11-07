@@ -8,8 +8,8 @@
     --cb-on-primary: #ffffff;
     --cb-primary-hover: #1d4ed8;
     --cb-overlay: rgba(0, 0, 0, 0.5);
-    --cb-surface: #f8fafc;
-    --cb-border: #e2e8f0;
+    --cb-surface: color-mix(in srgb, var(--cb-text) 4%, var(--cb-bg));
+    --cb-border: color-mix(in srgb, var(--cb-text) 20%, var(--cb-bg));
     --cb-radius: 12px;
     --cb-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
@@ -89,4 +89,13 @@
 @media (max-width: 359px) {
  .cb-decisions { grid-template-columns: 1fr; }
  .cb-bar-actions .cb-decisions { min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (forced-colors: active) {
+  button { border: 1px solid ButtonText; }
+  button:focus-visible, a:focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+  [role="switch"][aria-checked="true"] { outline: 2px solid Highlight; }
 }

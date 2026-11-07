@@ -32,7 +32,6 @@
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-exec": "^3.0.0",
-    "grunt-ftp-push": "^0.2.2",
     "grunt-sync": "^0.8.2",
     "grunt-wp-i18n": "^1.0.4",
     "preact": "10.25.4",

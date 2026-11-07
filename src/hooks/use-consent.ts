@@ -181,6 +181,7 @@ export function useConsent() {
 		rejectAll,
 		savePreferences,
 		openPreferences,
+		dismiss: toIdle,
 		preferencesInitialState,
 	};
 }

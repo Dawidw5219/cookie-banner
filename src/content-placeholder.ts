@@ -22,23 +22,19 @@ export function createContentPlaceholder(
 	const youtube = id === "youtube";
 	const named =
 		service && !id.startsWith("external-") && !/^unknown\b/i.test(service.name);
-	const name = named
-		? service.name
-		: copy.content.external;
+	const name = named ? service.name : copy.content.external;
 	const box = document.createElement("section");
 	box.className = "cb-content-placeholder";
- box.lang = lang;
-	box.setAttribute(
-		"aria-label",
-		copy.content.blocked,
-	);
+	box.lang = lang;
+	box.setAttribute("aria-label", copy.content.blocked);
 	box.style.cssText =
 		"box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;max-width:100%;min-height:280px;padding:32px 24px;text-align:center;border:1px solid var(--cb-content-border,color-mix(in srgb,currentColor 9%,transparent));border-radius:var(--cb-content-radius,18px);background:var(--cb-content-background,linear-gradient(145deg,color-mix(in srgb,var(--cb-content-surface,#fff) 96%,var(--cb-primary,#2563eb)),var(--cb-content-surface,#fff)));box-shadow:0 8px 28px color-mix(in srgb,currentColor 5%,transparent);color:var(--cb-content-color,inherit);font-family:inherit;font-size:13px;font-weight:400;line-height:1.5;";
 	applyTheme(box, config?.theme || {});
 	// Match the actual page surface, including dark sections, without loading artwork.
 	for (let parent = container; parent; parent = parent.parentElement) {
 		const background = getComputedStyle(parent).backgroundColor;
-		if (background === "transparent" || background === "rgba(0, 0, 0, 0)") continue;
+		if (background === "transparent" || background === "rgba(0, 0, 0, 0)")
+			continue;
 		box.style.setProperty("--cb-content-surface", background);
 		break;
 	}
@@ -79,11 +75,15 @@ export function createContentPlaceholder(
 	const text = document.createElement("p");
 	text.style.cssText =
 		"margin:0;max-width:38ch;font-family:inherit;font-size:13px;font-weight:400;line-height:1.5;color:inherit;text-wrap:pretty";
-	text.textContent = youtube ? copy.content.videoDescription : copy.content.description;
+	text.textContent = youtube
+		? copy.content.videoDescription
+		: copy.content.description;
 
 	const button = document.createElement("button");
 	button.type = "button";
-	button.textContent = youtube ? copy.content.allowPlay : copy.content.allowShow;
+	button.textContent = youtube
+		? copy.content.allowPlay
+		: copy.content.allowShow;
 	button.style.cssText =
 		"box-sizing:border-box;max-width:100%;min-height:44px;margin:4px 0 0;padding:11px 20px;font-family:inherit;font-size:13px;font-weight:600;line-height:1.4;white-space:normal;cursor:pointer;border:1px solid transparent;border-radius:var(--cb-content-button-radius,10px);background:var(--cb-content-primary,var(--cb-primary,#2563eb));color:var(--cb-content-button-text,var(--cb-on-primary,#fff));box-shadow:0 3px 8px color-mix(in srgb,var(--cb-primary,#2563eb) 16%,transparent);text-transform:none;letter-spacing:normal";
 	button.addEventListener(
@@ -93,6 +93,7 @@ export function createContentPlaceholder(
 				try {
 					allow();
 				} catch {
+					text.setAttribute("role", "alert");
 					text.textContent = copy.disclosure.saveError;
 				}
 			} else window.dispatchEvent(new Event("cb:open-preferences"));
@@ -108,10 +109,12 @@ export function createContentPlaceholder(
 	content.append(heading, text);
 
 	const details = document.createElement("details");
-	details.style.cssText = "max-width:48ch;font-family:inherit;font-size:12px;line-height:1.6;color:inherit";
+	details.style.cssText =
+		"max-width:48ch;font-family:inherit;font-size:12px;line-height:1.6;color:inherit";
 	const summary = document.createElement("summary");
 	summary.textContent = copy.content.privacyDetails;
-	summary.style.cssText = "cursor:pointer;text-decoration:underline;text-underline-offset:3px";
+	summary.style.cssText =
+		"min-height:24px;line-height:24px;cursor:pointer;text-decoration:underline;text-underline-offset:3px";
 	details.append(summary);
 	if (disclosed && service) {
 		const notice = document.createElement("p");
@@ -128,12 +131,24 @@ export function createContentPlaceholder(
 		const link = document.createElement("a");
 		link.href = url!;
 		link.textContent = label;
-		link.style.cssText = "display:inline-block;margin:4px 6px;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px";
+		link.style.cssText =
+			"display:inline-block;min-height:24px;line-height:24px;margin:4px 6px;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px";
 		link.target = "_blank";
 		link.rel = "noopener noreferrer";
 		details.append(link);
 	}
 	content.append(button, details);
+	// Keep keyboard focus visible even if the host resets button/link outlines.
+	for (const control of [button, summary, ...details.querySelectorAll("a")]) {
+		control.addEventListener("focus", () => {
+			control.style.outline = `2px solid ${getComputedStyle(box).color}`;
+			control.style.outlineOffset = "3px";
+		});
+		control.addEventListener("blur", () => {
+			control.style.removeProperty("outline");
+			control.style.removeProperty("outline-offset");
+		});
+	}
 
 	for (const child of content.children)
 		(child as HTMLElement).style.flexShrink = "0";

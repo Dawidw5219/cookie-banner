@@ -33,6 +33,7 @@ export const no: TranslationSchema = {
 		withdraw: "Trekk tilbake alle valgfrie samtykker",
 		saveError: "Valget kunne ikke lagres. Valgfri behandling forblir blokkert.",
 	},
+	close: "Lukk",
 	overlay: {
 		title: "Vi respekterer personvernet ditt",
 		description:

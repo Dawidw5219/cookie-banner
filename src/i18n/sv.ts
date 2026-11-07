@@ -33,6 +33,7 @@ export const sv: TranslationSchema = {
 		withdraw: "Återkalla alla valfria samtycken",
 		saveError: "Valet kunde inte sparas. Valfri behandling förblir blockerad.",
 	},
+	close: "Stäng",
 	overlay: {
 		title: "Vi respekterar din integritet",
 		description:

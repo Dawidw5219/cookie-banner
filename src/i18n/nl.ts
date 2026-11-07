@@ -33,6 +33,7 @@ export const nl: TranslationSchema = {
 		withdraw: "Alle optionele toestemmingen intrekken",
 		saveError: "De keuze kon niet worden opgeslagen. Optionele verwerking blijft geblokkeerd.",
 	},
+	close: "Sluiten",
 	overlay: {
 		title: "Wij respecteren uw privacy",
 		description:

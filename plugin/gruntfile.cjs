@@ -8,7 +8,7 @@ module.exports = (grunt) => {
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-cssmin");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
-	grunt.loadNpmTasks("grunt-ftp-push");
+	const deployment = require("./tools/deployment.cjs");
 	grunt.loadNpmTasks("grunt-sync");
 	grunt.loadNpmTasks("grunt-exec");
 
@@ -165,7 +165,7 @@ module.exports = (grunt) => {
 							// Root-mode extras: when the plugin lives alongside build tooling.
 							if (srcDir === ".") {
 								const rootExcludedDirs = new Set([
-									"src", "cli", "scripts", "widgets", "builds",
+									"src", "cli", "scripts", "tools", "widgets", "builds",
 								]);
 								if (segments.length > 0 && rootExcludedDirs.has(segments[0])) return false;
 
@@ -273,39 +273,8 @@ module.exports = (grunt) => {
 			},
 			ftp: {
 				files: [srcDir + "/**/*"],
-				tasks: ["uglify", "cssmin", "ftp_push:updates"],
+				tasks: ["uglify", "cssmin", "upload:ssh"],
 				options: { spawn: false },
-			},
-		},
-
-		ftp_push: {
-			full: {
-				options: {
-					port: process.env.FTP_PORT || 21,
-					host: process.env.FTP_HOST,
-					username: process.env.FTP_USERNAME,
-					password: process.env.FTP_PASSWORD,
-					dest:
-						process.env.FTP_WP_PLUGINS_FOLDER_PATH +
-						"/" +
-						pluginName,
-					incrementalUpdates: false,
-				},
-				files: [{ expand: true, cwd: srcDir, src: ["**", "!**/.svn/**"] }],
-			},
-			updates: {
-				options: {
-					port: process.env.FTP_PORT || 21,
-					host: process.env.FTP_HOST,
-					username: process.env.FTP_USERNAME,
-					password: process.env.FTP_PASSWORD,
-					dest:
-						process.env.FTP_WP_PLUGINS_FOLDER_PATH +
-						"/" +
-						pluginName,
-					incrementalUpdates: true,
-				},
-				files: [{ expand: true, cwd: srcDir, src: ["**", "!**/.svn/**"] }],
 			},
 		},
 
@@ -336,20 +305,6 @@ module.exports = (grunt) => {
 						`svn status | grep '^!' | awk '{print $2}' | xargs -I{} svn delete "{}" || true`,
 						`cd ..`,
 					].join(" && ")).join(" && ");
-				},
-			},
-			svn_commit: {
-				cmd: function () {
-					const version = grunt.config.get("wporg.version");
-					const svnUrl = grunt.config.get("wporg.svnUrl");
-					const auth = grunt.config.get("wporg.auth");
-					// Commit both src (trunk) and assets in one changelist
-					const dirs = [srcDir, "assets"].filter((d) => fs.existsSync(path.join(d, ".svn")));
-					const commitCmd = dirs.map((d) => `cd "${d}" && svn commit -m "Release ${version}" ${auth} && cd ..`).join(" && ");
-					// Remove all old tags, then create new tag from trunk (only latest version available)
-					const deleteOldTags = `svn list "${svnUrl}/tags" ${auth} 2>/dev/null | sed 's|/||' | while read tag; do svn delete "${svnUrl}/tags/$tag" -m "Remove old tag $tag" ${auth}; done || true`;
-					const createTag = `svn copy "${svnUrl}/trunk" "${svnUrl}/tags/${version}" -m "Tag ${version}" ${auth}`;
-					return commitCmd + " && " + deleteOldTags + " && " + createTag;
 				},
 			},
 		},
@@ -383,25 +338,11 @@ module.exports = (grunt) => {
 		grunt.task.run(tasks);
 	});
 
-	// dev:ftp  → FTP full push + watch
-	grunt.registerTask("dev:ftp", function () {
-		if (!process.env.FTP_HOST) {
-			grunt.log.error("FTP not configured in .env");
-			return false;
-		}
-		grunt.log.writeln("Dev+FTP: " + process.env.FTP_HOST);
-		grunt.task.run(["uglify", "cssmin", "ftp_push:full", "watch:ftp"]);
-	});
-
-	// deploy  → minify + FTP full push (one-shot)
-	grunt.registerTask("deploy", function () {
-		if (!process.env.FTP_HOST) {
-			grunt.log.error("FTP not configured in .env");
-			return false;
-		}
-		grunt.log.writeln("Deploy via FTP to " + process.env.FTP_HOST);
-		grunt.task.run(["uglify", "cssmin", "ftp_push:full"]);
-	});
+	grunt.registerTask("upload:ssh", function () { deployment.upload(srcDir, pluginName); });
+	grunt.registerTask("dev:ssh", ["uglify", "cssmin", "upload:ssh", "watch:ftp"]);
+	// Legacy entry point: SSH only; there is no plaintext fallback.
+	grunt.registerTask("dev:ftp", ["dev:ssh"]);
+	grunt.registerTask("deploy", ["uglify", "cssmin", "upload:ssh"]);
 
 	// assets  → generate icon + banner sizes from source images in assets/
 	grunt.registerTask("assets", "Generate WP.org plugin assets (icon + banner)", function () {
@@ -454,7 +395,7 @@ module.exports = (grunt) => {
 	grunt.registerTask("deploy:wp", "Deploy plugin to WordPress.org SVN", function () {
 		const version = getVersion();
 		const svnUrl = "https://plugins.svn.wordpress.org/" + pluginName;
-		const auth = `--username "${process.env.SVN_USERNAME || ""}" --password "${process.env.SVN_PASSWORD || ""}" --non-interactive --trust-server-cert`;
+		// Authentication is passed only through stdin by deployment.svn().
 
 		// Pre-flight checks
 		if (!process.env.SVN_USERNAME || !process.env.SVN_PASSWORD) {
@@ -492,43 +433,39 @@ module.exports = (grunt) => {
 
 		grunt.config.set("wporg.svnUrl", svnUrl);
 		grunt.config.set("wporg.version", version);
-		grunt.config.set("wporg.auth", auth);
 
 		grunt.task.run([
 			"exec:svn_check",
 			"wporg_prepare",
 			"exec:svn_add_remove",
-			"exec:svn_commit",
+			"svn_commit",
 		]);
 	});
 
-	// Run lint + build + svn checkout in parallel
-	grunt.registerTask("wporg_prepare", "Lint, build and SVN checkout in parallel", function () {
-		const done = this.async();
-		const { execSync, spawn } = require("child_process");
+	grunt.registerTask("svn_commit", function () {
+		const version = grunt.config.get("wporg.version");
+		const url = grunt.config.get("wporg.svnUrl");
+		for (const dir of [srcDir, "assets"].filter(dir => fs.existsSync(path.join(dir, ".svn")))) {
+			deployment.svn(["commit", "-m", `Release ${version}`], { cwd: dir });
+		}
+		const tags = deployment.svn(["list", `${url}/tags`], { capture: true });
+		for (const tag of tags.split(/\r?\n/).map(tag => tag.replace(/\/$/, "")).filter(Boolean)) {
+			deployment.svn(["delete", `${url}/tags/${tag}`, "-m", `Remove old tag ${tag}`]);
+		}
+		deployment.svn(["copy", `${url}/trunk`, `${url}/tags/${version}`, "-m", `Tag ${version}`]);
+	});
 
+	grunt.registerTask("wporg_prepare", "Lint, build and prepare SVN", function () {
+		const { execSync } = require("child_process");
 		const svnUrl = grunt.config.get("wporg.svnUrl");
-		const auth = grunt.config.get("wporg.auth");
-
-		// SVN checkout/update directly into src/ (trunk) and assets/
-		const svnCmds = [];
-		if (fs.existsSync(path.join(srcDir, ".svn"))) {
-			grunt.log.writeln("→ SVN update (cached)");
-			svnCmds.push(`svn update "${srcDir}" ${auth}`);
-			if (fs.existsSync(path.join("assets", ".svn"))) {
-				svnCmds.push(`svn update "assets" ${auth}`);
-			}
-		} else {
-			grunt.log.writeln("→ SVN checkout (first time)");
-			svnCmds.push(`svn checkout --force "${svnUrl}/trunk" "${srcDir}" ${auth}`);
-			svnCmds.push(`svn checkout --force "${svnUrl}/assets" "assets" ${auth}`);
+		for (const [remote, local] of [["trunk", srcDir], ["assets", "assets"]]) {
+			if (fs.existsSync(path.join(local, ".svn"))) deployment.svn(["update", local]);
+			else deployment.svn(["checkout", "--force", `${svnUrl}/${remote}`, local]);
 		}
 
-		const svnProc = spawn("sh", ["-c", svnCmds.join(" && ")], { stdio: "inherit" });
-
-		// Run lint + build synchronously while SVN works in background
+		// Build only after checkout/update succeeds.
 		try {
-			grunt.log.writeln("→ Lint + Build (parallel with SVN)");
+			grunt.log.writeln("→ Lint + Build");
 			execSync(`${findPhpTool("phpcbf")} -d memory_limit=512M --standard=phpcs.xml || true`, { stdio: "inherit" });
 			execSync(`${findPhpTool("phpcs")} -d memory_limit=512M --standard=phpcs.xml --report=full`, { stdio: "inherit" });
 
@@ -559,18 +496,10 @@ module.exports = (grunt) => {
 				grunt.log.ok("banners generated (PNG)");
 			}
 		} catch (e) {
-			svnProc.kill();
 			grunt.fail.fatal("Lint/build failed: " + e.message);
 		}
 
-		// Wait for SVN to finish
-		svnProc.on("close", function (code) {
-			if (code !== 0) {
-				grunt.fail.fatal("SVN checkout/update failed with code " + code);
-			}
-			grunt.log.ok("All ready — SVN + lint + build done");
-			done();
-		});
+		grunt.log.ok("SVN + lint + build ready");
 	});
 
 grunt.registerTask("default", ["build"]);

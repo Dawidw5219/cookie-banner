@@ -33,6 +33,7 @@ export const it: TranslationSchema = {
 		withdraw: "Revoca tutti i consensi facoltativi",
 		saveError: "Impossibile salvare la scelta. Il trattamento facoltativo resta bloccato.",
 	},
+	close: "Chiudi",
 	overlay: {
 		title: "Rispettiamo la tua privacy",
 		description:
