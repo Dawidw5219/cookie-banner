@@ -1,6 +1,8 @@
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+const sourceRoot = fileURLToPath(new URL("../../src/", import.meta.url));
 
 const base = process.env.CONSENT_TEST_URL || "http://127.0.0.1:5173";
 const chrome =
@@ -26,6 +28,9 @@ async function createPage(fixture) {
 				contentType: "text/html; charset=utf-8",
 				body: "<!doctype html><title>Mock provider</title>",
 			});
+		} else if (url.pathname.endsWith("/preview.html")) {
+			requests.push(url.href);
+			await route.continue();
 		} else if (fixture && url.pathname === "/__wp-fixture") {
 			await route.fulfill({
 				contentType: "text/html; charset=utf-8",
@@ -38,7 +43,7 @@ async function createPage(fixture) {
 
 try {
 	const ui = await createPage();
-	await ui.page.goto(base);
+	await ui.page.goto(`${base}/?lang=pl`);
 	await ui.page.waitForSelector(".cb-content-placeholder");
 	await ui.page.waitForTimeout(250);
 	assert.deepEqual(ui.requests, [], "No external request before consent");
@@ -47,7 +52,7 @@ try {
 		.click();
 	assert.equal(await ui.page.locator("iframe[src]").count(), 0);
 	const firstEmbed = ui.page.waitForResponse((response) =>
-		response.url().includes("youtube-nocookie.com"),
+		response.url().includes("preview.html?provider=youtube"),
 	);
 	await ui.page
 		.locator(".cb-content-placeholder")
@@ -59,9 +64,9 @@ try {
 	);
 	await firstEmbed;
 	assert.equal(ui.requests.length, 1);
-	assert.match(ui.requests[0], /youtube-nocookie\.com/);
+	assert.match(ui.requests[0], /preview\.html\?provider=youtube/);
 	const restoredEmbed = ui.page.waitForResponse((response) =>
-		response.url().includes("youtube-nocookie.com"),
+		response.url().includes("preview.html?provider=youtube"),
 	);
 	await ui.page.reload();
 	await ui.page.waitForFunction(
@@ -104,13 +109,13 @@ try {
 	);
 
 	const guard = await createPage();
-	await guard.page.goto(base);
+	await guard.page.goto(`${base}/?lang=pl`);
 	await guard.page.waitForSelector(".cb-content-placeholder");
 	await guard.page
 		.getByRole("button", { name: "Odrzuć wszystkie", exact: true })
 		.click();
-	await guard.page.evaluate(async () => {
-		const { installAutoBlocker } = await import("/src/core/auto-blocker.ts");
+	await guard.page.evaluate(async (source) => {
+		const { installAutoBlocker } = await import(source);
 		installAutoBlocker(window.__cookieConsent);
 		const script = document.createElement("script");
 		script.src = "https://www.youtube.com/iframe_api";
@@ -138,7 +143,7 @@ try {
 			/* Expected denial. */
 		}
 		navigator.sendBeacon("https://www.google-analytics.com/g/collect", "test");
-	});
+	}, `/@fs${sourceRoot}core/auto-blocker.ts`);
 	await guard.page.waitForTimeout(300);
 	assert.deepEqual(
 		guard.requests,
@@ -155,14 +160,14 @@ try {
 			),
 		true,
 	);
-	await guard.page.evaluate(async () => {
-		const { setServiceConsent } = await import("/src/api/native.ts");
+	await guard.page.evaluate(async (source) => {
+		const { setServiceConsent } = await import(source);
 		setServiceConsent("youtube", true);
-	});
+	}, `/@fs${sourceRoot}api/native.ts`);
 	await guard.page.waitForTimeout(300);
 	assert(guard.requests.length >= 1);
 	assert(
-		guard.requests.every((url) => new URL(url).hostname.includes("youtube")),
+		guard.requests.every((url) => new URL(url).hostname.includes("youtube") || url.includes("preview.html?provider=youtube")),
 	);
 	await guard.close();
 	console.log(

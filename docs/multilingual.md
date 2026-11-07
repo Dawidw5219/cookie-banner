@@ -9,7 +9,7 @@ można dostarczyć kompletny własny słownik również dla innego języka.
 ## npm / Next.js
 
 ```ts
-import { initializeConsent, resolveLocalizedConfig, consentCspHeaders } from '@app4you/cookie-banner/native';
+import { initializeConsent, resolveLocalizedConfig, consentCspHeaders } from '@app4you/cookie-banner';
 
 const config = {
   mode: 'standalone' as const,

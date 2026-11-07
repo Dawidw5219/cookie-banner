@@ -10,7 +10,7 @@ try {
 		execFileSync(
 			"npm",
 			["pack", "--ignore-scripts", "--pack-destination", temp, "--json"],
-			{ cwd: root, encoding: "utf8" },
+			{ cwd: root, encoding: "utf8", env: { ...process.env, npm_config_cache: join(temp, "npm-cache") } },
 		),
 	);
 	execFileSync("tar", ["-xzf", join(temp, pack.filename), "-C", temp]);
@@ -25,7 +25,12 @@ try {
 		join(temp, "node_modules/preact"),
 		"dir",
 	);
-	const source = `import {getDetectedServices, resolveLocalizedConfig, blockedContentProps, consentCspHeaders, getConsentReceipt, type ConsentReceipt, type BannerConfig} from '@app4you/cookie-banner/native';
+	const source = `import {getDetectedServices, resolveLocalizedConfig, blockedContentProps, consentCspHeaders, getConsentReceipt, type ConsentReceipt, type BannerConfig} from '@app4you/cookie-banner';
+import { scanCookies, startCookieScan } from '@app4you/cookie-banner/dev';
+import { blockedContentProps as legacyProps } from '@app4you/cookie-banner/native';
+if(legacyProps !== blockedContentProps) throw new Error('Legacy entry differs');
+if(scanCookies().cookies.length) throw new Error('SSR scanner invented cookies');
+startCookieScan(()=>{throw new Error('SSR scanner called client callback')})();
 const config: BannerConfig = {mode:'standalone',lang:'pl',noticeVersion:'qa-1',controller:{name:'QA controller'},purposes:'QA video',privacyPolicyUrl:'/privacy'};
 const receipt: ConsentReceipt|null=getConsentReceipt();
 if(resolveLocalizedConfig({...config,lang:'de-DE',localizations:{de:{purposes:'Zweck'}}}).purposes!=='Zweck')throw new Error('SSR locale resolution failed');

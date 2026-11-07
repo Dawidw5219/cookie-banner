@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, google tag manager, consent mode
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.0.2
+Stable tag: 3.0.0
 License: GPL-2.0-or-later
 
 Lightweight GDPR cookie consent banner with Google Consent Mode v2 support.

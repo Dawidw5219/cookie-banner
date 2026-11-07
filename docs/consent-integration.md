@@ -6,12 +6,12 @@ Pakiet i wtyczka korzystają z jednego modelu zgód oraz rejestru rozpoznawania 
 
 ## Npm: kod własnej strony / Next.js
 
-Punkt wejścia: `@app4you/cookie-banner/native`. Sam import i funkcje generujące atrybuty są bezpieczne w SSR. Klient pobiera kod bannera dopiero podczas inicjalizacji. Dotychczasowy bundle IIFE pozostaje w `@app4you/cookie-banner` i `@app4you/cookie-banner/auto`.
+Punkt wejścia: `@app4you/cookie-banner`. Sam import i funkcje generujące atrybuty są bezpieczne w SSR. Klient pobiera kod bannera dopiero podczas inicjalizacji. Bundle IIFE uruchamiający się automatycznie jest dostępny pod `@app4you/cookie-banner/auto`. Dawny import `/native` pozostaje aliasem API. Przy aktualizacji z wersji używającej głównego importu do automatycznego uruchamiania zmień go na `/auto`.
 
 W komponencie serwerowym można od razu wygenerować nieaktywny iframe:
 
 ```tsx
-import { blockedContentProps } from "@app4you/cookie-banner/native";
+import { blockedContentProps } from "@app4you/cookie-banner";
 
 export function Video() {
   return <iframe
@@ -31,7 +31,7 @@ Inicjalizacja po hydratacji, np. w jednym komponencie klientowym Next.js:
 ```tsx
 "use client";
 import { useEffect } from "react";
-import { initializeConsent } from "@app4you/cookie-banner/native";
+import { initializeConsent } from "@app4you/cookie-banner";
 
 export function ConsentProvider() {
   useEffect(() => {
@@ -67,7 +67,7 @@ Dla zwykłego skryptu użyj `blockedScriptProps("service-id", "https://provider.
 Dla komponentu wykonującego żądania podczas montowania zastosuj `onServiceConsent` **przed jego zamontowaniem**:
 
 ```ts
-import { onServiceConsent } from "@app4you/cookie-banner/native";
+import { onServiceConsent } from "@app4you/cookie-banner";
 
 const unsubscribe = onServiceConsent("support-chat", granted => {
   if (granted) mountChat();
@@ -123,12 +123,12 @@ Nie deklarujemy automatycznej pełnej zgodności całej witryny z RODO. Baza nie
 
 ## Strict network CSP (server integration)
 
-`@app4you/cookie-banner/native` exports server-safe `consentCspHeaders`,
+`@app4you/cookie-banner` exports server-safe `consentCspHeaders`,
 `buildConsentCsp` and `readCspConsent`. This is an HTTP policy, not a policy
 installed by a client effect. Apply it to the initial HTML response:
 
 ```ts
-import { consentCspHeaders } from '@app4you/cookie-banner/native';
+import { consentCspHeaders } from '@app4you/cookie-banner';
 
 const csp = {
   noticeVersion: "2026-11-06.1", // Same value in the client config.
@@ -251,7 +251,7 @@ W konfiguracji npm dostępne są również `localizations`, `customTexts`,
 `receiptEndpoint` i `receiptNonce`. CSP wymaga nagłówka z serwera aplikacji;
 przykład Next.js/SSR znajduje się w `docs/multilingual.md`.
 
-Z `@app4you/cookie-banner/native` można odczytać `getDetectedServices()` (zaobserwowane
+Z `@app4you/cookie-banner` można odczytać `getDetectedServices()` (zaobserwowane
 usługi z tego samego rejestru), `getConsentReceipt()` i korzystać z
 `hasServiceConsent`, `setServiceConsent`, `onServiceConsent` oraz nieaktywnych
 atrybutów `blockedContentProps` / `blockedScriptProps`.
@@ -260,3 +260,20 @@ Panel, zapis w tabeli bazy danych WordPressa, WPML/Polylang i czyszczenie cache
 wtyczek są adapterami WordPressa. W innej aplikacji jej backend odbiera dowody przez
 `receiptEndpoint`, a ustawienia przekazuje się jako konfigurację npm. Sam pakiet
 przeglądarkowy nie tworzy bazy danych ani panelu administracyjnego hosta.
+
+
+## Skanowanie podczas testowania aplikacji
+
+Narzędzie diagnostyczne jest osobnym importem. Nie trzeba montować bannera, aby go użyć:
+
+```ts
+if (import.meta.env.DEV) {
+  const { startCookieScan } = await import('@app4you/cookie-banner/dev');
+  const stop = startCookieScan(report => console.table(report));
+  // Wywołaj stop() przy odmontowaniu integracji.
+}
+```
+
+`scanCookies()` zwraca jednorazowy raport. `startCookieScan(callback)` odczytuje stan raz na sekundę, emituje zmiany i zwraca funkcję zatrzymującą. Raport obejmuje bieżące nazwy cookies, klucze localStorage/sessionStorage i originy zasobów z Resource Timing. Nie zawiera wartości, ścieżek, parametrów URL ani danych uwierzytelniających. Niczego nie wysyła do serwera. Pole `unavailable` wskazuje niedostępne źródła.
+
+To widok bieżącej strony, nie crawler i nie dowód braku trackingu. Nie obejmuje HttpOnly, obcych iframe’ów, serwerowego trackingu ani każdego żądania sieciowego. Originy zasobów mogą obejmować wcześniejsze żądania w tym samym dokumencie; bufor Resource Timing jest ograniczony. Skaner nie klasyfikuje automatycznie celu cookies ani nie potwierdza zgodności. Zmiany widoczne krócej niż interwał mogą nie zostać zauważone. Porównuj stan przed zgodą, po odmowie i po zgodzie w osobnych czystych sesjach przeglądarki.

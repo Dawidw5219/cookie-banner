@@ -15,9 +15,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "baseUrl": "."
   },
-  "include": ["src", "tests"]
+  "include": [
+    "src",
+    "tests",
+    "example"
+  ]
 }

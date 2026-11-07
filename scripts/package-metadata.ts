@@ -5,6 +5,7 @@ import { dirname, posix } from "node:path";
 // Publish only the public declaration graph, alongside all data attribution.
 const declarations = {
 	"api/native": "native",
+	"api/dev": "dev",
 	types: "types",
 	"core/service-consent": "core/service-consent",
 	"core/csp": "core/csp",

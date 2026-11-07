@@ -1,9 +1,9 @@
 {
   "name": "@app4you/cookie-banner",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Framework-independent cookie consent banner with Google Consent Mode v2 support.",
   "type": "module",
-  "main": "dist/cookie-banner.js",
+  "main": "./dist/native.js",
   "files": [
     "dist",
     "README.md",
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite example",
     "build": "bun run build:banner && bun run --cwd plugin build",
     "build:banner": "bun run typecheck && vite build && vite build --config vite.native.config.ts && tsc -p tsconfig.package.json && bun run scripts/package-metadata.ts",
     "deploy": "bun scripts/deploy.ts",
@@ -31,7 +31,9 @@
     "test:browser": "node tests/browser/browser.mjs",
     "test:package": "node tests/package/npm-package.mjs",
     "test:privacy": "node tests/browser/consent-hardening.mjs",
-    "test:accessibility": "node tests/browser/accessibility.mjs"
+    "test:accessibility": "node tests/browser/accessibility.mjs",
+    "build:demo": "bun run typecheck && vite build example --base /cookie-banner/",
+    "test:demo": "node tests/browser/demo.mjs"
   },
   "dependencies": {
     "preact": "^10"
@@ -58,12 +60,22 @@
     "esbuild"
   ],
   "exports": {
-    ".": "./dist/cookie-banner.js",
+    ".": {
+      "types": "./dist/native.d.ts",
+      "import": "./dist/native.js",
+      "default": "./dist/native.js"
+    },
     "./auto": "./dist/cookie-banner.js",
     "./native": {
       "types": "./dist/native.d.ts",
       "import": "./dist/native.js",
       "default": "./dist/native.js"
+    },
+    "./dev": {
+      "types": "./dist/dev.d.ts",
+      "import": "./dist/dev.js"
     }
-  }
+  },
+  "module": "./dist/native.js",
+  "types": "./dist/native.d.ts"
 }

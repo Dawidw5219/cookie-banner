@@ -10,6 +10,7 @@ plugin/builds/
 !/docs/consent-compliance.md
 !/docs/multilingual.md
 !/docs/deployment-security.md
+!/docs/banner-preview.png
 
 # Local Sophia data must never be committed.
 **/.sophia/
