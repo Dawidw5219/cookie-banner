@@ -61,6 +61,25 @@ lokalnego WordPressa, a testy panelu również sesji administratora
 Test narzędzi wdrożeniowych można uruchomić bez serwera:
 `node plugin/tests/deployment.cjs`.
 
+## Wydanie na GitHubie i npm
+
+```bash
+bun run deploy
+```
+
+Komenda buduje paczkę npm i plugin, uruchamia testy, sprawdza spakowaną paczkę oraz logowanie
+do npm i GitHuba, następnie przez `ghdeploy` tworzy GitHub Release z ZIP-em
+WordPressa, porównuje pobrany ZIP z lokalnym buildem i wykonuje
+`npm publish --access public`. Błąd zatrzymuje dalsze etapy.
+Updater WordPressa pobiera aktualizacje z ZIP-a dołączonego do GitHub Release.
+
+Wymagane są `ghdeploy`, zalogowane `gh` i `npm` oraz zgodne numery wersji
+w `package.json`, nagłówku i `COOKIE4_VERSION` pluginu oraz `Stable tag`
+w `plugin/readme.txt`. Dla kolejnego wydania ustaw nowy, wspólny numer przed
+uruchomieniem komendy. Wersja już opublikowana lub oczekująca w npm staging
+nie może zostać wysłana ponownie. npm może wymagać 2FA lub zatwierdzenia
+w Staged Packages. Podgląd samego planu: `bun run deploy --dry-run`.
+
 ## Plugin WordPress
 
 Źródła pluginu znajdują się w [`plugin/`](./plugin). Plugin korzysta z tego
