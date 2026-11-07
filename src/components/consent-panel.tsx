@@ -7,11 +7,13 @@ export function ConsentPanel({
 	class: extra = "",
 	label,
 	onDismiss,
+	showClose = true,
 }: {
 	children: ComponentChildren;
 	class?: string;
 	label: string;
 	onDismiss: () => void;
+	showClose?: boolean;
 }) {
 	const panel = useRef<HTMLDivElement>(null);
 	useLayoutEffect(() => {
@@ -102,16 +104,29 @@ export function ConsentPanel({
 				role="dialog"
 				aria-modal="true"
 				aria-label={label}
-				class={`max-h-[90vh] overflow-y-auto outline-none w-full sm:mx-4 sm:max-w-xl rounded-t-cb sm:rounded-cb bg-cb-bg shadow-2xl ${extra}`.trim()}
+				class={`relative max-h-[90vh] overflow-y-auto outline-none w-full sm:mx-4 sm:max-w-xl rounded-t-cb sm:rounded-cb bg-cb-bg shadow-2xl ${extra}`.trim()}
 			>
-				<button
-					type="button"
-					onClick={onDismiss}
-					aria-label={t.close}
-					class="float-right self-end shrink-0 ml-3 mb-2 min-h-8 min-w-8 rounded border border-cb-border text-cb-text focus-visible:outline-2"
-				>
-					×
-				</button>
+				{showClose && (
+					<button
+						type="button"
+						onClick={onDismiss}
+						aria-label={t.close}
+						class="cb-panel-close"
+					>
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							aria-hidden="true"
+						>
+							<path d="m6 6 12 12M18 6 6 18" />
+						</svg>
+					</button>
+				)}
 				{children}
 			</div>
 		</div>

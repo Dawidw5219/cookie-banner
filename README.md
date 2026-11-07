@@ -220,7 +220,7 @@ bun run dev          # Open the development demo
 bun run test         # Unit and regression tests
 bun run build        # npm bundle, types, WordPress admin and plugin ZIP
 bun run build:demo   # Static live demo for GitHub Pages
-bun run test:demo    # Production demo, local scanner and no external requests
+bun run test:demo    # Production demo, scanner and consent-gated video
 ```
 
 Builds start with type checking. Missing translation keys, incorrect translation types or invalid editor keys stop the build.
@@ -240,7 +240,7 @@ bun run deploy             # Build → tests → GitHub Release + ZIP → npm
 
 Deployment requires authenticated `gh` and `npm`, plus `ghdeploy`. Set the same version in `package.json`, the plugin header, `COOKIE4_VERSION` and the plugin readme's `Stable tag`. Use a new version if the previous one is already published or staged in npm. npm may require 2FA or staged approval.
 
-The page in `example/` uses local simulated providers and an opt-in scanner with synthetic test data. It never contacts real video or tracking providers.
+The article in `example/` uses a real YouTube embed, blocked until the visitor allows YouTube. It opens with a dialog and equal decision buttons. A small settings menu switches the presentation; the opt-in scanner supports synthetic test data. Tests mock the video provider and verify that refusal sends no provider requests.
 
 The `Live demo` GitHub Actions workflow builds the demo on pushes to `main` and deploys `example/dist` to GitHub Pages. Select **GitHub Actions** as the Pages publishing source in the repository settings.
 

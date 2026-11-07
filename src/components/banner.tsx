@@ -94,6 +94,7 @@ function AppContent() {
 			{view === "preferences" && (
 				<ConsentPanel
 					label={t.preferences.title}
+					showClose={config.buttonStyle === "equal"}
 					onDismiss={dismiss}
 					class="flex max-h-[90vh] flex-col"
 				>

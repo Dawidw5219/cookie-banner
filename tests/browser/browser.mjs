@@ -28,9 +28,6 @@ async function createPage(fixture) {
 				contentType: "text/html; charset=utf-8",
 				body: "<!doctype html><title>Mock provider</title>",
 			});
-		} else if (url.pathname.endsWith("/preview.html")) {
-			requests.push(url.href);
-			await route.continue();
 		} else if (fixture && url.pathname === "/__wp-fixture") {
 			await route.fulfill({
 				contentType: "text/html; charset=utf-8",
@@ -52,7 +49,7 @@ try {
 		.click();
 	assert.equal(await ui.page.locator("iframe[src]").count(), 0);
 	const firstEmbed = ui.page.waitForResponse((response) =>
-		response.url().includes("preview.html?provider=youtube"),
+		response.url().includes("youtube-nocookie.com"),
 	);
 	await ui.page
 		.locator(".cb-content-placeholder")
@@ -64,9 +61,9 @@ try {
 	);
 	await firstEmbed;
 	assert.equal(ui.requests.length, 1);
-	assert.match(ui.requests[0], /preview\.html\?provider=youtube/);
+	assert.match(ui.requests[0], /youtube-nocookie\.com/);
 	const restoredEmbed = ui.page.waitForResponse((response) =>
-		response.url().includes("preview.html?provider=youtube"),
+		response.url().includes("youtube-nocookie.com"),
 	);
 	await ui.page.reload();
 	await ui.page.waitForFunction(
@@ -79,8 +76,8 @@ try {
 		.click();
 	assert.equal(
 		await ui.page.getByRole("switch").count(),
-		5,
-		"Only categories and two observed providers",
+		4,
+		"Only categories and the observed YouTube provider",
 	);
 	const reloaded = ui.page.waitForNavigation();
 	await ui.page
@@ -100,7 +97,7 @@ try {
 		document.body.append(iframe);
 	});
 	await ui.page.waitForFunction(
-		() => document.querySelectorAll(".cb-content-placeholder").length === 3,
+		() => document.querySelectorAll(".cb-content-placeholder").length === 2,
 	);
 	assert.equal(ui.requests.length, 2);
 	await ui.close();
@@ -167,7 +164,7 @@ try {
 	await guard.page.waitForTimeout(300);
 	assert(guard.requests.length >= 1);
 	assert(
-		guard.requests.every((url) => new URL(url).hostname.includes("youtube") || url.includes("preview.html?provider=youtube")),
+		guard.requests.every((url) => new URL(url).hostname.includes("youtube")),
 	);
 	await guard.close();
 	console.log(

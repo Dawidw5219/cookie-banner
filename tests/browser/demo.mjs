@@ -46,22 +46,56 @@ try {
   });
   const page = await browser.newPage();
   const external = [],
-    frames = [],
     errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.route("**/*", (route) => {
     const url = new URL(route.request().url());
     if (url.origin !== origin) {
       external.push(url.href);
+      if (url.hostname === "www.youtube-nocookie.com")
+        return route.fulfill({
+          contentType: "text/html",
+          body: "<!doctype html><title>Mock YouTube player</title>",
+        });
       return route.abort();
     }
-    if (url.pathname.endsWith("/preview.html")) frames.push(url.href);
     return route.continue();
   });
   await page.goto(`${origin}/cookie-banner/`);
+  const dialog = page.getByRole("dialog");
+  await dialog.waitFor();
+  assert.equal(await dialog.getAttribute("aria-modal"), "true");
+  assert.equal(
+    await page.locator(".demo-options select").nth(0).inputValue(),
+    "modal",
+  );
+  assert.equal(
+    await page.locator(".demo-options select").nth(1).inputValue(),
+    "equal",
+  );
+  const appearance = (button) =>
+    button.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [
+        style.backgroundColor,
+        style.color,
+        style.borderColor,
+        style.fontWeight,
+      ];
+    });
+  assert.deepEqual(
+    await appearance(
+      page.getByRole("button", { name: "Reject All", exact: true }),
+    ),
+    await appearance(
+      page.getByRole("button", { name: "Accept All", exact: true }),
+    ),
+  );
+  assert.deepEqual(external, [], "No provider requests before consent");
   await page.getByRole("button", { name: "Reject All", exact: true }).click();
   assert.equal(await page.locator("iframe[src]").count(), 0);
-  assert.deepEqual(frames, []);
+  assert.deepEqual(external, [], "No provider requests after refusal");
+  await page.locator(".scanner-disclosure > summary").click();
   await page
     .getByRole("button", { name: "Start local scanner", exact: true })
     .click();
@@ -101,8 +135,11 @@ try {
   await page.waitForFunction(
     () => document.querySelectorAll("iframe[src]").length === 1,
   );
-  assert.equal(frames.length, 1);
-  assert(frames[0].endsWith("preview.html?provider=youtube"));
+  assert.equal(external.length, 1);
+  assert.equal(
+    external[0],
+    "https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ",
+  );
   for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 844 });
     assert.equal(
@@ -111,7 +148,7 @@ try {
     );
   }
   await page
-    .locator(".controls")
+    .locator(".article-footer")
     .getByRole("button", { name: "Cookie preferences", exact: true })
     .click();
   await page
@@ -121,10 +158,41 @@ try {
     (await page.request.get(`${origin}/cookie-banner/privacy.html`)).status(),
     200,
   );
-  assert.deepEqual(external, [], "The demo must not contact real providers");
+  assert.equal(
+    external.length,
+    1,
+    "Only the explicitly allowed video should load",
+  );
+  await page.keyboard.press("Escape");
+  await page.locator(".demo-options > summary").click();
+  await Promise.all([
+    page.waitForURL((url) => url.searchParams.get("variant") === "bar"),
+    page.getByLabel("Layout", { exact: true }).selectOption("bar"),
+  ]);
+  await page.getByRole("button", { name: "Reject All", exact: true }).waitFor();
+  assert.equal(
+    await page.evaluate(() => window.__cookieConsent.variant),
+    "bar",
+  );
+  assert.equal(
+    external.length,
+    1,
+    "Changing settings resets consent without reloading the provider",
+  );
+  await page.getByRole("button", { name: "Reject All", exact: true }).click();
+  await page.locator(".demo-options > summary").click();
+  await Promise.all([
+    page.waitForURL((url) => url.searchParams.get("buttons") === "standard"),
+    page.getByLabel("Decision buttons").selectOption("standard"),
+  ]);
+  await page.getByRole("button", { name: "Reject All", exact: true }).waitFor();
+  assert.equal(
+    await page.evaluate(() => window.__cookieConsent.buttonStyle),
+    "standard",
+  );
   assert.deepEqual(errors, []);
   console.log(
-    "PASS production demo: local simulations, no external requests, consent, synthetic scanner data and cleanup, mobile layout, privacy page.",
+    "PASS article demo: modal + equal defaults, no YouTube before consent/refusal, chosen video activation, local scanner, responsive layout and settings switches.",
   );
 } finally {
   await browser?.close();

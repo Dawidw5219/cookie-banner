@@ -165,7 +165,7 @@ try {
         );
         await page.setViewportSize({ width, height: 320 });
         await page
-          .getByRole("button", { name: "Zamknij", exact: true })
+          .getByRole("button", { name: "Odrzuć wszystkie", exact: true })
           .scrollIntoViewIfNeeded();
         await page.setViewportSize({ width, height: 900 });
         assert.equal(

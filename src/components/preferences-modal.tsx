@@ -1,21 +1,17 @@
+import { useContext, useEffect, useState } from "preact/hooks";
 import { getServices } from "../core/services";
-import { ConsentDecisionButton } from "../ui/consent-button";
 import {
 	hasCompleteDisclosure,
 	hasServiceDisclosure,
 	isPolicyUrl,
 } from "../core/disclosure";
+import { ConsentButton, ConsentDecisionButton } from "../ui/consent-button";
 import { ConfigContext } from "../hooks/use-consent";
-import { useContext } from "preact/hooks";
-import { useEffect, useState } from "preact/hooks";
 import { t } from "../i18n";
-import {
-	PreferencesPolicyLinks,
-	ConsentNotice,
-} from "./policy-links";
+import { PreferencesPolicyLinks, ConsentNotice } from "./policy-links";
+import { ConsentOption } from "./consent-option";
 import type { ConsentCategory, ConsentState } from "../types";
 import { CONSENT_CATEGORIES } from "../types";
-import { Toggle } from "../ui/toggle";
 
 interface PreferencesModalProps {
 	privacyPolicyUrl?: string;
@@ -36,122 +32,109 @@ export function PreferencesModal({
 }: PreferencesModalProps) {
 	const config = useContext(ConfigContext);
 	const disclosed = hasCompleteDisclosure(config || undefined);
+	const standard = (config?.buttonStyle ?? "standard") === "standard";
 	const [services, setServices] = useState(getServices);
+	const [state, setState] = useState<ConsentState>({ ...initialState });
 	useEffect(() => {
 		const update = () => setServices(getServices());
 		window.addEventListener("cb:services-changed", update);
 		return () => window.removeEventListener("cb:services-changed", update);
 	}, []);
-	const [state, setState] = useState<ConsentState>({
-		...initialState,
-	});
-
-	const handleToggle = (category: ConsentCategory, checked: boolean) => {
+	const handleToggle = (category: ConsentCategory, checked: boolean) =>
 		setState((prev) => ({ ...prev, [category]: checked }));
-	};
-
-	const handleSave = () => {
-		onSave({ ...state, essential: true });
-	};
 
 	return (
 		<>
-			<div class="shrink-0 border-b border-cb-border p-5 sm:p-6">
-				<div class="flex items-center justify-between">
+			<div class="cb-preferences-header shrink-0 border-b border-cb-border p-5 sm:p-6">
+				<div
+					class={`flex items-center justify-between gap-4 ${standard ? "" : "pr-10"}`}
+				>
 					<h2 class="text-lg sm:text-xl font-bold text-cb-text">
 						{t.preferences.title}
 					</h2>
+					{standard && (
+						<ConsentButton
+							type="button"
+							onClick={onRejectAll}
+							class="cb-header-reject"
+						>
+							{t.preferences.rejectAll}
+						</ConsentButton>
+					)}
 				</div>
 				<p class="mt-2 text-sm leading-relaxed text-cb-text">
-					<ConsentNotice />
 					{t.preferences.description}
 					<PreferencesPolicyLinks
 						privacyPolicyUrl={privacyPolicyUrl}
 						cookiePolicyUrl={cookiePolicyUrl}
 					/>
 				</p>
+				{!disclosed && (
+					<p class="mt-2 text-sm" role="status">
+						{t.disclosure.unavailable}
+					</p>
+				)}
 			</div>
-			<div class="flex-1 overflow-y-auto p-5 sm:p-6">
+			<div class="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6">
 				<div class="flex flex-col gap-3 sm:gap-4">
+					<details class="cb-notice-details">
+						<summary>{t.content.privacyDetails}</summary>
+						<div class="mt-3 text-xs leading-relaxed">
+							<ConsentNotice />
+						</div>
+					</details>
 					{CONSENT_CATEGORIES.map((category) => {
-						const catT = t.preferences.categories[category];
-						const isEssential = category === "essential";
+						const essential = category === "essential";
+						const copy = t.preferences.categories[category];
 						return (
-							<div
+							<ConsentOption
 								key={category}
-								class="rounded-cb border border-cb-border bg-cb-surface p-3 sm:p-4"
+								id={`cb-toggle-${category}`}
+								label={copy.label}
+								checked={essential || state[category]}
+								disabled={essential || !disclosed}
+								onChange={(checked) => handleToggle(category, checked)}
 							>
-								<div class="flex items-start justify-between gap-3">
-									<div class="min-w-0 flex-1">
-										<label
-											for={`cb-toggle-${category}`}
-											class="text-sm font-semibold text-cb-text"
-										>
-											{catT.label}
-										</label>
-										<p class="mt-1 text-xs leading-relaxed text-cb-text">
-											{catT.description}
-										</p>
-									</div>
-									<div class="shrink-0 pt-0.5">
-										<Toggle
-											id={`cb-toggle-${category}`}
-											checked={isEssential ? true : state[category]}
-											disabled={isEssential || !disclosed}
-											onChange={(checked) => handleToggle(category, checked)}
-										/>
-									</div>
-								</div>
-							</div>
+								<p>{copy.description}</p>
+							</ConsentOption>
 						);
 					})}
-					<h3 class="text-sm font-semibold text-cb-text">
-						{t.preferences.externalServices}
-					</h3>
-					{services.map((service) => (
-						<div
-							key={service.id}
-							class="rounded-cb border border-cb-border p-4"
-						>
-							<div class="flex items-center justify-between gap-3">
-								<label
-									for={`cb-service-${service.id}`}
-									class="text-sm font-semibold text-cb-text"
-								>
-									{service.name}
-								</label>
-								<Toggle
-									id={`cb-service-${service.id}`}
-									checked={state.services?.[service.id] === true}
-									disabled={!disclosed || !hasServiceDisclosure(service)}
-									onChange={(checked) =>
-										setState((prev) => ({
-											...prev,
-											services: { ...prev.services, [service.id]: checked },
-										}))
-									}
-								/>
-							</div>
-							<p class="mt-2 text-xs text-cb-text">
-								{service.description && (
-									<span>
-										{service.description}
-										<br />
-									</span>
-								)}
+					{services.length > 0 && (
+						<div class="mt-2">
+							<h3 class="text-sm font-semibold text-cb-text">
+								{t.preferences.externalServices}
+							</h3>
+							<p class="mt-1 text-xs leading-relaxed text-cb-text">
 								{t.preferences.externalServicesDescription}
-								{service.retention && (
-									<span class="block">
-										{t.disclosure.retention}: {service.retention}
-									</span>
-								)}
-								{!hasServiceDisclosure(service) && (
-									<span class="block">{t.disclosure.unavailable}</span>
-								)}
 							</p>
+						</div>
+					)}
+					{services.map((service) => (
+						<ConsentOption
+							key={service.id}
+							id={`cb-service-${service.id}`}
+							label={service.name}
+							checked={state.services?.[service.id] === true}
+							disabled={!disclosed || !hasServiceDisclosure(service)}
+							onChange={(checked) =>
+								setState((prev) => ({
+									...prev,
+									services: { ...prev.services, [service.id]: checked },
+								}))
+							}
+						>
+							{service.description && <p>{service.description}</p>}
+							{service.retention && (
+								<p class="mt-1">
+									{t.disclosure.retention}: {service.retention}
+								</p>
+							)}
+							{!hasServiceDisclosure(service) && (
+								<p class="mt-1">{t.disclosure.unavailable}</p>
+							)}
 							{isPolicyUrl(service.privacyUrl) && (
 								<a
-									class="text-xs text-cb-primary underline"
+									class="inline-block mt-2 text-cb-primary underline"
 									href={service.privacyUrl}
 									target="_blank"
 									rel="noopener noreferrer"
@@ -159,15 +142,27 @@ export function PreferencesModal({
 									{t.overlay.privacyPolicy}
 								</a>
 							)}
-						</div>
+						</ConsentOption>
 					))}
 				</div>
 			</div>
-			<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-cb-border p-5 sm:p-6">
-				<ConsentDecisionButton variant="outline" type="button" onClick={onRejectAll}>
-					{t.preferences.rejectAll}
-				</ConsentDecisionButton>
-				<ConsentDecisionButton variant="subtle" type="button" onClick={handleSave}>
+			<div
+				class={`cb-preferences-footer grid grid-cols-1 ${standard ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3 shrink-0 border-t border-cb-border p-5 sm:p-6`}
+			>
+				{!standard && (
+					<ConsentDecisionButton
+						variant="outline"
+						type="button"
+						onClick={onRejectAll}
+					>
+						{t.preferences.rejectAll}
+					</ConsentDecisionButton>
+				)}
+				<ConsentDecisionButton
+					variant={standard ? "outline" : "subtle"}
+					type="button"
+					onClick={() => onSave({ ...state, essential: true })}
+				>
 					{t.preferences.save}
 				</ConsentDecisionButton>
 				<ConsentDecisionButton
