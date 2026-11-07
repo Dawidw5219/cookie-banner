@@ -40,7 +40,6 @@ export const fr: TranslationSchema = {
 			"Les cookies facultatifs et services externes sont activés uniquement avec votre consentement. Vous pouvez refuser ou modifier votre choix à tout moment.",
 		descriptionPolicyLink: "Pour plus de détails, consultez notre",
 		acceptAll: "Tout accepter",
-		acceptAllAndContinue: "Tout accepter et continuer",
 		advancedSettings: "Paramètres avancés",
 		privacyPolicy: "politique de confidentialité",
 		cookiePolicy: "politique de cookies",

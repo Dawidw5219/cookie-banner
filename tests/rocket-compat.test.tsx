@@ -50,7 +50,7 @@ it.each(["modal", "bar"] as const)(
   async (variant) => {
     window.__cookieConsent!.variant = variant;
     ({ teardown } = await import("../src/app"));
-    button("Accept All & Continue").click();
+    button("Accept All").click();
     await settle();
     expect(localStorage.getItem("cb_has_consented")).toBe("1");
     expect(localStorage.getItem("cb_consent_analytics")).toBe("granted");

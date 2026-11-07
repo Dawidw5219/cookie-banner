@@ -141,7 +141,7 @@ export function PreferencesModal({
 				</div>
 			</div>
 			<div
-				class={`cb-preferences-footer grid grid-cols-1 ${standard ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3 shrink-0 border-t border-cb-border p-5 sm:p-6`}
+				class={`cb-preferences-footer ${standard ? "cb-preferences-footer-standard" : "grid grid-cols-1 sm:grid-cols-3"} gap-3 shrink-0 border-t border-cb-border p-5 sm:p-6`}
 			>
 				{!standard && (
 					<ConsentDecisionButton
@@ -164,9 +164,7 @@ export function PreferencesModal({
 					onClick={onAcceptAll}
 					disabled={!disclosed}
 				>
-					{standard
-						? t.overlay.acceptAllAndContinue
-						: t.preferences.acceptAllAndContinue}
+					{t.preferences.acceptAllAndContinue}
 				</ConsentDecisionButton>
 			</div>
 		</>

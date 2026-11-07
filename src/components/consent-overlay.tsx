@@ -80,7 +80,7 @@ export function ConsentOverlay({
 					onClick={onAcceptAll}
 					disabled={!disclosed}
 				>
-					{equal ? t.overlay.acceptAll : t.overlay.acceptAllAndContinue}
+					{t.overlay.acceptAll}
 				</ConsentDecisionButton>
 			</div>
 			{equal && (

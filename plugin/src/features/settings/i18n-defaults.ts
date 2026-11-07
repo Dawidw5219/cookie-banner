@@ -17,8 +17,7 @@ export const TEXT_SCHEMA: TextEntry[] = [
 	// Overlay
 	{ key: "overlay.title", label: "Banner title", group: "Banner" },
 	{ key: "overlay.description", label: "Banner description", group: "Banner", multiline: true },
-	{ key: "overlay.acceptAll", label: "Accept All button (equal)", group: "Banner" },
-	{ key: "overlay.acceptAllAndContinue", label: "Accept All & Continue button (standard)", group: "Banner" },
+	{ key: "overlay.acceptAll", label: "Accept All button", group: "Banner" },
 	{ key: "overlay.advancedSettings", label: "Advanced Settings button", group: "Banner" },
 
 	// Preferences
@@ -33,7 +32,7 @@ export const TEXT_SCHEMA: TextEntry[] = [
 	{ key: "preferences.save", label: "Save button", group: "Preferences" },
 	{
 		key: "preferences.acceptAllAndContinue",
-		label: "Accept All & Continue button (equal)",
+		label: "Accept All & Continue button",
 		group: "Preferences",
 	},
 

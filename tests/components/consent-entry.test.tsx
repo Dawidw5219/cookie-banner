@@ -51,7 +51,7 @@ for (const Component of [ConsentOverlay, ConsentBar]) {
 					? Component === ConsentOverlay
 						? ["Reject All", "Accept All", "Advanced Settings"]
 						: ["Advanced Settings", "Reject All", "Accept All"]
-					: ["Advanced Settings", "Accept All & Continue"],
+					: ["Advanced Settings", "Accept All"],
 			);
 			if (Component === ConsentOverlay)
 				expect(!!root.querySelector(".cb-intro-icon")).toBe(

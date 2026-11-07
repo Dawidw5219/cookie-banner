@@ -40,7 +40,6 @@ export const no: TranslationSchema = {
 			"Valgfrie informasjonskapsler og eksterne tjenester lastes bare med ditt samtykke. Du kan avslå eller endre valget når som helst.",
 		descriptionPolicyLink: "Du finner mer informasjon i",
 		acceptAll: "Godta alle",
-		acceptAllAndContinue: "Godta alle og fortsett",
 		advancedSettings: "Avanserte innstillinger",
 		privacyPolicy: "personvernerklæringen vår",
 		cookiePolicy: "retningslinjene våre for informasjonskapsler",

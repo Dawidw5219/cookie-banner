@@ -111,7 +111,7 @@ export function ConsentBar({
 								onClick={onAcceptAll}
 								disabled={!hasCompleteDisclosure(window.__cookieConsent)}
 							>
-								{equal ? t.overlay.acceptAll : t.overlay.acceptAllAndContinue}
+								{t.overlay.acceptAll}
 							</ConsentDecisionButton>
 						</div>
 					</div>

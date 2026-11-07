@@ -121,3 +121,7 @@
  text-decoration: none;
 }
 .cb-settings-inline:hover { background: color-mix(in srgb,var(--cb-primary) 6%,var(--cb-bg)); }
+
+/* Wrap standard footer actions according to their actual labels, not a viewport breakpoint. */
+.cb-preferences-footer-standard { display: flex; flex-wrap: wrap; }
+.cb-preferences-footer-standard .cb-decision { width: auto; max-width: 100%; flex: 1 1 auto; }

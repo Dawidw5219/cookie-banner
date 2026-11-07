@@ -40,7 +40,6 @@ export const da: TranslationSchema = {
 			"Valgfrie cookies og eksterne tjenester indlæses kun med dit samtykke. Du kan afvise eller ændre dit valg når som helst.",
 		descriptionPolicyLink: "Du kan finde flere oplysninger i vores",
 		acceptAll: "Accepter alle",
-		acceptAllAndContinue: "Accepter alle og fortsæt",
 		advancedSettings: "Avancerede indstillinger",
 		privacyPolicy: "privatlivspolitik",
 		cookiePolicy: "cookiepolitik",

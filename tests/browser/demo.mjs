@@ -81,7 +81,7 @@ try {
   const actions = actionRow.locator("button");
   assert.deepEqual(await actions.allTextContents(), [
     "Advanced Settings",
-    "Accept All & Continue",
+    "Accept All",
   ]);
   const settingsBox = await actions.nth(0).boundingBox(),
     acceptBox = await actions.nth(1).boundingBox();

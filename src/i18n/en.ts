@@ -38,7 +38,6 @@ export const en = {
 			"Optional cookies and external services load only after your consent. You can refuse them or change your choice at any time.",
 		descriptionPolicyLink: "Learn more in our",
 		acceptAll: "Accept All",
-		acceptAllAndContinue: "Accept All & Continue",
 		advancedSettings: "Advanced Settings",
 		privacyPolicy: "privacy policy",
 		cookiePolicy: "cookie policy",
