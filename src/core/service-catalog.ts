@@ -1,5 +1,5 @@
 import trackers from "../../plugin/includes/tracker-database.json";
-import providers from "../../plugin/includes/service-database.json";
+import { getProvider } from "./provider-catalog";
 import type { Service } from "./services";
 
 // The catalog describes recognized providers; consent UI contains observed services only.
@@ -16,30 +16,24 @@ const known = new Map<string, Service>([
 				},
 			] as [string, Service],
 	),
-	...providers.map(
-		(provider) =>
-			[
-				provider.id,
-				{
-					id: provider.id,
-					name: provider.name,
-					description: provider.category,
-					privacyUrl: "",
-				},
-			] as [string, Service],
-	),
 ]);
 
 export function getService(id: string): Service {
 	const config = window.__cookieConsent;
 	const custom = config?.services?.find((item) => item.id === id);
+	const provider = !custom && !known.has(id) ? getProvider(id) : undefined;
 	const service = custom ||
-		known.get(id) || {
+		known.get(id) || (provider ? {
+			id: provider.id,
+			name: provider.name,
+			description: provider.category,
+			privacyUrl: "",
+		} : {
 			id,
 			name: id.replace(/^external-/, ""),
 			description: "",
 			privacyUrl: "",
-		};
+		});
 	return {
 		...service,
 		...config?.serviceDisclosures?.[id],

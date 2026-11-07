@@ -1,6 +1,6 @@
 import { hasServiceDisclosure } from "./disclosure";
 import trackers from "../../plugin/includes/tracker-database.json";
-import providers from "../../plugin/includes/service-database.json";
+import { matchProvider } from "./provider-catalog";
 import { getService } from "./service-catalog";
 export { getService } from "./service-catalog";
 import { getConsentState } from "./consent-storage";
@@ -13,6 +13,15 @@ export interface Service {
 	requiresConsent?: boolean;
 	retention?: string;
 }
+
+// These rules are static: parse them once rather than for every DOM/network URL.
+const trackerPatterns = Object.entries(trackers).map(([name, tracker]) => ({
+	name,
+	tracker,
+	patterns: [...tracker.scriptPatterns, ...tracker.networkPatterns].map(
+		(pattern) => new URL(`https://${pattern}`),
+	),
+}));
 
 export function matchService(url: string): Service | undefined {
 	let parsed: URL;
@@ -39,19 +48,14 @@ export function matchService(url: string): Service | undefined {
 		)
 			return { ...service, privacyUrl: service.privacyUrl || "" };
 	}
-	for (const [name, tracker] of Object.entries(trackers)) {
+	for (const { name, tracker, patterns } of trackerPatterns) {
 		if (
-			[...tracker.scriptPatterns, ...tracker.networkPatterns].some(
-				(pattern) => {
-					const target = new URL(`https://${pattern}`);
-					return (
-						target.hostname.includes(".") &&
-						(parsed.hostname === target.hostname ||
-							parsed.hostname.endsWith(`.${target.hostname}`)) &&
-						parsed.pathname.startsWith(target.pathname)
-					);
-				},
-			)
+			patterns.some((target) => (
+				target.hostname.includes(".") &&
+				(parsed.hostname === target.hostname ||
+					parsed.hostname.endsWith(`.${target.hostname}`)) &&
+				parsed.pathname.startsWith(target.pathname)
+			))
 		)
 			return {
 				id: tracker.id,
@@ -60,14 +64,7 @@ export function matchService(url: string): Service | undefined {
 				privacyUrl: tracker.privacyLink,
 			};
 	}
-	const provider = providers.find((provider) =>
-		provider.domains.some((domain) =>
-			domain.startsWith("*.")
-				? parsed.hostname === domain.slice(2) ||
-					parsed.hostname.endsWith(domain.slice(1))
-				: parsed.hostname === domain,
-		),
-	);
+	const provider = matchProvider(parsed.hostname);
 	if (provider)
 		return {
 			id: provider.id,
